@@ -2,49 +2,45 @@
    NICK MASON CONSTRUCTION - Main Stylesheet
    ============================================
    
-   This file controls all the visual styling.
-   Edit values here to change colors, fonts, spacing, etc.
+   Typography matched to logo:
+   - "NICK MASON" = Bold condensed sans-serif (Barlow Condensed)
+   - "CONSTRUCTION, INC." = Refined serif (Cormorant Garamond)
    
    ============================================ */
 
 
 /* ============================================
    CSS VARIABLES
-   ============================================
-   Change these values to quickly update the entire site's look.
-   Think of these as "settings" for your design.
-*/
+   ============================================ */
 
 :root {
-    /* Colors */
-    --color-bg: #f8f7f5;           /* Page background - warm off-white */
-    --color-text: #1a1a1a;         /* Main text - near black */
-    --color-text-muted: #6b6b6b;   /* Secondary text - gray */
-    --color-accent: #8b7355;       /* Accent color - warm brown */
+    /* Colors - warm, grounded palette */
+    --color-bg: #f5f4f1;           /* Warm off-white, like canvas */
+    --color-text: #1a1a1a;         /* Near black */
+    --color-text-muted: #5a5a5a;   /* Warm gray */
+    --color-accent: #3d3d3d;       /* Dark charcoal */
     
-    /* Typography */
-    --font-display: 'Cormorant Garamond', serif;  /* Headlines, quotes */
-    --font-body: 'IBM Plex Sans', sans-serif;     /* Body text, nav */
+    /* Typography - matching the logo */
+    --font-display: 'Barlow Condensed', sans-serif;   /* Bold headlines, logo style */
+    --font-serif: 'Cormorant Garamond', serif;        /* Refined, elegant text */
+    --font-body: 'IBM Plex Sans', sans-serif;         /* Clean body text */
     
-    /* Spacing - used throughout for consistency */
-    --space-xs: 0.5rem;    /* 8px */
-    --space-sm: 1rem;      /* 16px */
-    --space-md: 2rem;      /* 32px */
-    --space-lg: 4rem;      /* 64px */
-    --space-xl: 8rem;      /* 128px */
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 4rem;
+    --space-xl: 8rem;
     
-    /* Transitions - for smooth animations */
+    /* Transitions */
     --transition-smooth: 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     --transition-fast: 0.3s ease;
 }
 
 
 /* ============================================
-   RESET & BASE STYLES
-   ============================================
-   These remove default browser styling so everything 
-   looks consistent across different browsers.
-*/
+   RESET & BASE
+   ============================================ */
 
 *, *::before, *::after {
     margin: 0;
@@ -54,7 +50,7 @@
 
 html {
     font-size: 16px;
-    scroll-behavior: smooth;  /* Smooth scrolling when clicking nav links */
+    scroll-behavior: smooth;
 }
 
 body {
@@ -64,7 +60,7 @@ body {
     color: var(--color-text);
     line-height: 1.6;
     letter-spacing: 0.01em;
-    overflow-x: hidden;  /* Prevents horizontal scroll */
+    overflow-x: hidden;
 }
 
 img, video {
@@ -80,10 +76,7 @@ a {
 
 /* ============================================
    NAVIGATION
-   ============================================
-   Fixed at top, minimal like Chandelier Creative.
-   Uses mix-blend-mode so text is visible on any background.
-*/
+   ============================================ */
 
 nav {
     position: fixed;
@@ -95,14 +88,15 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    mix-blend-mode: difference;  /* Makes text invert based on background */
+    mix-blend-mode: difference;
 }
 
+/* Logo styling - matches the patch typography */
 .logo {
     font-family: var(--font-display);
-    font-size: 1.1rem;
-    font-weight: 400;
-    letter-spacing: 0.15em;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: white;
 }
@@ -114,9 +108,10 @@ nav {
 }
 
 .nav-links a {
-    font-size: 0.75rem;
+    font-family: var(--font-serif);
+    font-size: 0.85rem;
     font-weight: 400;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: white;
     transition: opacity var(--transition-fast);
@@ -129,10 +124,7 @@ nav {
 
 /* ============================================
    HERO SECTION
-   ============================================
-   Full-viewport image/video with subtle animation.
-   The slow zoom creates the "live" feeling.
-*/
+   ============================================ */
 
 .hero {
     height: 100vh;
@@ -143,29 +135,27 @@ nav {
 
 .hero-media {
     position: absolute;
-    inset: 0;  /* Same as top:0, right:0, bottom:0, left:0 */
+    inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;  /* Fills container without distortion */
+    object-fit: cover;
     animation: slowZoom 20s ease-in-out infinite alternate;
 }
 
-/* Subtle zoom animation for "live" photo effect */
 @keyframes slowZoom {
     from { transform: scale(1); }
     to { transform: scale(1.05); }
 }
 
-/* Gradient overlay for depth */
 .hero-overlay {
     position: absolute;
     inset: 0;
     background: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.1) 0%,
+        rgba(0,0,0,0.15) 0%,
         rgba(0,0,0,0) 30%,
-        rgba(0,0,0,0) 70%,
-        rgba(0,0,0,0.2) 100%
+        rgba(0,0,0,0) 60%,
+        rgba(0,0,0,0.3) 100%
     );
     pointer-events: none;
 }
@@ -173,10 +163,7 @@ nav {
 
 /* ============================================
    PROJECTS GRID
-   ============================================
-   Mosaic-style layout like Chandelier Creative.
-   Images reveal info on hover.
-*/
+   ============================================ */
 
 .projects-section {
     padding: var(--space-xl) 0;
@@ -185,17 +172,16 @@ nav {
 .project-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2px;  /* Thin gap between images */
+    gap: 2px;
 }
 
 .project-item {
     position: relative;
     overflow: hidden;
-    aspect-ratio: 16/10;  /* Default shape */
+    aspect-ratio: 16/10;
     cursor: pointer;
 }
 
-/* Variant shapes for visual interest */
 .project-item.tall {
     aspect-ratio: 10/14;
 }
@@ -212,20 +198,18 @@ nav {
     transition: transform var(--transition-smooth);
 }
 
-/* Zoom effect on hover */
 .project-item:hover img,
 .project-item:hover video {
     transform: scale(1.03);
 }
 
-/* Project info overlay */
 .project-info {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     padding: var(--space-lg) var(--space-md);
-    background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
     opacity: 0;
     transform: translateY(10px);
     transition: all var(--transition-smooth);
@@ -236,22 +220,27 @@ nav {
     transform: translateY(0);
 }
 
+/* Project title - bold condensed like logo */
 .project-title {
     font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 300;
+    font-size: 1.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: white;
     margin-bottom: var(--space-xs);
 }
 
+/* Project location - refined serif */
 .project-location {
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.7);
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.8);
 }
 
-/* Two columns on larger screens */
 @media (min-width: 768px) {
     .project-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -265,10 +254,7 @@ nav {
 
 /* ============================================
    ABOUT SECTION
-   ============================================
-   Two-column layout with image and text.
-   Stacks vertically on mobile.
-*/
+   ============================================ */
 
 .about-section {
     display: grid;
@@ -301,36 +287,42 @@ nav {
     padding: var(--space-md) 0;
 }
 
+/* Section label - small caps serif */
 .section-label {
-    font-size: 0.65rem;
+    font-family: var(--font-serif);
+    font-size: 0.75rem;
+    font-weight: 400;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--color-text-muted);
     margin-bottom: var(--space-md);
 }
 
+/* Headline - bold condensed */
 .about-headline {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 3.5rem);  /* Responsive font size */
-    font-weight: 300;
-    line-height: 1.2;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.1;
     margin-bottom: var(--space-md);
 }
 
 .about-text {
+    font-family: var(--font-body);
     font-size: 0.95rem;
+    font-weight: 300;
     color: var(--color-text-muted);
     max-width: 500px;
     margin-bottom: var(--space-md);
+    line-height: 1.7;
 }
 
 
 /* ============================================
    QUOTE SECTION
-   ============================================
-   Centered, elegant typography.
-   Like Walker Warner's editorial style.
-*/
+   ============================================ */
 
 .quote-section {
     padding: var(--space-xl) var(--space-lg);
@@ -339,8 +331,9 @@ nav {
     margin: 0 auto;
 }
 
+/* Quote text - elegant serif italic */
 .quote-text {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
     font-size: clamp(1.5rem, 4vw, 2.5rem);
     font-weight: 300;
     font-style: italic;
@@ -348,9 +341,12 @@ nav {
     margin-bottom: var(--space-md);
 }
 
+/* Attribution - condensed sans */
 .quote-attribution {
-    font-size: 0.7rem;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
     font-style: normal;
+    font-weight: 500;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--color-text-muted);
@@ -359,9 +355,7 @@ nav {
 
 /* ============================================
    FOOTER
-   ============================================
-   Simple three-column layout with contact info.
-*/
+   ============================================ */
 
 footer {
     padding: var(--space-xl) var(--space-lg);
@@ -379,14 +373,18 @@ footer {
 
 .footer-section h4 {
     font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     margin-bottom: var(--space-sm);
 }
 
 .footer-section p,
 .footer-section a {
+    font-family: var(--font-body);
     font-size: 0.85rem;
+    font-weight: 300;
     color: var(--color-text-muted);
     line-height: 1.8;
 }
@@ -398,10 +396,7 @@ footer {
 
 /* ============================================
    ANIMATIONS
-   ============================================
-   Fade-in animations for page load.
-   Add class "animate-in" to elements you want to animate.
-*/
+   ============================================ */
 
 @keyframes fadeUp {
     from {
@@ -427,17 +422,23 @@ footer {
 
 /* ============================================
    MOBILE ADJUSTMENTS
-   ============================================
-   Reduce spacing on smaller screens.
-*/
+   ============================================ */
 
 @media (max-width: 767px) {
     nav {
-        padding: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+    }
+    
+    .logo {
+        font-size: 1rem;
     }
     
     .nav-links {
         gap: var(--space-sm);
+    }
+    
+    .nav-links a {
+        font-size: 0.75rem;
     }
     
     section {
