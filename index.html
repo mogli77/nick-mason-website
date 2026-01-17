@@ -23,22 +23,28 @@
         </a>
         <ul class="nav-links">
             <li><a href="#work">Work</a></li>
-            <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
     </nav>
 
     <!-- Hero - Full bleed image/video -->
     <section class="hero">
-        <!-- 
-            REPLACE THIS: Use your own hero image or video loop
-            For "live" effect: use a subtle video loop from the job site
-        -->
-        <img 
-            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80" 
-            alt="Construction site at golden hour"
+        <!-- Video loop for "live" effect -->
+        <video
             class="hero-media"
+            autoplay
+            muted
+            loop
+            playsinline
+            poster="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80"
         >
+            <source src="https://videos.pexels.com/video-files/5765175/5765175-hd_1920_1080_30fps.mp4" type="video/mp4">
+            <!-- Fallback image for browsers that don't support video -->
+            <img
+                src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80"
+                alt="Construction site at golden hour"
+            >
+        </video>
         <div class="hero-overlay"></div>
     </section>
 
