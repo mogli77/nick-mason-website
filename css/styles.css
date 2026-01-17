@@ -111,14 +111,13 @@ nav {
 
 /* "CONSTRUCTION, INC." - Refined serif */
 .logo-sub {
+    display: block;
     font-family: var(--font-serif);
-    font-size: 0.7rem;
+    font-size: 0.55rem;
     font-weight: 400;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
-    margin-top: 0.1rem;
-    transform: scaleX(1.15);
-    transform-origin: left;
+    margin-top: 2px;
 }
 
 .nav-links {
@@ -159,6 +158,10 @@ nav {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Zoom animation only for static images */
+.hero-media:not(video) {
     animation: slowZoom 20s ease-in-out infinite alternate;
 }
 
