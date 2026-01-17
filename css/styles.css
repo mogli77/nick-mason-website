@@ -117,6 +117,8 @@ nav {
     letter-spacing: 0.2em;
     text-transform: uppercase;
     margin-top: 0.1rem;
+    transform: scaleX(1.15);
+    transform-origin: left;
 }
 
 .nav-links {
