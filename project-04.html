@@ -15,11 +15,11 @@
 </head>
 <body class="project-page fade-out">
     <!-- Back Arrow -->
-    <a href="#" class="back-arrow-fixed" aria-label="Go back">
+    <button type="button" class="back-arrow-fixed" aria-label="Go back">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
-    </a>
+    </button>
 
     <!-- Navigation -->
     <nav>
@@ -247,12 +247,15 @@
             });
         });
 
-        // Back arrow - go back in history
-        document.querySelector('.back-arrow-fixed').addEventListener('click', (e) => {
-            e.preventDefault();
+        // Back arrow - go back in history (or to work section if no history)
+        document.querySelector('.back-arrow-fixed').addEventListener('click', () => {
             document.body.classList.add('fade-out');
             setTimeout(() => {
-                history.back();
+                if (window.history.length > 1) {
+                    history.back();
+                } else {
+                    window.location.href = 'index.html#work';
+                }
             }, 600);
         });
     </script>

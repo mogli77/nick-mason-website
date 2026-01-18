@@ -605,6 +605,9 @@ footer {
     opacity: 0.5;
     transition: opacity var(--transition-fast), color var(--transition-fast);
     padding: var(--space-sm);
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 .back-arrow-fixed:hover {
