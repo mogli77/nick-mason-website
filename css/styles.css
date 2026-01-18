@@ -317,6 +317,11 @@ nav.nav-dark .nav-links a {
 .about-image img {
     width: 100%;
     height: auto;
+    position: relative;
+    left: -138px;
+    top: -53px;
+    transform: scale(1.41);
+    transform-origin: top left;
 }
 
 .about-content {
@@ -436,7 +441,14 @@ footer {
     .about-section {
         padding: var(--space-lg) var(--space-md);
     }
-    
+
+    .about-image img {
+        position: static;
+        left: 0;
+        top: 0;
+        transform: none;
+    }
+
     footer {
         padding: var(--space-lg) var(--space-md);
     }

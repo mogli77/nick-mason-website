@@ -120,3 +120,46 @@ To add a project to the grid, copy the `<article class="project-item">` structur
 - **Colors**: Edit CSS custom properties at `styles.css:5-11`
 - **Fonts**: Update Google Fonts link in `index.html:9-11` and variables in `styles.css:12-15`
 - **Spacing**: Modify spacing scale at `styles.css:17-22`
+
+---
+
+## Positioning Mode
+
+A development tool for visually positioning and scaling elements. Instead of back-and-forth CSS adjustments, drag elements to the exact position you want, scale them, then lock the values.
+
+### How to Use
+
+**Step 1: Enable positioning mode**
+Tell Claude: `enable positioning mode on [CSS selector]`
+
+Claude will:
+- Add the positioning script to index.html
+- The element becomes draggable with a coordinate/scale display
+
+**Step 2: Position and scale the element**
+- **Drag** the element to move it
+- **Arrow keys** for 1px nudges
+- **Shift + Arrow keys** for 10px nudges
+- **Scroll wheel** over element to scale
+- **+/-** keys to scale by 1%
+- Watch the X/Y/Scale values update in real-time (top-right overlay)
+
+**Step 3: Lock the position**
+Tell Claude: `lock [element] at X: [number] Y: [number] Scale: [number]%`
+
+Claude will:
+- Apply those exact coordinates and scale to the CSS
+- Remove the positioning script from index.html
+
+### Controls Reference
+| Action | Result |
+|--------|--------|
+| Drag | Move element freely |
+| Arrow keys | Nudge 1px |
+| Shift + Arrow | Nudge 10px |
+| Scroll wheel | Scale up/down (2% increments) |
+| +/- keys | Scale up/down (1% increments) |
+| ESC | Cancel and restore original position |
+
+### File Location
+`js/positioning-mode.js` - Reusable script, not loaded by default
