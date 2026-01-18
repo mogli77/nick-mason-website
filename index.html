@@ -151,15 +151,22 @@
 
     <script src="js/main.js"></script>
     <script>
-        // Nav color change on scroll
+        // Nav color change based on what section is behind it
         const nav = document.querySelector('nav');
         const hero = document.querySelector('.hero');
+        const projectsSection = document.querySelector('.projects-section');
+        const quoteSection = document.querySelector('.quote-section');
         
         function updateNavColor() {
-            const heroBottom = hero.offsetHeight;
             const scrollPosition = window.scrollY;
+            const navHeight = nav.offsetHeight;
+            const heroBottom = hero.offsetHeight;
+            const projectsBottom = projectsSection.offsetTop + projectsSection.offsetHeight;
+            const quoteTop = quoteSection.offsetTop;
             
-            if (scrollPosition < heroBottom - 100) {
+            // Over hero or projects = light (white text)
+            // Over quote, about, footer = dark (black text)
+            if (scrollPosition + navHeight < quoteTop) {
                 nav.classList.remove('nav-dark');
                 nav.classList.add('nav-light');
             } else {

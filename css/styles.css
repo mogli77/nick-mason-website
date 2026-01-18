@@ -74,10 +74,10 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-/* Nav default state - white text for over images/video */
+/* Nav default state - white text, transparent bg for over images/video */
 nav.nav-light {
     background-color: transparent;
 }
@@ -86,9 +86,10 @@ nav.nav-light .logo-main,
 nav.nav-light .logo-sub,
 nav.nav-light .nav-links a {
     color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Nav dark state - black text for over white background */
+/* Nav dark state - black text, solid bg for over white background */
 nav.nav-dark {
     background-color: var(--color-bg);
 }
@@ -97,6 +98,7 @@ nav.nav-dark .logo-main,
 nav.nav-dark .logo-sub,
 nav.nav-dark .nav-links a {
     color: var(--color-text);
+    text-shadow: none;
 }
 
 /* Logo - stacked layout - BIGGER */
@@ -111,16 +113,16 @@ nav.nav-dark .nav-links a {
     font-family: var(--font-display);
     font-size: 1.6rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     transition: color 0.3s ease;
 }
 
 .logo-sub {
     font-family: var(--font-serif);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 400;
-    letter-spacing: 0.135em;
+    letter-spacing: 0.154em;
     text-transform: uppercase;
     margin-top: 3px;
     transition: color 0.3s ease;
