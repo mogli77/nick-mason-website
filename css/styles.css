@@ -110,9 +110,9 @@ nav {
 
 .logo-sub {
     font-family: var(--font-serif);
-    font-size: 0.52rem;
+    font-size: 0.48rem;
     font-weight: 400;
-    letter-spacing: 0.31em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: white;
     margin-top: 3px;
@@ -380,17 +380,23 @@ nav {
    ============================================ */
 
 footer {
+    text-align: left;
     padding: var(--space-xl) var(--space-lg);
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-lg);
     border-top: 1px solid rgba(0,0,0,0.1);
+    scroll-margin-top: 100px;
 }
 
 @media (min-width: 768px) {
     footer {
         grid-template-columns: 1fr 1fr 1fr;
     }
+}
+
+.footer-section {
+    text-align: left;
 }
 
 .footer-section h4 {
