@@ -1,29 +1,18 @@
 /* ============================================
    NICK MASON CONSTRUCTION - Main Stylesheet
-   ============================================
-   
-   Typography matched to logo:
-   - "NICK MASON" = Bold condensed sans-serif (Barlow Condensed)
-   - "CONSTRUCTION, INC." = Refined serif (Cormorant Garamond)
-   
-   ============================================ */
-
-
-/* ============================================
-   CSS VARIABLES
    ============================================ */
 
 :root {
-    /* Colors - warm, grounded palette */
-    --color-bg: #f5f4f1;           /* Warm off-white, like canvas */
-    --color-text: #1a1a1a;         /* Near black */
-    --color-text-muted: #5a5a5a;   /* Warm gray */
-    --color-accent: #3d3d3d;       /* Dark charcoal */
+    /* Colors */
+    --color-bg: #f5f4f1;
+    --color-text: #1a1a1a;
+    --color-text-muted: #5a5a5a;
+    --color-accent: #3d3d3d;
     
-    /* Typography - matching the logo */
-    --font-display: 'Barlow Condensed', sans-serif;   /* Bold headlines, logo style */
-    --font-serif: 'Cormorant Garamond', serif;        /* Refined, elegant text */
-    --font-body: 'IBM Plex Sans', sans-serif;         /* Clean body text */
+    /* Typography */
+    --font-display: 'Barlow Condensed', sans-serif;
+    --font-serif: 'Cormorant Garamond', serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
     
     /* Spacing */
     --space-xs: 0.5rem;
@@ -36,7 +25,6 @@
     --transition-smooth: 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     --transition-fast: 0.3s ease;
 }
-
 
 /* ============================================
    RESET & BASE
@@ -59,7 +47,6 @@ body {
     background-color: var(--color-bg);
     color: var(--color-text);
     line-height: 1.6;
-    letter-spacing: 0.01em;
     overflow-x: hidden;
 }
 
@@ -72,7 +59,6 @@ a {
     color: inherit;
     text-decoration: none;
 }
-
 
 /* ============================================
    NAVIGATION
@@ -91,11 +77,12 @@ nav {
     mix-blend-mode: difference;
 }
 
-/* Logo styling - stacked layout matching the patch typography */
+/* Logo - stacked layout */
 .logo {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    line-height: 1;
 }
 
 .logo-main {
@@ -105,18 +92,16 @@ nav {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: white;
-    line-height: 1;
 }
 
 .logo-sub {
     font-family: var(--font-serif);
     font-size: 0.48rem;
     font-weight: 400;
-    letter-spacing: 0.145em;
+    letter-spacing: 0.135em;
     text-transform: uppercase;
     color: white;
-    margin-top: 3px;
-    line-height: 1;
+    margin-top: 2px;
 }
 
 .nav-links {
@@ -126,10 +111,10 @@ nav {
 }
 
 .nav-links a {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     font-size: 0.85rem;
-    font-weight: 400;
-    letter-spacing: 0.08em;
+    font-weight: 500;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: white;
     transition: opacity var(--transition-fast);
@@ -138,7 +123,6 @@ nav {
 .nav-links a:hover {
     opacity: 0.6;
 }
-
 
 /* ============================================
    HERO SECTION
@@ -159,16 +143,6 @@ nav {
     object-fit: cover;
 }
 
-/* Zoom animation only for static images */
-.hero-media:not(video) {
-    animation: slowZoom 20s ease-in-out infinite alternate;
-}
-
-@keyframes slowZoom {
-    from { transform: scale(1); }
-    to { transform: scale(1.05); }
-}
-
 .hero-overlay {
     position: absolute;
     inset: 0;
@@ -182,90 +156,84 @@ nav {
     pointer-events: none;
 }
 
-
 /* ============================================
-   PROJECTS GRID
+   PROJECTS GRID - Masonry Style
    ============================================ */
 
 .projects-section {
-    padding: var(--space-xl) 0;
+    padding: 0;
 }
 
 .project-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-auto-rows: 350px;
-    gap: 2px;
+    grid-template-rows: auto;
+    gap: 4px;
 }
 
 .project-item {
     position: relative;
     overflow: hidden;
+    aspect-ratio: 4/3;
 }
 
 .project-item.tall {
     grid-row: span 2;
+    aspect-ratio: auto;
 }
 
 .project-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform var(--transition-smooth);
 }
 
-.project-item:hover img,
-.project-item:hover video {
-    transform: scale(1.03);
+.project-item:hover img {
+    transform: scale(1.02);
 }
 
-.project-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: var(--space-lg) var(--space-md);
-    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all var(--transition-smooth);
-}
-
-.project-item:hover .project-info {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Project title - bold condensed like logo */
-.project-title {
-    font-family: var(--font-display);
-    font-size: 1.75rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: white;
-    margin-bottom: var(--space-xs);
-}
-
-/* Project location - refined serif */
-.project-location {
-    font-family: var(--font-serif);
-    font-size: 0.9rem;
-    font-weight: 300;
-    font-style: italic;
-    letter-spacing: 0.06em;
-    color: rgba(255,255,255,0.8);
-}
-
-@media (min-width: 768px) {
+/* Mobile: single column */
+@media (max-width: 767px) {
     .project-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
     }
     
-    .project-item.wide {
-        grid-column: span 2;
+    .project-item.tall {
+        grid-row: span 1;
+        aspect-ratio: 3/4;
     }
 }
 
+/* ============================================
+   QUOTE SECTION
+   ============================================ */
+
+.quote-section {
+    padding: var(--space-xl) var(--space-lg);
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.quote-text {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.4;
+    margin-bottom: var(--space-md);
+}
+
+.quote-attribution {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
 
 /* ============================================
    ABOUT SECTION
@@ -275,9 +243,9 @@ nav {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-lg);
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: var(--space-xl) var(--space-lg);
+    padding: var(--space-lg) var(--space-lg) var(--space-xl);
 }
 
 @media (min-width: 768px) {
@@ -288,7 +256,7 @@ nav {
 }
 
 .about-image {
-    aspect-ratio: 4/5;
+    aspect-ratio: 3/4;
     overflow: hidden;
 }
 
@@ -302,22 +270,21 @@ nav {
     padding: var(--space-md) 0;
 }
 
-/* Section label - small caps serif */
 .section-label {
     font-family: var(--font-serif);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 400;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--color-text-muted);
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-sm);
+    display: block;
 }
 
-/* Headline - bold condensed */
 .about-headline {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 3.25rem);
-    font-weight: 500;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
     line-height: 1.1;
@@ -330,56 +297,21 @@ nav {
     font-weight: 300;
     color: var(--color-text-muted);
     max-width: 500px;
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-sm);
     line-height: 1.7;
 }
-
-
-/* ============================================
-   QUOTE SECTION
-   ============================================ */
-
-.quote-section {
-    padding: var(--space-xl) var(--space-lg);
-    text-align: center;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-/* Quote text - elegant serif italic */
-.quote-text {
-    font-family: var(--font-serif);
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    font-weight: 300;
-    font-style: italic;
-    line-height: 1.4;
-    margin-bottom: var(--space-md);
-}
-
-/* Attribution - condensed sans */
-.quote-attribution {
-    font-family: var(--font-display);
-    font-size: 0.8rem;
-    font-style: normal;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-}
-
 
 /* ============================================
    FOOTER
    ============================================ */
 
 footer {
-    text-align: left;
     padding: var(--space-xl) var(--space-lg);
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-lg);
     border-top: 1px solid rgba(0,0,0,0.1);
-    scroll-margin-top: 100px;
+    scroll-margin-top: 50px;
 }
 
 @media (min-width: 768px) {
@@ -394,7 +326,7 @@ footer {
 
 .footer-section h4 {
     font-family: var(--font-display);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -414,33 +346,6 @@ footer {
     color: var(--color-text);
 }
 
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-in {
-    animation: fadeUp 1s var(--transition-smooth) forwards;
-    opacity: 0;
-}
-
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
-
-
 /* ============================================
    MOBILE ADJUSTMENTS
    ============================================ */
@@ -449,25 +354,21 @@ footer {
     nav {
         padding: var(--space-sm) var(--space-md);
     }
-
+    
     .logo-main {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
-
+    
     .logo-sub {
-        font-size: 0.6rem;
+        font-size: 0.4rem;
     }
-
+    
     .nav-links {
         gap: var(--space-sm);
     }
-
+    
     .nav-links a {
         font-size: 0.75rem;
-    }
-    
-    section {
-        padding: var(--space-lg) var(--space-md);
     }
     
     .about-section {
