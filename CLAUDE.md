@@ -49,6 +49,7 @@ ALWAYS:
 ### Known Patterns
 - **Navigation color changes**: The inline script (not main.js) handles white text over images → black text over white backgrounds. Any layout changes must preserve this behavior.
 - **Code integrity**: When making changes, verify existing functionality (especially nav scripts) still works. Past issues have occurred when updates broke the navigation system.
+- **Page transition events**: Use `pageshow` event instead of `DOMContentLoaded` for fade-in transitions to ensure animations fire when using browser back/forward buttons (bfcache compatibility).
 
 ---
 
