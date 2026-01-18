@@ -148,7 +148,6 @@ nav.nav-dark .nav-links a {
     width: 100%;
     position: relative;
     overflow: hidden;
-    margin-bottom: -4px;
 }
 
 .hero-media {
@@ -310,24 +309,29 @@ nav.nav-dark .nav-links a {
 
 .about-collage {
     display: flex;
+    gap: 4px;
+}
+
+.collage-left {
+    flex: 1;
+}
+
+.collage-left img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.collage-right {
+    flex: 1;
+    display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.collage-top {
-    display: flex;
-    gap: 4px;
-}
-
-.collage-top img {
-    width: 50%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-}
-
-.collage-bottom img {
+.collage-right img {
     width: 100%;
-    aspect-ratio: 4/3;
+    flex: 1;
     object-fit: cover;
 }
 
