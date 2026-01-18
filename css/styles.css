@@ -308,22 +308,33 @@ nav.nav-dark .nav-links a {
 }
 
 .about-collage {
-    display: flex;
-    gap: 4px;
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    height: 450px;
 }
 
 .collage-left {
-    flex: 1;
+    position: absolute;
+    left: 0;
+    top: 50px;
+    width: 55%;
+    height: 400px;
+    z-index: 1;
 }
 
 .collage-left img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: right center;
 }
 
 .collage-right {
-    flex: 1;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 55%;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -331,7 +342,7 @@ nav.nav-dark .nav-links a {
 
 .collage-right img {
     width: 100%;
-    flex: 1;
+    height: 180px;
     object-fit: cover;
 }
 
