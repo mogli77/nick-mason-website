@@ -200,8 +200,8 @@
 
     <!-- Page Transition Script -->
     <script>
-        // Fade in on page load
-        window.addEventListener('DOMContentLoaded', () => {
+        // Fade in on page load (pageshow fires on back/forward navigation too)
+        window.addEventListener('pageshow', () => {
             document.body.classList.remove('fade-out');
         });
 
