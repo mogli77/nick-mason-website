@@ -193,6 +193,43 @@ nav {
     transform: scale(1.02);
 }
 
+/* Project info overlay on hover */
+.project-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-lg) var(--space-md);
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all var(--transition-smooth);
+}
+
+.project-item:hover .project-info {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.project-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: white;
+    margin-bottom: var(--space-xs);
+}
+
+.project-location {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.8);
+}
+
 /* Mobile: single column */
 @media (max-width: 767px) {
     .project-grid {
