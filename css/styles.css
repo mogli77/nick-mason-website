@@ -302,7 +302,7 @@ nav.nav-dark .nav-links a {
 
 @media (min-width: 768px) {
     .about-section {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.35fr 1fr;
         align-items: center;
     }
 }
