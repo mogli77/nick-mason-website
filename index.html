@@ -149,7 +149,7 @@
         </div>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/main.js"></script>
+    <script src="js/main.js"></script>
     <script>
         // Nav color change based on what section is behind it
         const nav = document.querySelector('nav');
@@ -175,4 +175,15 @@
             }
         }
         
-        // Initi
+        // Initial state
+        nav.classList.add('nav-light');
+        
+        // Update on scroll
+        window.addEventListener('scroll', updateNavColor);
+        
+        // Update on load
+        updateNavColor();
+    </script>
+
+</body>
+</html>
