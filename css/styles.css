@@ -323,6 +323,7 @@ nav.nav-dark .nav-links a {
     max-width: 1200px;
     margin: 0 auto;
     padding: var(--space-lg) var(--space-lg) var(--space-xl);
+    scroll-margin-top: 80px;
 }
 
 @media (min-width: 768px) {
@@ -384,49 +385,27 @@ nav.nav-dark .nav-links a {
     line-height: 1.7;
 }
 
-/* ============================================
-   FOOTER
-   ============================================ */
-
-footer {
-    padding: var(--space-xl) var(--space-lg);
+/* Contact info within about section */
+.about-contact {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
     border-top: 1px solid rgba(0,0,0,0.1);
-    scroll-margin-top: 50px;
 }
 
-@media (min-width: 768px) {
-    footer {
-        grid-template-columns: repeat(3, 1fr);
-        justify-items: start;
-    }
-    
-    .footer-section:nth-child(2) {
-        justify-self: center;
-    }
-    
-    .footer-section:nth-child(3) {
-        justify-self: end;
-    }
-}
-
-.footer-section {
-    text-align: left;
-}
-
-.footer-section h4 {
+.about-contact-item h4 {
     font-family: var(--font-display);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
 }
 
-.footer-section p,
-.footer-section a {
+.about-contact-item p,
+.about-contact-item a {
     font-family: var(--font-body);
     font-size: 0.85rem;
     font-weight: 300;
@@ -434,8 +413,33 @@ footer {
     line-height: 1.8;
 }
 
-.footer-section a:hover {
+.about-contact-item a:hover {
     color: var(--color-text);
+}
+
+@media (max-width: 767px) {
+    .about-contact {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+footer {
+    padding: var(--space-lg) var(--space-lg);
+    text-align: center;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.footer-copyright {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--color-text-muted);
+    letter-spacing: 0.02em;
 }
 
 /* ============================================
