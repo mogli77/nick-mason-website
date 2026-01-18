@@ -95,13 +95,15 @@ nav {
 .logo {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    width: 180px;
     line-height: 1;
     color: white;
 }
 
 /* "NICK MASON" - Bold condensed sans-serif */
 .logo-main {
+    display: block;
+    width: 100%;
     font-family: var(--font-display);
     font-size: 1.25rem;
     font-weight: 700;
@@ -112,10 +114,11 @@ nav {
 /* "CONSTRUCTION, INC." - Refined serif */
 .logo-sub {
     display: block;
+    width: 100%;
     font-family: var(--font-serif);
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     font-weight: 400;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
     margin-top: 2px;
 }
