@@ -148,6 +148,7 @@ nav.nav-dark .nav-links a {
     width: 100%;
     position: relative;
     overflow: hidden;
+    margin-bottom: -4px;
 }
 
 .hero-media {
@@ -307,14 +308,26 @@ nav.nav-dark .nav-links a {
     }
 }
 
-.about-image {
-    aspect-ratio: 3/4;
-    overflow: hidden;
+.about-collage {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.about-image img {
+.collage-top {
+    display: flex;
+    gap: 4px;
+}
+
+.collage-top img {
+    width: 50%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+.collage-bottom img {
     width: 100%;
-    height: 100%;
+    aspect-ratio: 4/3;
     object-fit: cover;
 }
 
