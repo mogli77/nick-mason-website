@@ -309,12 +309,14 @@ nav.nav-dark .nav-links a {
 
 .about-image {
     width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .about-image img {
     width: 100%;
     height: auto;
-    object-fit: contain;
 }
 
 .about-content {
