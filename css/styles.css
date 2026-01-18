@@ -344,9 +344,9 @@ nav.nav-dark .nav-links a {
     width: 100%;
     height: auto;
     position: relative;
-    left: -21px;
-    top: 17px;
-    transform: scale(1.08);
+    left: 28px;
+    top: 13px;
+    transform: scale(0.94);
     transform-origin: top left;
 }
 
@@ -431,7 +431,6 @@ nav.nav-dark .nav-links a {
 footer {
     padding: var(--space-lg) var(--space-lg);
     text-align: center;
-    border-top: 1px solid rgba(0,0,0,0.1);
 }
 
 .footer-copyright {
