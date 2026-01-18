@@ -307,43 +307,14 @@ nav.nav-dark .nav-links a {
     }
 }
 
-.about-collage {
-    position: relative;
+.about-image {
     width: 100%;
-    max-width: 500px;
-    height: 450px;
 }
 
-.collage-left {
-    position: absolute;
-    left: 0;
-    top: 50px;
-    width: 55%;
-    height: 400px;
-    z-index: 1;
-}
-
-.collage-left img {
+.about-image img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: right center;
-}
-
-.collage-right {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 55%;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.collage-right img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
 }
 
 .about-content {
