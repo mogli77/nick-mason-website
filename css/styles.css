@@ -595,6 +595,43 @@ footer {
     z-index: 1;
 }
 
+/* Fixed back arrow */
+.back-arrow-fixed {
+    position: fixed;
+    left: var(--space-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 99;
+    opacity: 0.5;
+    transition: opacity var(--transition-fast), color var(--transition-fast);
+    padding: var(--space-sm);
+}
+
+.back-arrow-fixed:hover {
+    opacity: 1;
+}
+
+.back-arrow-fixed svg {
+    display: block;
+}
+
+/* Light state - white arrow over images/video */
+.back-arrow-fixed.arrow-light {
+    color: white;
+}
+
+/* Dark state - black arrow over white background */
+.back-arrow-fixed.arrow-dark {
+    color: var(--color-text);
+}
+
+/* Hide on mobile */
+@media (max-width: 1024px) {
+    .back-arrow-fixed {
+        display: none;
+    }
+}
+
 /* Back to work link */
 .project-nav-section {
     padding: var(--space-lg) var(--space-lg) var(--space-xl);
