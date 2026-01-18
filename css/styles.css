@@ -27,6 +27,25 @@
 }
 
 /* ============================================
+   PAGE TRANSITIONS
+   ============================================ */
+
+body {
+    opacity: 1;
+    transition: opacity 0.6s ease;
+}
+
+body.fade-out {
+    opacity: 0;
+}
+
+/* Parallax effect for gallery images */
+.parallax-img {
+    will-change: transform;
+    transition: transform 0.1s ease-out;
+}
+
+/* ============================================
    RESET & BASE
    ============================================ */
 
@@ -195,6 +214,12 @@ nav.nav-dark .nav-links a {
 .project-item.tall {
     grid-row: span 2;
     aspect-ratio: auto;
+}
+
+.project-link {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .project-item img {
@@ -411,6 +436,240 @@ footer {
 
 .footer-section a:hover {
     color: var(--color-text);
+}
+
+/* ============================================
+   PROJECT PAGE
+   ============================================ */
+
+/* Project Hero - video with minimal title */
+.project-hero {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.project-hero-content {
+    position: absolute;
+    bottom: var(--space-lg);
+    left: var(--space-lg);
+    z-index: 10;
+    color: white;
+}
+
+/* Smaller, more minimal title */
+.project-hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 4px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.project-hero-location {
+    font-family: var(--font-serif);
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.08em;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Project Gallery - Walker Warner inspired */
+.project-gallery {
+    background: var(--color-bg);
+    padding: var(--space-xl) var(--space-lg);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Gallery text blocks */
+.gallery-text {
+    padding: var(--space-lg) 0;
+    max-width: 800px;
+}
+
+.gallery-text.centered {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.gallery-text.right {
+    margin-left: auto;
+    margin-right: 0;
+    text-align: left;
+    max-width: 600px;
+    padding-right: var(--space-lg);
+}
+
+.gallery-description {
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--color-text);
+}
+
+/* Gallery quote blocks */
+.gallery-quote {
+    padding: 5rem 0;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.gallery-quote blockquote {
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
+}
+
+.gallery-quote cite {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+}
+
+/* Gallery images */
+.gallery-item {
+    margin: 0;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.gallery-item.full {
+    width: 100%;
+    margin: 5rem 0;
+}
+
+.gallery-video video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Overlapping image pairs - the key Walker Warner effect */
+.gallery-overlap {
+    display: flex;
+    align-items: flex-start;
+    margin: 5rem 0;
+}
+
+.gallery-overlap .overlap-left {
+    width: 55%;
+    margin-top: 80px;
+    margin-right: -10%;
+    position: relative;
+    z-index: 1;
+}
+
+.gallery-overlap .overlap-right {
+    width: 55%;
+    position: relative;
+    z-index: 2;
+}
+
+/* Reversed overlap - right image lower */
+.gallery-overlap.reverse .overlap-left {
+    margin-top: 0;
+    z-index: 2;
+}
+
+.gallery-overlap.reverse .overlap-right {
+    margin-top: 80px;
+    z-index: 1;
+}
+
+/* Back to work link */
+.project-nav-section {
+    padding: var(--space-lg) var(--space-lg) var(--space-xl);
+    text-align: center;
+}
+
+.back-to-work {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.back-to-work:hover {
+    color: var(--color-text);
+}
+
+.back-arrow {
+    transition: transform var(--transition-fast);
+}
+
+.back-to-work:hover .back-arrow {
+    transform: translateX(-4px);
+}
+
+/* Project page mobile */
+@media (max-width: 767px) {
+    .project-hero-content {
+        left: var(--space-md);
+        bottom: var(--space-md);
+    }
+
+    .project-gallery {
+        padding: var(--space-lg) var(--space-md);
+    }
+
+    .gallery-text {
+        padding: var(--space-lg) 0;
+    }
+
+    .gallery-text.right {
+        padding-right: 0;
+        max-width: 100%;
+    }
+
+    .gallery-quote {
+        padding: var(--space-lg) 0;
+    }
+
+    .gallery-overlap {
+        flex-direction: column;
+        gap: var(--space-md);
+        margin: var(--space-md) 0;
+    }
+
+    .gallery-overlap .overlap-left,
+    .gallery-overlap .overlap-right {
+        width: 100%;
+        margin: 0;
+    }
+
+    .gallery-overlap.reverse .overlap-left,
+    .gallery-overlap.reverse .overlap-right {
+        margin: 0;
+    }
+
+    .project-nav-section {
+        padding: var(--space-md) var(--space-md) var(--space-lg);
+    }
 }
 
 /* ============================================

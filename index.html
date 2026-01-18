@@ -13,8 +13,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-
+<body class="fade-out">
     <!-- Navigation -->
     <nav>
         <a href="index.html" class="logo">
@@ -45,53 +44,67 @@
     <section class="projects-section" id="work">
         <div class="project-grid">
             <article class="project-item">
-                <img src="images/project_01.jpg" alt="Project">
-                <div class="project-info">
-                    <h3 class="project-title">Project Name</h3>
-                    <span class="project-location">Location, State</span>
-                </div>
+                <a href="#" class="project-link">
+                    <img src="images/project_01.jpg" alt="Project">
+                    <div class="project-info">
+                        <h3 class="project-title">Project Name</h3>
+                        <span class="project-location">Location, State</span>
+                    </div>
+                </a>
             </article>
             <article class="project-item tall">
-                <img src="images/project_04.jpg" alt="Project">
-                <div class="project-info">
-                    <h3 class="project-title">Project Name</h3>
-                    <span class="project-location">Location, State</span>
-                </div>
+                <a href="project-04.html" class="project-link">
+                    <img src="images/project_04.jpg" alt="Project">
+                    <div class="project-info">
+                        <h3 class="project-title">Project Name</h3>
+                        <span class="project-location">Location, State</span>
+                    </div>
+                </a>
             </article>
             <article class="project-item">
-                <img src="images/project_03.jpg" alt="Project">
-                <div class="project-info">
-                    <h3 class="project-title">Project Name</h3>
-                    <span class="project-location">Location, State</span>
-                </div>
+                <a href="#" class="project-link">
+                    <img src="images/project_03.jpg" alt="Project">
+                    <div class="project-info">
+                        <h3 class="project-title">Project Name</h3>
+                        <span class="project-location">Location, State</span>
+                    </div>
+                </a>
             </article>
             <article class="project-item">
-                <img src="images/project_02.jpg" alt="Project">
-                <div class="project-info">
-                    <h3 class="project-title">Project Name</h3>
-                    <span class="project-location">Location, State</span>
-                </div>
+                <a href="#" class="project-link">
+                    <img src="images/project_02.jpg" alt="Project">
+                    <div class="project-info">
+                        <h3 class="project-title">Project Name</h3>
+                        <span class="project-location">Location, State</span>
+                    </div>
+                </a>
             </article>
             <article class="project-item">
-                <img src="images/project_06.jpg" alt="Project">
-                <div class="project-info">
-                    <h3 class="project-title">Project Name</h3>
-                    <span class="project-location">Location, State</span>
-                </div>
+                <a href="#" class="project-link">
+                    <img src="images/project_06.jpg" alt="Project">
+                    <div class="project-info">
+                        <h3 class="project-title">Project Name</h3>
+                        <span class="project-location">Location, State</span>
+                    </div>
+                </a>
             </article>
             <article class="project-item">
-                <img src="images/project_07.jpg" alt="Project">
-                <div class="project-info">
-                    <h3 class="project-title">Project Name</h3>
-                    <span class="project-location">Location, State</span>
-                </div>
+                <a href="#" class="project-link">
+                    <img src="images/project_07.jpg" alt="Project">
+                    <div class="project-info">
+                        <h3 class="project-title">Project Name</h3>
+                        <span class="project-location">Location, State</span>
+                    </div>
+                </a>
             </article>
             <article class="project-item">
-                <img src="images/project_08.jpg" alt="Project">
-                <div class="project-info">
-                    <h3 class="project-title">Project Name</h3>
-                    <span class="project-location">Location, State</span>
-                </div>
+                <a href="#" class="project-link">
+                    <img src="images/project_08.jpg" alt="Project">
+                    <div class="project-info">
+                        <h3 class="project-title">Project Name</h3>
+                        <span class="project-location">Location, State</span>
+                    </div>
+                </a>
             </article>
         </div>
     </section>
@@ -183,6 +196,33 @@
         
         // Update on load
         updateNavColor();
+    </script>
+
+    <!-- Page Transition Script -->
+    <script>
+        // Fade in on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.remove('fade-out');
+        });
+
+        // Fade out before navigating
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+
+                // Skip hash links and external links
+                if (href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('tel')) {
+                    return;
+                }
+
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 600);
+            });
+        });
     </script>
 
 </body>

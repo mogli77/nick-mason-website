@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Name — Nick Mason Construction</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="project-page fade-out">
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="logo">
+            <span class="logo-main">Nick Mason</span>
+            <span class="logo-sub">Construction, Inc.</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html#work">Work</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Project Hero - Video loop with minimal title -->
+    <section class="project-hero">
+        <video
+            class="hero-media"
+            autoplay
+            muted
+            loop
+            playsinline
+        >
+            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1768772079/nick_ref_video_02_bnmm4k.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="project-hero-content">
+            <h1 class="project-hero-title">Project Name</h1>
+            <span class="project-hero-location">Location, State</span>
+        </div>
+    </section>
+
+    <!-- Project Gallery -->
+    <section class="project-gallery">
+
+        <!-- Opening text block -->
+        <div class="gallery-quote">
+            <blockquote>
+                With calming sounds of the creek and sweeping views of the mountain
+                valley, you feel completely immersed in the forest around you.
+            </blockquote>
+        </div>
+
+        <!-- Full width image -->
+        <figure class="gallery-item full">
+            <img class="parallax-img" src="projects_page_01/original.avif" alt="Project detail">
+        </figure>
+
+        <!-- Overlapping pair - left lower, right higher -->
+        <div class="gallery-overlap">
+            <figure class="gallery-item overlap-left">
+                <img class="parallax-img" src="projects_page_01/original (1).avif" alt="Project detail">
+            </figure>
+            <figure class="gallery-item overlap-right">
+                <img class="parallax-img" src="projects_page_01/original (2).avif" alt="Project detail">
+            </figure>
+        </div>
+
+        <!-- Quote block -->
+        <div class="gallery-quote">
+            <blockquote>
+                "Every space, both inside and out, has a unique relationship
+                to the landscape—it's calm and dynamic at the same time."
+            </blockquote>
+            <cite>— Nick Mason, Founder</cite>
+        </div>
+
+        <!-- Overlapping pair - reversed -->
+        <div class="gallery-overlap reverse">
+            <figure class="gallery-item overlap-left">
+                <img class="parallax-img" src="projects_page_01/original (3).avif" alt="Project detail">
+            </figure>
+            <figure class="gallery-item overlap-right">
+                <img class="parallax-img" src="projects_page_01/original (4).avif" alt="Project detail">
+            </figure>
+        </div>
+
+        <!-- Video loop -->
+        <figure class="gallery-item full gallery-video">
+            <video autoplay muted loop playsinline>
+                <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1768773851/nick_ref_video_03_pudnxl.mp4" type="video/mp4">
+            </video>
+        </figure>
+
+        <!-- Overlapping pair -->
+        <div class="gallery-overlap">
+            <figure class="gallery-item overlap-left">
+                <img class="parallax-img" src="projects_page_01/original (5).avif" alt="Project detail">
+            </figure>
+            <figure class="gallery-item overlap-right">
+                <img class="parallax-img" src="projects_page_01/original (6).avif" alt="Project detail">
+            </figure>
+        </div>
+
+        <!-- Final single image -->
+        <figure class="gallery-item full">
+            <img class="parallax-img" src="projects_page_01/original (7).avif" alt="Project detail">
+        </figure>
+
+    </section>
+
+    <!-- Back to Work link -->
+    <section class="project-nav-section">
+        <a href="index.html#work" class="back-to-work">
+            <span class="back-arrow">&larr;</span>
+            Back to Work
+        </a>
+    </section>
+
+    <!-- Footer / Contact -->
+    <footer id="contact">
+        <div class="footer-section">
+            <h4>Contact</h4>
+            <p>
+                <a href="mailto:info@nickmason.com">info@nickmason.com</a><br>
+                <a href="tel:+1XXXXXXXXXX">XXX.XXX.XXXX</a>
+            </p>
+        </div>
+        <div class="footer-section">
+            <h4>Location</h4>
+            <p>
+                Address Line 1<br>
+                City, State ZIP
+            </p>
+        </div>
+        <div class="footer-section">
+            <h4>Follow</h4>
+            <p>
+                <a href="#">Instagram</a><br>
+                <a href="#">LinkedIn</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Nav color change - starts light over video, goes dark over gallery
+        const nav = document.querySelector('nav');
+        const projectHero = document.querySelector('.project-hero');
+
+        function updateNavColor() {
+            const scrollPosition = window.scrollY;
+            const navHeight = nav.offsetHeight;
+            const heroBottom = projectHero.offsetHeight;
+
+            // Over hero video = light (white text)
+            // Over gallery and below = dark (black text)
+            if (scrollPosition + navHeight < heroBottom - 50) {
+                nav.classList.remove('nav-dark');
+                nav.classList.add('nav-light');
+            } else {
+                nav.classList.remove('nav-light');
+                nav.classList.add('nav-dark');
+            }
+        }
+
+        // Initial state
+        nav.classList.add('nav-light');
+
+        // Update on scroll
+        window.addEventListener('scroll', updateNavColor);
+
+        // Update on load
+        updateNavColor();
+    </script>
+
+    <!-- Page Transition Script -->
+    <script>
+        // Fade in on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.remove('fade-out');
+        });
+
+        // Fade out before navigating
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+
+                // Skip hash links and external links
+                if (href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('tel')) {
+                    return;
+                }
+
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 600);
+            });
+        });
+    </script>
+
+    <!-- Parallax Script -->
+    <script>
+        const parallaxImages = document.querySelectorAll('.parallax-img');
+
+        function updateParallax() {
+            parallaxImages.forEach(img => {
+                const rect = img.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+
+                // Only apply when image is in viewport
+                if (rect.top < windowHeight && rect.bottom > 0) {
+                    // Calculate how far through the viewport the image is
+                    const scrollPercent = (windowHeight - rect.top) / (windowHeight + rect.height);
+                    // Subtle movement: -30px to +30px
+                    const translateY = (scrollPercent - 0.5) * 60;
+                    img.style.transform = `translateY(${translateY}px)`;
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateParallax, { passive: true });
+        updateParallax();
+    </script>
+
+</body>
+</html>
