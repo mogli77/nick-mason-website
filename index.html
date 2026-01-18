@@ -150,6 +150,33 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        // Nav color change on scroll
+        const nav = document.querySelector('nav');
+        const hero = document.querySelector('.hero');
+        
+        function updateNavColor() {
+            const heroBottom = hero.offsetHeight;
+            const scrollPosition = window.scrollY;
+            
+            if (scrollPosition < heroBottom - 100) {
+                nav.classList.remove('nav-dark');
+                nav.classList.add('nav-light');
+            } else {
+                nav.classList.remove('nav-light');
+                nav.classList.add('nav-dark');
+            }
+        }
+        
+        // Initial state
+        nav.classList.add('nav-light');
+        
+        // Update on scroll
+        window.addEventListener('scroll', updateNavColor);
+        
+        // Update on load
+        updateNavColor();
+    </script>
 
 </body>
 </html>
