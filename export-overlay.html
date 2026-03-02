@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nick Mason - Export Text Overlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #1a1a1a;
+            color: #ccc;
+            font-family: 'IBM Plex Sans', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        h1 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 500;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        p.note {
+            font-size: 0.85rem;
+            color: #777;
+            margin-bottom: 30px;
+        }
+        .preview-container {
+            position: relative;
+            width: 100%;
+            max-width: 960px;
+            margin-bottom: 30px;
+        }
+        .preview-container canvas {
+            width: 100%;
+            height: auto;
+            border: 1px solid #333;
+            border-radius: 4px;
+            /* Checkerboard pattern to show transparency */
+            background-image:
+                linear-gradient(45deg, #2a2a2a 25%, transparent 25%),
+                linear-gradient(-45deg, #2a2a2a 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #2a2a2a 75%),
+                linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+            background-color: #222;
+        }
+        .buttons {
+            display: flex;
+            gap: 16px;
+        }
+        button {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 12px 32px;
+            border: 1px solid #555;
+            background: transparent;
+            color: #eee;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            background: #fff;
+            color: #1a1a1a;
+            border-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Text Overlay Export</h1>
+    <p class="note">Preview shown on checkerboard — downloaded PNG will have a transparent background</p>
+    <div class="preview-container" id="preview"></div>
+    <div class="buttons">
+        <button onclick="downloadOverlay(1920, 1080, 'nick-mason-overlay-1080p.png')">Download 1080p</button>
+        <button onclick="downloadOverlay(3840, 2160, 'nick-mason-overlay-4k.png')">Download 4K</button>
+    </div>
+
+    <script>
+        function createOverlay(width, height) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            // Scale relative to 1080p base
+            const s = width / 1920;
+
+            // Padding matches CSS: 2rem top/bottom, 4rem left/right (1rem = 16px)
+            const padX = 64 * s;
+            const padY = 32 * s;
+
+            // White text with subtle shadow (nav-light state)
+            ctx.fillStyle = 'white';
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 1 * s;
+            ctx.shadowBlur = 3 * s;
+            ctx.textBaseline = 'top';
+
+            // --- NICK MASON (logo-main) ---
+            const nmSize = 25.6 * s; // 1.6rem
+            ctx.font = '700 ' + nmSize + 'px "Barlow Condensed"';
+            ctx.letterSpacing = (3.072 * s) + 'px'; // 0.12em
+            ctx.fillText('NICK MASON', padX, padY);
+
+            // --- CONSTRUCTION, INC. (logo-sub) ---
+            const ciSize = 10.88 * s; // 0.68rem
+            const ciY = padY + nmSize + (3 * s); // margin-top: 3px
+            ctx.font = '400 ' + ciSize + 'px "Cormorant Garamond"';
+            ctx.letterSpacing = (1.6864 * s) + 'px'; // 0.155em
+            ctx.fillText('CONSTRUCTION, INC.', padX, ciY);
+
+            // --- NAV LINKS (right side, vertically centered with logo) ---
+            const nlSize = 16 * s; // 1rem
+            ctx.font = '500 ' + nlSize + 'px "Barlow Condensed"';
+            ctx.letterSpacing = (1.6 * s) + 'px'; // 0.1em
+
+            // Vertical centering: match align-items: center behavior
+            const logoGroupHeight = nmSize + (3 * s) + ciSize;
+            const navLinkY = padY + (logoGroupHeight - nlSize) / 2;
+
+            // Measure and position from right edge
+            const contactWidth = ctx.measureText('CONTACT').width;
+            const workWidth = ctx.measureText('WORK').width;
+            const gap = 32 * s; // 2rem gap between links
+
+            ctx.fillText('CONTACT', width - padX - contactWidth, navLinkY);
+            ctx.fillText('WORK', width - padX - contactWidth - gap - workWidth, navLinkY);
+
+            return canvas;
+        }
+
+        function renderPreview() {
+            const container = document.getElementById('preview');
+            const canvas = createOverlay(1920, 1080);
+            container.innerHTML = '';
+            container.appendChild(canvas);
+        }
+
+        function downloadOverlay(w, h, filename) {
+            const canvas = createOverlay(w, h);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Wait for fonts to load before rendering
+        document.fonts.ready.then(renderPreview);
+    </script>
+</body>
+</html>
