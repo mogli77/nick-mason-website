@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Editor — Nick Mason Construction</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+            background: #0e0e0e;
+            color: #ccc;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 200;
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 44px;
+        }
+        .toolbar h1 { font-size: 12px; font-weight: 600; color: #0f0; letter-spacing: 0.08em; text-transform: uppercase; margin-right: auto; }
+        .toolbar button {
+            font-family: inherit; font-size: 11px; padding: 5px 12px;
+            background: #222; color: #ccc; border: 1px solid #444; border-radius: 4px; cursor: pointer;
+        }
+        .toolbar button:hover { background: #333; color: #fff; }
+        .toolbar button.primary { background: #0a5; color: #fff; border-color: #0a5; }
+        .toolbar button.primary:hover { background: #0c7; }
+        .toolbar .sep { width: 1px; height: 20px; background: #333; }
+        .toolbar .status { font-size: 10px; color: #555; }
+
+        /* ── Sidebar: image tray ── */
+        .sidebar {
+            position: fixed;
+            top: 44px; left: 0; bottom: 0;
+            width: 200px;
+            background: #151515;
+            border-right: 1px solid #282828;
+            overflow-y: auto;
+            z-index: 100;
+            padding: 8px;
+            display: none;
+        }
+        .sidebar.active { display: block; }
+        .sidebar h3 { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; padding: 4px; }
+
+        .tray-thumb {
+            width: 100%; aspect-ratio: 4/3;
+            margin-bottom: 6px; border-radius: 4px;
+            overflow: hidden; cursor: grab; position: relative;
+            border: 1px solid #282828;
+            transition: border-color 0.15s;
+        }
+        .tray-thumb:hover { border-color: #555; }
+        .tray-thumb img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .tray-thumb .fname {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.7); font-size: 8px; color: #888;
+            padding: 2px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .tray-thumb.used { opacity: 0.25; }
+        .tray-thumb.used::after {
+            content: 'on canvas'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            font-size: 9px; color: #0f0; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 3px;
+        }
+
+        /* ── Canvas ── */
+        .canvas-area {
+            position: fixed;
+            top: 44px; left: 0; right: 0; bottom: 0;
+            overflow: auto;
+            background: #0e0e0e;
+            cursor: default;
+        }
+        .canvas-area.with-sidebar { left: 200px; }
+
+        .canvas {
+            position: relative;
+            width: 1200px;
+            min-height: 4000px;
+            margin: 40px auto;
+            background: #f5f4f1;
+            box-shadow: 0 0 80px rgba(0,0,0,0.5);
+        }
+
+        /* Center line guide */
+        .canvas::before {
+            content: '';
+            position: absolute;
+            left: 50%; top: 0; bottom: 0;
+            width: 1px;
+            background: rgba(0,0,0,0.05);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Canvas Images ── */
+        .canvas-img {
+            position: absolute;
+            cursor: grab;
+            user-select: none;
+            outline: 2px solid transparent;
+            transition: outline-color 0.1s;
+        }
+        .canvas-img:hover { outline-color: rgba(0,200,0,0.4); }
+        .canvas-img.selected { outline-color: #0f0; }
+        .canvas-img.dragging { opacity: 0.7; cursor: grabbing; }
+
+        .canvas-img img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+            pointer-events: none;
+        }
+
+        /* Resize handles */
+        .canvas-img .handle {
+            position: absolute; width: 12px; height: 12px;
+            background: #0f0; border: 1px solid #000;
+            border-radius: 2px; z-index: 10;
+            display: none;
+        }
+        .canvas-img.selected .handle { display: block; }
+        .canvas-img .handle.br { bottom: -6px; right: -6px; cursor: nwse-resize; }
+        .canvas-img .handle.bl { bottom: -6px; left: -6px; cursor: nesw-resize; }
+        .canvas-img .handle.tr { top: -6px; right: -6px; cursor: nesw-resize; }
+        .canvas-img .handle.tl { top: -6px; left: -6px; cursor: nwse-resize; }
+
+        /* Image label */
+        .canvas-img .img-label {
+            position: absolute; bottom: -20px; left: 0;
+            font-size: 9px; color: #999; white-space: nowrap;
+            display: none; pointer-events: none;
+        }
+        .canvas-img.selected .img-label { display: block; }
+
+        /* ── Landing ── */
+        .landing {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: calc(100vh - 44px); gap: 20px;
+        }
+        .landing h2 { font-size: 15px; font-weight: 400; color: #666; }
+        .drop-zone {
+            width: 460px; height: 180px;
+            border: 2px dashed #333; border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 10px; cursor: pointer; transition: border-color 0.2s, background 0.2s;
+        }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #0f0; background: rgba(0,255,0,0.02); }
+        .drop-zone p { font-size: 12px; color: #555; }
+        .drop-zone .big { font-size: 14px; color: #888; }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #0a5; color: #fff;
+            padding: 10px 24px; border-radius: 6px;
+            font-size: 12px; z-index: 300;
+            transition: transform 0.3s ease;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* ── Context menu ── */
+        .ctx-menu {
+            position: fixed; z-index: 500;
+            background: #222; border: 1px solid #444;
+            border-radius: 6px; padding: 4px 0;
+            min-width: 160px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            display: none;
+        }
+        .ctx-menu.show { display: block; }
+        .ctx-menu button {
+            display: block; width: 100%;
+            padding: 8px 16px; text-align: left;
+            font-family: inherit; font-size: 11px;
+            background: none; border: none; color: #ccc; cursor: pointer;
+        }
+        .ctx-menu button:hover { background: #333; color: #fff; }
+        .ctx-menu button.danger { color: #f66; }
+        .ctx-menu .divider { height: 1px; background: #333; margin: 4px 0; }
+    </style>
+</head>
+<body>
+
+<div class="toolbar" id="toolbar">
+    <h1 id="title">Layout Editor</h1>
+    <button id="btnLoad">Open Folder</button>
+    <div class="sep"></div>
+    <button id="btnFitWidth">Fit Width (W)</button>
+    <button id="btnHalf">Half Width (H)</button>
+    <button id="btnThird">Third Width (T)</button>
+    <div class="sep"></div>
+    <button id="btnBringFwd">Forward (])</button>
+    <button id="btnSendBack">Back ([)</button>
+    <div class="sep"></div>
+    <button id="btnDelete">Delete (Del)</button>
+    <div class="sep"></div>
+    <button id="btnExport" class="primary">Export Layout</button>
+    <span class="status" id="status"></span>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <h3 id="sidebarTitle">Images</h3>
+    <div id="tray"></div>
+</div>
+
+<div class="canvas-area" id="canvasArea">
+    <div class="landing" id="landing">
+        <h2>Freeform Layout Editor</h2>
+        <div class="drop-zone" id="dropZone">
+            <p class="big">Click to select an image folder</p>
+            <p>Drag, resize, overlap — build your collage</p>
+        </div>
+        <p style="font-size:10px; color:#444;">Pick a project's web/ folder</p>
+    </div>
+    <div class="canvas" id="canvas" style="display:none;"></div>
+</div>
+
+<div class="ctx-menu" id="ctxMenu">
+    <button data-action="fit">Full Width</button>
+    <button data-action="half">Half Width</button>
+    <button data-action="third">Third Width</button>
+    <div class="divider"></div>
+    <button data-action="front">Bring to Front</button>
+    <button data-action="back">Send to Back</button>
+    <div class="divider"></div>
+    <button data-action="remove" class="danger">Remove from Canvas</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const canvasEl = document.getElementById('canvas');
+const canvasArea = document.getElementById('canvasArea');
+const sidebar = document.getElementById('sidebar');
+const tray = document.getElementById('tray');
+const landing = document.getElementById('landing');
+const ctxMenu = document.getElementById('ctxMenu');
+const CANVAS_W = 1200;
+
+let allImages = []; // {name, url, onCanvas}
+let canvasImages = []; // {id, name, url, x, y, w, h, z, naturalW, naturalH}
+let selectedId = null;
+let nextId = 1;
+let nextZ = 1;
+
+// ── Drag state ──
+let drag = null; // {type: 'move'|'resize', id, startX, startY, origX, origY, origW, origH, handle}
+
+// ── Folder Loading ──
+
+document.getElementById('dropZone').addEventListener('click', pickFolder);
+document.getElementById('btnLoad').addEventListener('click', pickFolder);
+
+async function pickFolder() {
+    try {
+        const dh = await window.showDirectoryPicker();
+        allImages = [];
+        for await (const entry of dh.values()) {
+            if (entry.kind === 'file' && /\.(jpe?g|png|webp|avif)$/i.test(entry.name)) {
+                const file = await entry.getFile();
+                allImages.push({ name: entry.name, url: URL.createObjectURL(file), onCanvas: false });
+            }
+        }
+        allImages.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+        document.getElementById('title').textContent = `Layout Editor — ${dh.name}`;
+        document.getElementById('sidebarTitle').textContent = `${dh.name} (${allImages.length})`;
+
+        landing.style.display = 'none';
+        canvasEl.style.display = 'block';
+        sidebar.classList.add('active');
+        canvasArea.classList.add('with-sidebar');
+
+        renderTray();
+        updateStatus();
+    } catch (e) {
+        if (e.name !== 'AbortError') console.error(e);
+    }
+}
+
+function renderTray() {
+    tray.innerHTML = '';
+    allImages.forEach((img, i) => {
+        const div = document.createElement('div');
+        div.className = 'tray-thumb' + (img.onCanvas ? ' used' : '');
+        div.innerHTML = `<img src="${img.url}"><div class="fname">${img.name}</div>`;
+
+        // Double-click to add at next available position
+        div.addEventListener('dblclick', () => addToCanvas(i));
+
+        // Drag from tray to canvas
+        div.draggable = true;
+        div.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('tray-index', i.toString());
+            e.dataTransfer.effectAllowed = 'copy';
+        });
+
+        tray.appendChild(div);
+    });
+}
+
+// ── Canvas drop from tray ──
+
+canvasEl.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
+canvasEl.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const idx = e.dataTransfer.getData('tray-index');
+    if (idx !== '') {
+        const rect = canvasEl.getBoundingClientRect();
+        const x = e.clientX - rect.left + canvasArea.scrollLeft;
+        const y = e.clientY - rect.top + canvasArea.scrollTop - 44;
+        addToCanvas(parseInt(idx), x, y);
+    }
+});
+
+function addToCanvas(imgIdx, x, y) {
+    const img = allImages[imgIdx];
+    if (!img) return;
+    img.onCanvas = true;
+
+    // Default: third width, maintain aspect
+    const w = CANVAS_W / 3;
+    const tempImg = new Image();
+    tempImg.onload = () => {
+        const aspect = tempImg.naturalHeight / tempImg.naturalWidth;
+        const h = w * aspect;
+        const posY = y !== undefined ? y : getNextY();
+        const posX = x !== undefined ? Math.max(0, x - w/2) : 0;
+
+        const ci = {
+            id: nextId++,
+            imgIdx,
+            name: img.name,
+            url: img.url,
+            x: posX, y: posY,
+            w, h,
+            z: nextZ++,
+            naturalW: tempImg.naturalWidth,
+            naturalH: tempImg.naturalHeight
+        };
+        canvasImages.push(ci);
+        renderCanvasImage(ci);
+        selectImage(ci.id);
+        renderTray();
+        updateStatus();
+        growCanvas();
+    };
+    tempImg.src = img.url;
+}
+
+function getNextY() {
+    if (canvasImages.length === 0) return 40;
+    const maxBottom = Math.max(...canvasImages.map(c => c.y + c.h));
+    return maxBottom + 20;
+}
+
+function growCanvas() {
+    const maxBottom = Math.max(4000, ...canvasImages.map(c => c.y + c.h + 200));
+    canvasEl.style.minHeight = maxBottom + 'px';
+}
+
+// ── Render a canvas image ──
+
+function renderCanvasImage(ci) {
+    const existing = document.getElementById(`ci-${ci.id}`);
+    if (existing) existing.remove();
+
+    const div = document.createElement('div');
+    div.className = 'canvas-img' + (ci.id === selectedId ? ' selected' : '');
+    div.id = `ci-${ci.id}`;
+    div.style.left = ci.x + 'px';
+    div.style.top = ci.y + 'px';
+    div.style.width = ci.w + 'px';
+    div.style.height = ci.h + 'px';
+    div.style.zIndex = ci.z;
+
+    div.innerHTML = `
+        <img src="${ci.url}" draggable="false">
+        <div class="handle tl" data-h="tl"></div>
+        <div class="handle tr" data-h="tr"></div>
+        <div class="handle bl" data-h="bl"></div>
+        <div class="handle br" data-h="br"></div>
+        <div class="img-label">${ci.name} — ${Math.round(ci.w)}x${Math.round(ci.h)}</div>
+    `;
+
+    // Mouse down on image = start drag
+    div.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains('handle')) return;
+        e.preventDefault();
+        selectImage(ci.id);
+        drag = { type: 'move', id: ci.id, startX: e.clientX, startY: e.clientY, origX: ci.x, origY: ci.y };
+    });
+
+    // Mouse down on handle = start resize
+    div.querySelectorAll('.handle').forEach(h => {
+        h.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            selectImage(ci.id);
+            drag = { type: 'resize', id: ci.id, handle: h.dataset.h, startX: e.clientX, startY: e.clientY, origX: ci.x, origY: ci.y, origW: ci.w, origH: ci.h };
+        });
+    });
+
+    // Right-click context menu
+    div.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        selectImage(ci.id);
+        showCtxMenu(e.clientX, e.clientY, ci.id);
+    });
+
+    canvasEl.appendChild(div);
+}
+
+function rerenderAll() {
+    canvasEl.querySelectorAll('.canvas-img').forEach(el => el.remove());
+    canvasImages.forEach(ci => renderCanvasImage(ci));
+}
+
+// ── Selection ──
+
+function selectImage(id) {
+    selectedId = id;
+    canvasEl.querySelectorAll('.canvas-img').forEach(el => {
+        el.classList.toggle('selected', el.id === `ci-${id}`);
+    });
+}
+
+canvasEl.addEventListener('mousedown', (e) => {
+    if (e.target === canvasEl) { selectedId = null; selectImage(null); hideCtxMenu(); }
+});
+
+// ── Mouse move / up (drag + resize) ──
+
+document.addEventListener('mousemove', (e) => {
+    if (!drag) return;
+    const ci = canvasImages.find(c => c.id === drag.id);
+    if (!ci) return;
+
+    const dx = e.clientX - drag.startX;
+    const dy = e.clientY - drag.startY;
+
+    if (drag.type === 'move') {
+        ci.x = Math.max(0, drag.origX + dx);
+        ci.y = Math.max(0, drag.origY + dy);
+    } else if (drag.type === 'resize') {
+        const aspect = ci.naturalH / ci.naturalW;
+        let newW = drag.origW;
+        let newH = drag.origH;
+        let newX = drag.origX;
+        let newY = drag.origY;
+
+        if (drag.handle === 'br') {
+            newW = Math.max(80, drag.origW + dx);
+            newH = newW * aspect;
+        } else if (drag.handle === 'bl') {
+            newW = Math.max(80, drag.origW - dx);
+            newH = newW * aspect;
+            newX = drag.origX + (drag.origW - newW);
+        } else if (drag.handle === 'tr') {
+            newW = Math.max(80, drag.origW + dx);
+            newH = newW * aspect;
+            newY = drag.origY + (drag.origH - newH);
+        } else if (drag.handle === 'tl') {
+            newW = Math.max(80, drag.origW - dx);
+            newH = newW * aspect;
+            newX = drag.origX + (drag.origW - newW);
+            newY = drag.origY + (drag.origH - newH);
+        }
+
+        ci.w = newW; ci.h = newH; ci.x = newX; ci.y = newY;
+    }
+
+    const el = document.getElementById(`ci-${ci.id}`);
+    if (el) {
+        el.style.left = ci.x + 'px';
+        el.style.top = ci.y + 'px';
+        el.style.width = ci.w + 'px';
+        el.style.height = ci.h + 'px';
+        const label = el.querySelector('.img-label');
+        if (label) label.textContent = `${ci.name} — ${Math.round(ci.w)}x${Math.round(ci.h)}`;
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    if (drag) { drag = null; growCanvas(); }
+});
+
+// ── Keyboard shortcuts ──
+
+document.addEventListener('keydown', (e) => {
+    const ci = canvasImages.find(c => c.id === selectedId);
+
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (ci) removeFromCanvas(ci.id);
+    }
+    if (e.key === 'w' || e.key === 'W') { if (ci) setWidth(ci, CANVAS_W); }
+    if (e.key === 'h' || e.key === 'H') { if (ci) setWidth(ci, CANVAS_W / 2); }
+    if (e.key === 't' || e.key === 'T') { if (ci) setWidth(ci, CANVAS_W / 3); }
+    if (e.key === ']') { if (ci) bringForward(ci); }
+    if (e.key === '[') { if (ci) sendBack(ci); }
+    if (e.key === 'Escape') { selectedId = null; selectImage(null); hideCtxMenu(); }
+
+    // Arrow keys to nudge
+    if (ci && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        const step = e.shiftKey ? 20 : 5;
+        if (e.key === 'ArrowLeft') ci.x = Math.max(0, ci.x - step);
+        if (e.key === 'ArrowRight') ci.x += step;
+        if (e.key === 'ArrowUp') ci.y = Math.max(0, ci.y - step);
+        if (e.key === 'ArrowDown') ci.y += step;
+        const el = document.getElementById(`ci-${ci.id}`);
+        if (el) { el.style.left = ci.x + 'px'; el.style.top = ci.y + 'px'; }
+    }
+});
+
+function setWidth(ci, w) {
+    const aspect = ci.naturalH / ci.naturalW;
+    ci.w = w;
+    ci.h = w * aspect;
+    renderCanvasImage(ci);
+    growCanvas();
+}
+
+function bringForward(ci) {
+    ci.z = nextZ++;
+    const el = document.getElementById(`ci-${ci.id}`);
+    if (el) el.style.zIndex = ci.z;
+}
+
+function sendBack(ci) {
+    const minZ = Math.min(...canvasImages.map(c => c.z));
+    ci.z = minZ - 1;
+    const el = document.getElementById(`ci-${ci.id}`);
+    if (el) el.style.zIndex = ci.z;
+}
+
+function removeFromCanvas(id) {
+    const idx = canvasImages.findIndex(c => c.id === id);
+    if (idx === -1) return;
+    const ci = canvasImages[idx];
+    allImages[ci.imgIdx].onCanvas = false;
+    canvasImages.splice(idx, 1);
+    document.getElementById(`ci-${id}`)?.remove();
+    selectedId = null;
+    renderTray();
+    updateStatus();
+}
+
+// ── Toolbar buttons ──
+
+document.getElementById('btnFitWidth').addEventListener('click', () => { const ci = canvasImages.find(c => c.id === selectedId); if (ci) setWidth(ci, CANVAS_W); });
+document.getElementById('btnHalf').addEventListener('click', () => { const ci = canvasImages.find(c => c.id === selectedId); if (ci) setWidth(ci, CANVAS_W / 2); });
+document.getElementById('btnThird').addEventListener('click', () => { const ci = canvasImages.find(c => c.id === selectedId); if (ci) setWidth(ci, CANVAS_W / 3); });
+document.getElementById('btnBringFwd').addEventListener('click', () => { const ci = canvasImages.find(c => c.id === selectedId); if (ci) bringForward(ci); });
+document.getElementById('btnSendBack').addEventListener('click', () => { const ci = canvasImages.find(c => c.id === selectedId); if (ci) sendBack(ci); });
+document.getElementById('btnDelete').addEventListener('click', () => { if (selectedId) removeFromCanvas(selectedId); });
+
+// ── Context menu ──
+
+function showCtxMenu(x, y, id) {
+    ctxMenu.style.left = x + 'px';
+    ctxMenu.style.top = y + 'px';
+    ctxMenu.classList.add('show');
+    ctxMenu.dataset.targetId = id;
+}
+
+function hideCtxMenu() { ctxMenu.classList.remove('show'); }
+
+document.addEventListener('click', (e) => { if (!ctxMenu.contains(e.target)) hideCtxMenu(); });
+
+ctxMenu.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const id = parseInt(ctxMenu.dataset.targetId);
+        const ci = canvasImages.find(c => c.id === id);
+        if (!ci) { hideCtxMenu(); return; }
+
+        switch (btn.dataset.action) {
+            case 'fit': setWidth(ci, CANVAS_W); break;
+            case 'half': setWidth(ci, CANVAS_W / 2); break;
+            case 'third': setWidth(ci, CANVAS_W / 3); break;
+            case 'front': bringForward(ci); break;
+            case 'back': sendBack(ci); break;
+            case 'remove': removeFromCanvas(ci.id); break;
+        }
+        hideCtxMenu();
+    });
+});
+
+// ── Export ──
+
+document.getElementById('btnExport').addEventListener('click', () => {
+    // Sort by Y position (top to bottom), then X (left to right)
+    const sorted = [...canvasImages].sort((a, b) => a.y - b.y || a.x - b.x);
+
+    const layout = {
+        canvasWidth: CANVAS_W,
+        images: sorted.map(ci => ({
+            file: ci.name,
+            x: Math.round(ci.x),
+            y: Math.round(ci.y),
+            w: Math.round(ci.w),
+            h: Math.round(ci.h),
+            z: ci.z
+        }))
+    };
+
+    const json = JSON.stringify(layout, null, 2);
+
+    navigator.clipboard.writeText(json).then(() => {
+        showToast('Layout copied — paste it to Claude');
+    }).catch(() => {
+        console.log(json);
+        const blob = new Blob([json], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'layout.json';
+        a.click();
+        showToast('Layout downloaded as JSON');
+    });
+});
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function updateStatus() {
+    document.getElementById('status').textContent = `${canvasImages.length} on canvas / ${allImages.length} total`;
+}
+</script>
+</body>
+</html>

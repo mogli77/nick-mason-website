@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crew — Nick Mason Construction</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Freeform collage layout */
+        .collage {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+
+        .collage-group {
+            position: relative;
+            width: 100%;
+        }
+
+        .collage-group img {
+            position: absolute;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Mobile: stack vertically */
+        @media (max-width: 767px) {
+            .collage-group {
+                padding-bottom: 0 !important;
+            }
+            .collage-group img {
+                position: relative !important;
+                left: 0 !important;
+                top: auto !important;
+                width: 100% !important;
+                height: auto !important;
+                margin-bottom: 4px;
+            }
+        }
+    </style>
+</head>
+<body class="project-page fade-out">
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="logo">
+            <span class="logo-main">Nick Mason</span>
+            <span class="logo-sub">Construction Co.</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html#work">Work</a></li>
+            <li><a href="#" class="active">Crew</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Crew Header -->
+    <section style="padding: calc(var(--space-xl) + 60px) var(--space-lg) var(--space-lg);">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;">The Crew</h1>
+        </div>
+    </section>
+
+    <!-- Collage Layout -->
+    <section class="collage">
+        <!-- Group 1: Two overlapping landscape shots at top -->
+        <!-- Total height: max(114+304, 171+298) = max(418, 469) = 469 -->
+        <!-- As % of 1200: padding-bottom = 469/1200 * 100 = 39.08% -->
+        <div class="collage-group" style="padding-bottom: 39.1%;">
+            <img src="images/crew/web/DSC04620.jpg" alt="Crew at work"
+                 style="left: 10%; top: 24.3%; width: 37.9%; height: 64.8%;">
+            <img src="images/crew/web/DSC04674.jpg" alt="Crew members"
+                 style="left: 44.6%; top: 36.5%; width: 37.2%; height: 63.5%; z-index: 2;">
+        </div>
+
+        <!-- Group 2: Portrait left + landscape right, overlapping -->
+        <!-- y range: 480 to max(480+598, 558+410) = max(1078, 968) = 1078 -->
+        <!-- height of group: 1078-480 = 598, gap from previous: 480-469 = 11px ≈ small margin -->
+        <!-- As % of 1200: padding-bottom = 598/1200 * 100 = 49.8% -->
+        <div class="collage-group" style="padding-bottom: 49.8%; margin-top: 1%;">
+            <img src="images/crew/web/DSC04811.jpg" alt="Crew member portrait"
+                 style="left: 7.6%; top: 0%; width: 33.3%; height: 100%;">
+            <img src="images/crew/web/DSC04824.jpg" alt="Crew on site"
+                 style="left: 43.1%; top: 13%; width: 51.1%; height: 68.6%; z-index: 2;">
+        </div>
+
+        <!-- Group 3: Full width shot -->
+        <div style="margin-top: 3%; padding: 0;">
+            <img src="images/crew/web/R0009759.jpg" alt="The full crew"
+                 style="width: 100%; height: auto; display: block;">
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-copyright">&copy; Nick Mason Construction Co.</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Nav stays dark on this page (no hero video/image)
+        const nav = document.querySelector('nav');
+        nav.classList.add('nav-dark');
+    </script>
+
+    <!-- Page Transition Script -->
+    <script>
+        window.addEventListener('pageshow', () => {
+            document.body.classList.remove('fade-out');
+        });
+
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                if (href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('tel')) {
+                    return;
+                }
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 600);
+            });
+        });
+    </script>
+</body>
+</html>
