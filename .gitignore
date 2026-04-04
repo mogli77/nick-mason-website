@@ -13,5 +13,13 @@
 # Temp/placeholder content
 images/temp/
 
+# Full-res originals and SELECTS (only commit web-optimized versions)
+images/projects/*/SELECTS/
+images/crew/SELECTS/
+images/construction/*.jpg
+images/construction/*.JPG
+images/construction/*.jpeg
+images/construction/*.ARW
+
 # Local Netlify folder
 .netlify
