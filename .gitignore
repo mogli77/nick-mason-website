@@ -1,0 +1,17 @@
+# OS files
+.DS_Store
+
+# RAW camera files
+*.ARW
+*.arw
+
+# Source design files (keep in assets/ but don't deploy)
+*.ai
+*.eps
+*.psd
+
+# Temp/placeholder content
+images/temp/
+
+# Local Netlify folder
+.netlify
