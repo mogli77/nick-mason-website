@@ -9,6 +9,12 @@
 *.ai
 *.eps
 *.psd
+*.xmp
+
+# SVG source pages (keep only the optimized nick-mason-logo.svg)
+assets/logo/brand_page*.svg
+assets/logo/brand_identity*.svg
+assets/logo/preview_page*.png
 
 # Temp/placeholder content
 images/temp/

@@ -96,7 +96,7 @@ nav {
     background-color: transparent;
 }
 
-/* Nav light state - white text for over images/video */
+/* Nav light state - white text/logo for over images/video */
 nav.nav-light .logo-main,
 nav.nav-light .logo-sub,
 nav.nav-light .nav-links a {
@@ -104,7 +104,11 @@ nav.nav-light .nav-links a {
     text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Nav dark state - black text for over white background */
+nav.nav-light .logo-svg {
+    filter: invert(1) drop-shadow(0 1px 3px rgba(0,0,0,0.3));
+}
+
+/* Nav dark state - black text/logo for over white background */
 nav.nav-dark .logo-main,
 nav.nav-dark .logo-sub,
 nav.nav-dark .nav-links a {
@@ -112,14 +116,24 @@ nav.nav-dark .nav-links a {
     text-shadow: none;
 }
 
-/* Logo - stacked layout */
+nav.nav-dark .logo-svg {
+    filter: none;
+}
+
+/* Logo */
 .logo {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     line-height: 1;
 }
 
+.logo-svg {
+    height: 40px;
+    width: auto;
+    transition: filter 0.3s ease;
+}
+
+/* Keep text logo styles as fallback */
 .logo-main {
     font-family: var(--font-display);
     font-size: 1.6rem;
@@ -482,6 +496,18 @@ footer {
     text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
+/* Project pages: nav slides up/down based on scroll direction */
+.project-page nav {
+    position: fixed;
+    top: 0;
+    transform: translateY(0);
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-page nav.nav-hidden {
+    transform: translateY(-100%);
+}
+
 /* Project Gallery - Walker Warner inspired */
 .project-gallery {
     background: var(--color-bg);
@@ -646,6 +672,23 @@ footer {
         gap: var(--space-md);
         margin: var(--space-md) 0;
     }
+
+    .gallery-collage {
+        padding-bottom: 0 !important;
+        position: static !important;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        margin: var(--space-md) 0 !important;
+    }
+
+    .gallery-collage figure {
+        position: static !important;
+        width: 100% !important;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+    }
 }
 
 /* Fixed back arrow */
@@ -774,10 +817,14 @@ footer {
         padding: var(--space-sm) var(--space-md);
     }
     
+    .logo-svg {
+        height: 30px;
+    }
+
     .logo-main {
         font-size: 1.2rem;
     }
-    
+
     .logo-sub {
         font-size: 0.55rem;
     }

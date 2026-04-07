@@ -28,7 +28,7 @@ ALWAYS:
 
 ## Project Context
 
-**Client**: Nick Mason Construction, Inc.
+**Client**: Nick Mason Construction Co.
 **Scope**: $10-15k professional website, includes travel for photography/videography at construction sites
 **Partner**: Kelly (collaborating on this project)
 
@@ -37,25 +37,41 @@ ALWAYS:
 - **Aesthetic goal**: Elevated lifestyle-brand feel - elegant, simple, exclusive
 - **Anti-goal**: Must NOT look like a typical contractor website or use generic templates (why we chose custom HTML/CSS/JS over WordPress/Squarespace)
 
-### Brand Typography
-- **"NICK MASON"**: Bold condensed (matches logo patch)
-- **"CONSTRUCTION, INC."**: Refined serif
-- This pairing is critical to the brand identity
+### Brand Identity
+- **Logo**: SVG at `assets/logo/nick-mason-logo.svg` — optimized from brand identity .ai file (page 2)
+- **Brand name**: "Nick Mason Construction Co." (NOT "Inc." — confirmed with client)
+- The logo is purely typographic — "NICK MASON" bold condensed + "CONSTRUCTION CO." refined serif
+- Nav uses `filter: invert(1)` for white logo over dark backgrounds
 
 ### Video Hosting
 - Videos hosted on Cloudinary (account: dylwzl4vu) to avoid Netlify bandwidth costs
 - Hero video loops are pulled from Cloudinary URLs
 
 ### Known Patterns
-- **Navigation color changes**: The inline script (not main.js) handles white text over images → black text over white backgrounds. Any layout changes must preserve this behavior.
+- **Navigation color changes**: Inline scripts (not main.js) handle white logo/text over images → black over white backgrounds. Any layout changes must preserve this behavior.
+- **Nav scroll behavior**: On project pages (`.project-page`), nav slides up on scroll-down and reappears on scroll-up (0.8s transition). On index.html, nav stays fixed.
 - **Code integrity**: When making changes, verify existing functionality (especially nav scripts) still works. Past issues have occurred when updates broke the navigation system.
 - **Page transition events**: Use `pageshow` event instead of `DOMContentLoaded` for fade-in transitions to ensure animations fire when using browser back/forward buttons (bfcache compatibility).
+
+### Image Pipeline
+- **NEVER re-process images with ImageMagick** — this caused quality degradation (darker, worse colors) in early iterations
+- User exports from Lightroom: JPEG, sRGB, quality 85-90, long edge 2400px, screen sharpening
+- Images go directly from Lightroom → `web/` folders → git → deploy
+- No auto-orient, no color space conversion, no resizing by Claude
+
+### Gallery Layout Types
+- **full**: Single full-width image (`gallery-item full`)
+- **overlap**: Two images overlapping Walker Warner style (`gallery-overlap`, add `reverse` for reversed offset)
+- **trio**: Three images in a row (`gallery-trio`)
+- **pair**: Two images side by side (`gallery-pair`)
+- **collage**: Freeform positioned images (`gallery-collage` with absolute positioning, percentage-based for responsive)
+- All collapse to single-column on mobile
 
 ---
 
 ## Project Overview
 
-This is a static website for Nick Mason Construction, Inc., built with vanilla HTML, CSS, and JavaScript. The site features a clean, editorial design inspired by architecture/construction portfolio sites like Chandelier Creative and Walker Warner.
+This is a static website for Nick Mason Construction Co., built with vanilla HTML, CSS, and JavaScript. The site features a clean, editorial design inspired by architecture/construction portfolio sites like Chandelier Creative and Walker Warner.
 
 ## Development Workflow
 
@@ -70,11 +86,18 @@ This is a static website for Nick Mason Construction, Inc., built with vanilla H
 ## Architecture & Structure
 
 ### Core Files
-- `index.html` - Single-page site with all content sections
+- `index.html` - Landing page with hero video, project grid, quote, about/contact
+- `el-monte.html` - El Monte project page (hero video + gallery)
+- `la-marina.html` - La Marina project page
+- `pomar-lane.html` - Pomar Lane project page
+- `crew.html` - Crew page with collage layout
 - `css/styles.css` - Complete styling system with CSS custom properties
 - `js/main.js` - Minimal JavaScript (currently unused, reserved for future interactivity)
-- `images/` - Project photos and static images
-- `videos/` - Video loops for hero section
+- `assets/logo/nick-mason-logo.svg` - Optimized SVG logo
+- `images/projects/{slug}/web/` - Web-optimized project photos (Lightroom exports)
+- `images/crew/web/` - Crew photos
+- `images/construction/web/` - Construction-phase photos
+- `tools/layout-editor/` - Freeform drag-and-drop layout editor (dev tool)
 
 ### Navigation Color System
 The navigation has a dynamic color-switching system implemented via inline script in `index.html:154-186`:

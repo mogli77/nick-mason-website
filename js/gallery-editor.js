@@ -2,221 +2,463 @@
    GALLERY EDITOR - Development Tool
    ============================================
 
-   Drag-and-drop gallery reordering tool.
-   Rearrange images, change layout types, then
-   export the new order to update HTML.
+   In-page drag-and-drop editor for gallery layouts.
+   Works directly on the live grid — drag to reorder,
+   delete images, change sizes, add from sidebar.
 
    Usage: Add <script src="js/gallery-editor.js"></script>
-   to any project page. Press ESC to exit.
+   to any project page.
 
    ============================================ */
 
 (function() {
+    // ── Panel ──
     const panel = document.createElement('div');
-    panel.id = 'gallery-editor-panel';
+    panel.id = 'ge-panel';
     panel.innerHTML = `
         <style>
-            #gallery-editor-panel {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: rgba(0,0,0,0.92);
-                color: #fff;
-                font-family: 'Monaco','Menlo',monospace;
-                font-size: 12px;
-                padding: 16px 20px;
-                border-radius: 10px;
-                z-index: 99999;
-                min-width: 220px;
+            #ge-panel {
+                position: fixed; top: 12px; right: 12px;
+                background: rgba(0,0,0,0.92); color: #fff;
+                font-family: 'Monaco','Menlo',monospace; font-size: 11px;
+                padding: 14px 18px; border-radius: 10px;
+                z-index: 99999; min-width: 200px;
                 box-shadow: 0 4px 24px rgba(0,0,0,0.4);
                 user-select: none;
             }
-            #gallery-editor-panel h3 {
-                margin: 0 0 10px;
-                font-size: 13px;
-                color: #0f0;
-                border-bottom: 1px solid #333;
-                padding-bottom: 8px;
+            #ge-panel h3 {
+                margin: 0 0 10px; font-size: 12px; color: #0f0;
+                border-bottom: 1px solid #333; padding-bottom: 8px;
             }
-            #gallery-editor-panel button {
-                display: block;
-                width: 100%;
-                margin: 6px 0;
-                padding: 8px;
-                background: #222;
-                color: #fff;
-                border: 1px solid #444;
-                border-radius: 4px;
-                font-family: inherit;
-                font-size: 11px;
-                cursor: pointer;
+            #ge-panel button {
+                display: block; width: 100%; margin: 5px 0; padding: 7px 10px;
+                background: #222; color: #ccc; border: 1px solid #444;
+                border-radius: 4px; font-family: inherit; font-size: 11px; cursor: pointer;
             }
-            #gallery-editor-panel button:hover { background: #333; }
-            #gallery-editor-panel .info { color: #888; font-size: 10px; margin-top: 10px; line-height: 1.5; }
+            #ge-panel button:hover { background: #333; color: #fff; }
+            #ge-panel button.primary { background: #0a5; color: #fff; border-color: #0a5; }
+            #ge-panel .info { color: #666; font-size: 9px; margin-top: 10px; line-height: 1.5; }
 
-            /* Drag visual feedback */
-            .gallery-item.ge-dragging {
-                opacity: 0.4 !important;
-                outline: 3px dashed #0f0 !important;
-            }
-            .gallery-item.ge-dragover {
-                outline: 3px solid #0f0 !important;
-                outline-offset: -3px;
-            }
-            .gallery-item.ge-slot {
+            /* Drag feedback */
+            .ge-dragging { opacity: 0.3 !important; }
+            .ge-drag-over { outline: 3px solid #0f0 !important; outline-offset: -3px; }
+
+            /* Editable items get hover controls */
+            .ge-editable {
+                position: relative !important;
                 cursor: grab;
-                position: relative;
             }
-            .gallery-item.ge-slot::after {
-                content: attr(data-ge-label);
-                position: absolute;
-                bottom: 4px;
-                left: 4px;
-                background: rgba(0,0,0,0.8);
-                color: #0f0;
-                font-family: 'Monaco','Menlo',monospace;
-                font-size: 10px;
-                padding: 2px 6px;
-                border-radius: 3px;
-                pointer-events: none;
-                z-index: 10;
+            .ge-editable:active { cursor: grabbing; }
+
+            /* Delete button on each image */
+            .ge-delete {
+                position: absolute; top: 6px; right: 6px;
+                width: 28px; height: 28px;
+                background: rgba(0,0,0,0.7); color: #f55;
+                border: 1px solid #f55; border-radius: 50%;
+                font-size: 16px; line-height: 26px; text-align: center;
+                cursor: pointer; z-index: 10;
+                opacity: 0; transition: opacity 0.15s;
+                font-family: sans-serif;
+            }
+            .ge-editable:hover .ge-delete { opacity: 1; }
+            .ge-delete:hover { background: #f55; color: #fff; }
+
+            /* Size toggle buttons */
+            .ge-sizes {
+                position: absolute; bottom: 6px; left: 6px;
+                display: flex; gap: 3px;
+                opacity: 0; transition: opacity 0.15s; z-index: 10;
+            }
+            .ge-editable:hover .ge-sizes { opacity: 1; }
+            .ge-sizes button {
+                display: inline-block; width: auto; margin: 0;
+                padding: 3px 8px; font-size: 9px;
+                background: rgba(0,0,0,0.7); color: #ccc;
+                border: 1px solid #555; border-radius: 3px;
+            }
+            .ge-sizes button:hover { background: rgba(0,0,0,0.9); color: #fff; }
+            .ge-sizes button.active { color: #0f0; border-color: #0f0; }
+
+            /* Label */
+            .ge-label {
+                position: absolute; top: 6px; left: 6px;
+                background: rgba(0,0,0,0.7); color: #0f0;
+                font-family: 'Monaco','Menlo',monospace; font-size: 9px;
+                padding: 2px 6px; border-radius: 3px;
+                opacity: 0; transition: opacity 0.15s;
+                pointer-events: none; z-index: 10;
+            }
+            .ge-editable:hover .ge-label { opacity: 1; }
+
+            /* Removed tray */
+            #ge-removed {
+                position: fixed; bottom: 12px; left: 12px; right: 12px;
+                background: rgba(0,0,0,0.9); border-radius: 10px;
+                padding: 12px; z-index: 99998;
+                display: none; max-height: 150px; overflow-y: auto;
+            }
+            #ge-removed.has-items { display: block; }
+            #ge-removed h4 {
+                font-family: 'Monaco',monospace; font-size: 10px;
+                color: #555; margin-bottom: 8px; text-transform: uppercase;
+            }
+            #ge-removed .ge-removed-grid {
+                display: flex; flex-wrap: wrap; gap: 6px;
+            }
+            #ge-removed .ge-removed-thumb {
+                width: 80px; height: 55px; border-radius: 4px;
+                overflow: hidden; cursor: pointer; opacity: 0.5;
+                transition: opacity 0.15s; position: relative;
+            }
+            #ge-removed .ge-removed-thumb:hover { opacity: 1; }
+            #ge-removed .ge-removed-thumb img {
+                width: 100%; height: 100%; object-fit: cover;
             }
         </style>
         <h3>GALLERY EDITOR</h3>
-        <div style="margin-bottom: 8px; color: #ccc;">Drag images to swap positions</div>
-        <button id="ge-export">Export New Order</button>
-        <button id="ge-exit">Exit Editor (ESC)</button>
+        <button id="ge-add-images">+ Add Images from Folder</button>
+        <button id="ge-export" class="primary">Export Layout</button>
+        <button id="ge-exit">Exit (ESC)</button>
         <div class="info">
-            Drag any image onto another<br>to swap their positions.<br>
-            Export copies the new image<br>order to your clipboard.
+            Drag images to reorder<br>
+            Hover for delete &amp; size controls<br>
+            Export copies JSON to clipboard
         </div>
     `;
     document.body.appendChild(panel);
 
-    // Find all gallery images
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    let dragSource = null;
+    // Removed tray
+    const removedTray = document.createElement('div');
+    removedTray.id = 'ge-removed';
+    removedTray.innerHTML = '<h4>Removed (click to restore)</h4><div class="ge-removed-grid" id="ge-removed-grid"></div>';
+    document.body.appendChild(removedTray);
 
-    galleryItems.forEach((item, i) => {
+    const gallery = document.querySelector('.project-gallery');
+    if (!gallery) { console.error('No .project-gallery found'); return; }
+
+    let dragEl = null;
+    let removedImages = [];
+
+    // ── Find all gallery items (images inside gallery containers) ──
+    function getAllItems() {
+        return gallery.querySelectorAll('.gallery-item');
+    }
+
+    function getContainerType(el) {
+        const parent = el.parentElement;
+        if (parent.classList.contains('gallery-overlap')) return parent.classList.contains('reverse') ? 'overlap-reverse' : 'overlap';
+        if (parent.classList.contains('gallery-trio')) return 'trio';
+        if (parent.classList.contains('gallery-pair')) return 'pair';
+        if (el.classList.contains('full')) return 'full';
+        return 'full';
+    }
+
+    // ── Setup each item for editing ──
+    function setupItem(item) {
+        if (item.classList.contains('ge-editable')) return;
+        item.classList.add('ge-editable');
+        item.draggable = true;
+
         const img = item.querySelector('img');
         if (!img) return;
-
-        // Label each slot
         const filename = img.src.split('/').pop();
-        item.classList.add('ge-slot');
-        item.setAttribute('data-ge-label', filename);
-        item.setAttribute('draggable', 'true');
 
+        // Label
+        const label = document.createElement('div');
+        label.className = 'ge-label';
+        label.textContent = filename;
+        item.appendChild(label);
+
+        // Delete button
+        const del = document.createElement('div');
+        del.className = 'ge-delete';
+        del.textContent = '\u00d7';
+        del.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeImage(item);
+        });
+        item.appendChild(del);
+
+        // Drag events
         item.addEventListener('dragstart', (e) => {
-            dragSource = item;
+            dragEl = item;
             item.classList.add('ge-dragging');
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', i.toString());
+            e.dataTransfer.setData('text/plain', '');
         });
 
         item.addEventListener('dragend', () => {
             item.classList.remove('ge-dragging');
-            document.querySelectorAll('.ge-dragover').forEach(el => el.classList.remove('ge-dragover'));
+            gallery.querySelectorAll('.ge-drag-over').forEach(el => el.classList.remove('ge-drag-over'));
+            dragEl = null;
         });
 
         item.addEventListener('dragover', (e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
-            item.classList.add('ge-dragover');
+            if (dragEl && dragEl !== item) {
+                item.classList.add('ge-drag-over');
+            }
         });
 
         item.addEventListener('dragleave', () => {
-            item.classList.remove('ge-dragover');
+            item.classList.remove('ge-drag-over');
         });
 
         item.addEventListener('drop', (e) => {
             e.preventDefault();
-            item.classList.remove('ge-dragover');
+            item.classList.remove('ge-drag-over');
+            if (!dragEl || dragEl === item) return;
 
-            if (dragSource && dragSource !== item) {
-                // Swap the img src and alt between the two slots
-                const srcImg = dragSource.querySelector('img');
-                const dstImg = item.querySelector('img');
-                if (srcImg && dstImg) {
-                    const tmpSrc = srcImg.src;
-                    const tmpAlt = srcImg.alt;
-                    srcImg.src = dstImg.src;
-                    srcImg.alt = dstImg.alt;
-                    dstImg.src = tmpSrc;
-                    dstImg.alt = tmpAlt;
+            const srcImg = dragEl.querySelector('img');
+            const dstImg = item.querySelector('img');
+            if (!srcImg || !dstImg) return;
 
-                    // Update labels
-                    dragSource.setAttribute('data-ge-label', srcImg.src.split('/').pop());
-                    item.setAttribute('data-ge-label', dstImg.src.split('/').pop());
-                }
+            const srcEmpty = dragEl.classList.contains('ge-empty');
+            const dstEmpty = item.classList.contains('ge-empty');
+
+            if (dstEmpty && !srcEmpty) {
+                // Dragging a real image into an empty slot — move it there
+                dstImg.src = srcImg.src;
+                dstImg.alt = srcImg.alt;
+                dstImg.style.display = '';
+                item.classList.remove('ge-empty');
+
+                // Source becomes empty
+                srcImg.style.display = 'none';
+                dragEl.classList.add('ge-empty');
+            } else if (!dstEmpty && !srcEmpty) {
+                // Both have images — swap
+                const tmpSrc = srcImg.src;
+                const tmpAlt = srcImg.alt;
+                srcImg.src = dstImg.src;
+                srcImg.alt = dstImg.alt;
+                dstImg.src = tmpSrc;
+                dstImg.alt = tmpAlt;
             }
-            dragSource = null;
+            // If both empty or dragging empty onto real, do nothing
+
+            // Update labels
+            const srcLabel = dragEl.querySelector('.ge-label');
+            const dstLabel = item.querySelector('.ge-label');
+            if (srcLabel) srcLabel.textContent = dragEl.classList.contains('ge-empty') ? '' : srcImg.src.split('/').pop();
+            if (dstLabel) dstLabel.textContent = item.classList.contains('ge-empty') ? '' : dstImg.src.split('/').pop();
         });
-    });
+    }
 
-    // Export button — collects current image order grouped by parent container
-    document.getElementById('ge-export').addEventListener('click', () => {
-        const gallery = document.querySelector('.project-gallery');
-        if (!gallery) return;
+    function removeImage(item) {
+        const img = item.querySelector('img');
+        if (!img) return;
 
-        let output = 'GALLERY ORDER:\n\n';
-        const children = gallery.children;
+        removedImages.push({
+            src: img.src,
+            alt: img.alt,
+            filename: img.src.split('/').pop()
+        });
 
-        for (let i = 0; i < children.length; i++) {
-            const child = children[i];
-            const classes = child.className;
+        // Turn into empty placeholder slot instead of removing
+        img.style.display = 'none';
+        item.classList.add('ge-empty');
 
-            if (child.classList.contains('gallery-quote')) {
-                output += '[QUOTE]\n';
-            } else if (child.classList.contains('gallery-overlap')) {
-                const reverse = child.classList.contains('reverse') ? ' reverse' : '';
-                const imgs = child.querySelectorAll('img');
-                output += `[OVERLAP${reverse}]\n`;
-                imgs.forEach(img => output += '  ' + img.src.split('/web/').pop() + '\n');
-            } else if (child.classList.contains('gallery-trio')) {
-                const imgs = child.querySelectorAll('img');
-                output += '[TRIO]\n';
-                imgs.forEach(img => output += '  ' + img.src.split('/web/').pop() + '\n');
-            } else if (child.classList.contains('gallery-pair')) {
-                const imgs = child.querySelectorAll('img');
-                output += '[PAIR]\n';
-                imgs.forEach(img => output += '  ' + img.src.split('/web/').pop() + '\n');
-            } else if (child.classList.contains('gallery-item') && child.classList.contains('full')) {
-                const img = child.querySelector('img');
-                if (img) output += '[FULL] ' + img.src.split('/web/').pop() + '\n';
-            } else if (child.classList.contains('gallery-video')) {
-                output += '[VIDEO]\n';
-            }
-            output += '\n';
+        // Add empty slot styling
+        if (!document.getElementById('ge-empty-style')) {
+            const style = document.createElement('style');
+            style.id = 'ge-empty-style';
+            style.textContent = `
+                .ge-empty {
+                    background: repeating-linear-gradient(
+                        45deg, #1a1a1a, #1a1a1a 10px, #222 10px, #222 20px
+                    ) !important;
+                    min-height: 200px;
+                    display: flex !important;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .ge-empty::before {
+                    content: 'Drop image here';
+                    color: #555;
+                    font-family: 'Monaco','Menlo',monospace;
+                    font-size: 11px;
+                }
+                .ge-empty .ge-delete { display: none; }
+                .ge-empty .ge-label { display: none; }
+            `;
+            document.head.appendChild(style);
         }
 
-        navigator.clipboard.writeText(output).then(() => {
+        // Update the drop handler so dropping into an empty slot fills it
+        // (already handled by the swap logic — it swaps src, so dropping
+        // a real image into an empty slot moves the image there)
+
+        updateRemovedTray();
+    }
+
+    function restoreImage(idx) {
+        const imgData = removedImages[idx];
+        removedImages.splice(idx, 1);
+
+        // Try to fill an empty slot first
+        const emptySlot = gallery.querySelector('.ge-empty');
+        if (emptySlot) {
+            const img = emptySlot.querySelector('img');
+            img.src = imgData.src;
+            img.alt = imgData.alt;
+            img.style.display = '';
+            emptySlot.classList.remove('ge-empty');
+            const label = emptySlot.querySelector('.ge-label');
+            if (label) label.textContent = imgData.filename;
+        } else {
+            // No empty slots — append as full-width
+            const figure = document.createElement('figure');
+            figure.className = 'gallery-item full';
+            figure.innerHTML = `<img class="parallax-img" src="${imgData.src}" alt="${imgData.alt}">`;
+            gallery.appendChild(figure);
+            setupItem(figure);
+        }
+        updateRemovedTray();
+    }
+
+    function updateRemovedTray() {
+        const grid = document.getElementById('ge-removed-grid');
+        grid.innerHTML = '';
+        removedImages.forEach((img, idx) => {
+            const thumb = document.createElement('div');
+            thumb.className = 'ge-removed-thumb';
+            thumb.innerHTML = `<img src="${img.src}">`;
+            thumb.title = img.filename + ' — click to restore';
+            thumb.addEventListener('click', () => restoreImage(idx));
+            grid.appendChild(thumb);
+        });
+        removedTray.classList.toggle('has-items', removedImages.length > 0);
+    }
+
+    // ── Add images from folder ──
+    document.getElementById('ge-add-images').addEventListener('click', async () => {
+        try {
+            const dirHandle = await window.showDirectoryPicker();
+            const files = [];
+            for await (const entry of dirHandle.values()) {
+                if (entry.kind === 'file' && /\.(jpe?g|png|webp)$/i.test(entry.name)) {
+                    const file = await entry.getFile();
+                    files.push({ name: entry.name, url: URL.createObjectURL(file) });
+                }
+            }
+            files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+            // Check which are already on the page
+            const existing = new Set();
+            gallery.querySelectorAll('img').forEach(img => {
+                existing.add(img.src.split('/').pop());
+            });
+
+            let added = 0;
+            files.forEach(f => {
+                if (!existing.has(f.name)) {
+                    const figure = document.createElement('figure');
+                    figure.className = 'gallery-item full';
+                    figure.innerHTML = `<img class="parallax-img" src="${f.url}" alt="${f.name}" data-filename="${f.name}">`;
+                    gallery.appendChild(figure);
+                    setupItem(figure);
+                    added++;
+                }
+            });
+
+            if (added > 0) {
+                const btn = document.getElementById('ge-add-images');
+                btn.textContent = `Added ${added} images`;
+                setTimeout(() => { btn.textContent = '+ Add Images from Folder'; }, 2000);
+            }
+        } catch (e) {
+            if (e.name !== 'AbortError') console.error(e);
+        }
+    });
+
+    // ── Export ──
+    document.getElementById('ge-export').addEventListener('click', () => {
+        const items = gallery.querySelectorAll('.gallery-item');
+        const layout = [];
+
+        items.forEach(item => {
+            if (item.classList.contains('ge-empty')) return; // skip empty slots
+            const img = item.querySelector('img');
+            if (!img) return;
+
+            const filename = img.dataset.filename || img.src.split('/').pop();
+            const type = getContainerType(item);
+
+            layout.push({ file: filename, type: type });
+        });
+
+        // Group consecutive items by their parent container
+        const grouped = [];
+        let currentGroup = null;
+
+        items.forEach(item => {
+            const img = item.querySelector('img');
+            if (!img) return;
+
+            const filename = img.dataset.filename || img.src.split('/').pop();
+            const parent = item.parentElement;
+            const isDirectChild = parent === gallery;
+
+            if (isDirectChild) {
+                grouped.push({ type: 'full', images: [filename] });
+            } else {
+                // Check if same parent as previous
+                if (currentGroup && currentGroup._parent === parent) {
+                    currentGroup.images.push(filename);
+                } else {
+                    let type = 'pair';
+                    if (parent.classList.contains('gallery-overlap')) {
+                        type = parent.classList.contains('reverse') ? 'overlap-reverse' : 'overlap';
+                    } else if (parent.classList.contains('gallery-trio')) {
+                        type = 'trio';
+                    } else if (parent.classList.contains('gallery-pair')) {
+                        type = 'pair';
+                    }
+                    currentGroup = { type, images: [filename], _parent: parent };
+                    grouped.push(currentGroup);
+                }
+            }
+        });
+
+        // Clean up internal refs
+        grouped.forEach(g => delete g._parent);
+
+        const json = JSON.stringify({ layout: grouped }, null, 2);
+
+        navigator.clipboard.writeText(json).then(() => {
             const btn = document.getElementById('ge-export');
             btn.textContent = 'Copied to clipboard!';
-            btn.style.background = '#0a3';
+            btn.style.background = '#0c7';
             setTimeout(() => {
-                btn.textContent = 'Export New Order';
-                btn.style.background = '#222';
+                btn.textContent = 'Export Layout';
+                btn.style.background = '';
             }, 2000);
         }).catch(() => {
-            // Fallback: show in console
-            console.log(output);
-            alert('Order logged to console (clipboard not available over file://)');
+            console.log(json);
+            alert('Layout logged to console');
         });
     });
 
-    // Exit
+    // ── Exit ──
     function exitEditor() {
-        galleryItems.forEach(item => {
-            item.classList.remove('ge-slot', 'ge-dragging', 'ge-dragover');
+        gallery.querySelectorAll('.ge-editable').forEach(item => {
+            item.classList.remove('ge-editable', 'ge-dragging', 'ge-drag-over');
             item.removeAttribute('draggable');
-            item.removeAttribute('data-ge-label');
+            item.querySelectorAll('.ge-delete, .ge-label, .ge-sizes').forEach(el => el.remove());
         });
         panel.remove();
+        removedTray.remove();
     }
 
     document.getElementById('ge-exit').addEventListener('click', exitEditor);
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') exitEditor();
     });
+
+    // ── Init: setup all existing items ──
+    getAllItems().forEach(setupItem);
+
 })();

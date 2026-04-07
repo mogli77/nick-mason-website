@@ -24,8 +24,7 @@
     <!-- Navigation -->
     <nav>
         <a href="index.html" class="logo">
-            <span class="logo-main">Nick Mason</span>
-            <span class="logo-sub">Construction Co.</span>
+            <img src="assets/logo/nick-mason-logo.svg" alt="Nick Mason Construction Co." class="logo-svg">
         </a>
         <ul class="nav-links">
             <li><a href="index.html#work">Work</a></li>
@@ -249,10 +248,22 @@
 
     <script src="js/main.js"></script>
     <script>
-        // Nav color change - starts light over hero, goes dark over gallery
         const nav = document.querySelector('nav');
         const backArrow = document.querySelector('.back-arrow-fixed');
         const projectHero = document.querySelector('.project-hero');
+
+        // Nav: slide up on scroll down, reappear on scroll up
+        let lastScrollY = 0;
+
+        function updateNavPosition() {
+            const scrollY = window.scrollY;
+            if (scrollY > lastScrollY && scrollY > 80) {
+                nav.classList.add('nav-hidden');
+            } else {
+                nav.classList.remove('nav-hidden');
+            }
+            lastScrollY = scrollY;
+        }
 
         function updateNavColor() {
             const scrollPosition = window.scrollY;
@@ -299,10 +310,12 @@
         backArrow.classList.add('arrow-light');
 
         window.addEventListener('scroll', () => {
+            updateNavPosition();
             updateNavColor();
             updateArrowColor();
         }, { passive: true });
 
+        updateNavPosition();
         updateNavColor();
         updateArrowColor();
     </script>

@@ -92,7 +92,6 @@
             box-shadow: 0 0 80px rgba(0,0,0,0.5);
         }
 
-        /* Center line guide */
         .canvas::before {
             content: '';
             position: absolute;
@@ -102,6 +101,16 @@
             pointer-events: none;
             z-index: 0;
         }
+
+        /* ── Snap guides ── */
+        .snap-guide {
+            position: absolute;
+            background: rgba(0,200,0,0.4);
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .snap-guide.horizontal { left: 0; right: 0; height: 1px; }
+        .snap-guide.vertical { top: 0; bottom: 0; width: 1px; }
 
         /* ── Canvas Images ── */
         .canvas-img {
@@ -121,7 +130,6 @@
             pointer-events: none;
         }
 
-        /* Resize handles */
         .canvas-img .handle {
             position: absolute; width: 12px; height: 12px;
             background: #0f0; border: 1px solid #000;
@@ -134,7 +142,6 @@
         .canvas-img .handle.tr { top: -6px; right: -6px; cursor: nesw-resize; }
         .canvas-img .handle.tl { top: -6px; left: -6px; cursor: nwse-resize; }
 
-        /* Image label */
         .canvas-img .img-label {
             position: absolute; bottom: -20px; left: 0;
             font-size: 9px; color: #999; white-space: nowrap;
@@ -149,15 +156,16 @@
             height: calc(100vh - 44px); gap: 20px;
         }
         .landing h2 { font-size: 15px; font-weight: 400; color: #666; }
+        .landing .options { display: flex; gap: 20px; }
         .drop-zone {
-            width: 460px; height: 180px;
+            width: 300px; height: 160px;
             border: 2px dashed #333; border-radius: 12px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 10px; cursor: pointer; transition: border-color 0.2s, background 0.2s;
         }
-        .drop-zone:hover, .drop-zone.dragover { border-color: #0f0; background: rgba(0,255,0,0.02); }
-        .drop-zone p { font-size: 12px; color: #555; }
-        .drop-zone .big { font-size: 14px; color: #888; }
+        .drop-zone:hover { border-color: #0f0; background: rgba(0,255,0,0.02); }
+        .drop-zone p { font-size: 12px; color: #555; text-align: center; }
+        .drop-zone .big { font-size: 13px; color: #888; }
 
         /* ── Toast ── */
         .toast {
@@ -196,15 +204,16 @@
 <div class="toolbar" id="toolbar">
     <h1 id="title">Layout Editor</h1>
     <button id="btnLoad">Open Folder</button>
+    <button id="btnLoadPage">Load from Page</button>
     <div class="sep"></div>
-    <button id="btnFitWidth">Fit Width (W)</button>
-    <button id="btnHalf">Half Width (H)</button>
-    <button id="btnThird">Third Width (T)</button>
+    <button id="btnFitWidth">Full (W)</button>
+    <button id="btnHalf">Half (H)</button>
+    <button id="btnThird">Third (T)</button>
     <div class="sep"></div>
-    <button id="btnBringFwd">Forward (])</button>
-    <button id="btnSendBack">Back ([)</button>
+    <button id="btnBringFwd">] Fwd</button>
+    <button id="btnSendBack">[ Back</button>
     <div class="sep"></div>
-    <button id="btnDelete">Delete (Del)</button>
+    <button id="btnDelete">Delete</button>
     <div class="sep"></div>
     <button id="btnExport" class="primary">Export Layout</button>
     <span class="status" id="status"></span>
@@ -217,12 +226,17 @@
 
 <div class="canvas-area" id="canvasArea">
     <div class="landing" id="landing">
-        <h2>Freeform Layout Editor</h2>
-        <div class="drop-zone" id="dropZone">
-            <p class="big">Click to select an image folder</p>
-            <p>Drag, resize, overlap — build your collage</p>
+        <h2>Layout Editor</h2>
+        <div class="options">
+            <div class="drop-zone" id="dropZone">
+                <p class="big">Open Folder</p>
+                <p>Start from scratch with<br>a project's web/ folder</p>
+            </div>
+            <div class="drop-zone" id="loadPageZone">
+                <p class="big">Load from Page</p>
+                <p>Import existing layout<br>from a project page</p>
+            </div>
         </div>
-        <p style="font-size:10px; color:#444;">Pick a project's web/ folder</p>
     </div>
     <div class="canvas" id="canvas" style="display:none;"></div>
 </div>
@@ -248,46 +262,245 @@ const tray = document.getElementById('tray');
 const landing = document.getElementById('landing');
 const ctxMenu = document.getElementById('ctxMenu');
 const CANVAS_W = 1200;
+const SNAP_DIST = 8;
 
-let allImages = []; // {name, url, onCanvas}
-let canvasImages = []; // {id, name, url, x, y, w, h, z, naturalW, naturalH}
+let allImages = [];
+let canvasImages = [];
 let selectedId = null;
 let nextId = 1;
 let nextZ = 1;
+let drag = null;
+let folderHandle = null;
 
-// ── Drag state ──
-let drag = null; // {type: 'move'|'resize', id, startX, startY, origX, origY, origW, origH, handle}
+// ── Snap guides ──
+let guides = [];
 
-// ── Folder Loading ──
+function clearGuides() {
+    guides.forEach(g => g.remove());
+    guides = [];
+}
+
+function showGuide(type, pos) {
+    const g = document.createElement('div');
+    g.className = `snap-guide ${type}`;
+    if (type === 'horizontal') g.style.top = pos + 'px';
+    else g.style.left = pos + 'px';
+    canvasEl.appendChild(g);
+    guides.push(g);
+}
+
+function getSnapTargets(excludeId) {
+    const targets = [];
+    // Canvas edges
+    targets.push({ x: 0 }, { x: CANVAS_W }, { x: CANVAS_W / 2 });
+    // Other images
+    canvasImages.forEach(ci => {
+        if (ci.id === excludeId) return;
+        targets.push({ x: ci.x }, { x: ci.x + ci.w }, { y: ci.y }, { y: ci.y + ci.h });
+    });
+    return targets;
+}
+
+function snapValue(val, targets, prop) {
+    for (const t of targets) {
+        if (t[prop] !== undefined && Math.abs(val - t[prop]) < SNAP_DIST) {
+            return t[prop];
+        }
+    }
+    return val;
+}
+
+// ── Landing ──
 
 document.getElementById('dropZone').addEventListener('click', pickFolder);
 document.getElementById('btnLoad').addEventListener('click', pickFolder);
+document.getElementById('loadPageZone').addEventListener('click', loadFromPage);
+document.getElementById('btnLoadPage').addEventListener('click', loadFromPage);
+
+// ── Folder Loading ──
 
 async function pickFolder() {
     try {
         const dh = await window.showDirectoryPicker();
-        allImages = [];
-        for await (const entry of dh.values()) {
-            if (entry.kind === 'file' && /\.(jpe?g|png|webp|avif)$/i.test(entry.name)) {
-                const file = await entry.getFile();
-                allImages.push({ name: entry.name, url: URL.createObjectURL(file), onCanvas: false });
-            }
-        }
-        allImages.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
-        document.getElementById('title').textContent = `Layout Editor — ${dh.name}`;
-        document.getElementById('sidebarTitle').textContent = `${dh.name} (${allImages.length})`;
-
-        landing.style.display = 'none';
-        canvasEl.style.display = 'block';
-        sidebar.classList.add('active');
-        canvasArea.classList.add('with-sidebar');
-
-        renderTray();
-        updateStatus();
+        folderHandle = dh;
+        await loadFolderImages(dh);
+        showCanvas(dh.name);
     } catch (e) {
         if (e.name !== 'AbortError') console.error(e);
     }
 }
+
+async function loadFolderImages(dh) {
+    allImages = [];
+    for await (const entry of dh.values()) {
+        if (entry.kind === 'file' && /\.(jpe?g|png|webp|avif)$/i.test(entry.name)) {
+            const file = await entry.getFile();
+            allImages.push({ name: entry.name, url: URL.createObjectURL(file), onCanvas: false });
+        }
+    }
+    allImages.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+}
+
+function showCanvas(name) {
+    document.getElementById('title').textContent = `Layout Editor — ${name}`;
+    document.getElementById('sidebarTitle').textContent = `${name} (${allImages.length})`;
+    landing.style.display = 'none';
+    canvasEl.style.display = 'block';
+    sidebar.classList.add('active');
+    canvasArea.classList.add('with-sidebar');
+    renderTray();
+    updateStatus();
+}
+
+// ── Load from existing project page ──
+
+async function loadFromPage() {
+    // Let user pick an HTML file
+    try {
+        const [fileHandle] = await window.showOpenFilePicker({
+            types: [{ description: 'HTML', accept: { 'text/html': ['.html'] } }]
+        });
+        const file = await fileHandle.getFile();
+        const html = await file.text();
+
+        // Parse the HTML to extract gallery images and layout
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const gallery = doc.querySelector('.project-gallery');
+        if (!gallery) {
+            showToast('No .project-gallery found in that file');
+            return;
+        }
+
+        // Find the image folder path from the first img src
+        const firstImg = gallery.querySelector('img');
+        if (!firstImg) {
+            showToast('No images found in gallery');
+            return;
+        }
+        const imgPath = firstImg.getAttribute('src');
+        const folderPath = imgPath.substring(0, imgPath.lastIndexOf('/') + 1);
+
+        // Ask user to select the matching web/ folder
+        showToast(`Select the folder: ${folderPath}`);
+        const dh = await window.showDirectoryPicker();
+        folderHandle = dh;
+        await loadFolderImages(dh);
+
+        // Build a map of filename → blob URL
+        const urlMap = {};
+        allImages.forEach(img => { urlMap[img.name] = img.url; });
+
+        // Extract layout from HTML structure
+        let yPos = 40;
+        const GAP = 20;
+
+        for (const child of gallery.children) {
+            if (child.classList.contains('gallery-quote')) {
+                // Skip quotes, just add vertical space
+                yPos += 100;
+                continue;
+            }
+
+            const imgs = child.querySelectorAll('img');
+            if (imgs.length === 0) continue;
+
+            if (child.classList.contains('gallery-item') && child.classList.contains('full')) {
+                // Full width
+                const filename = child.querySelector('img').getAttribute('src').split('/').pop();
+                if (urlMap[filename]) {
+                    await addToCanvasAt(filename, urlMap[filename], 0, yPos, CANVAS_W);
+                    const ci = canvasImages[canvasImages.length - 1];
+                    yPos += ci.h + GAP;
+                }
+            } else if (child.classList.contains('gallery-overlap')) {
+                const isReverse = child.classList.contains('reverse');
+                const imgEls = child.querySelectorAll('img');
+                const names = [...imgEls].map(i => i.getAttribute('src').split('/').pop());
+                const w = CANVAS_W * 0.55;
+
+                if (names[0] && urlMap[names[0]]) {
+                    const topOffset = isReverse ? 0 : 80;
+                    await addToCanvasAt(names[0], urlMap[names[0]], 0, yPos + topOffset, w);
+                }
+                if (names[1] && urlMap[names[1]]) {
+                    const topOffset = isReverse ? 80 : 0;
+                    await addToCanvasAt(names[1], urlMap[names[1]], CANVAS_W * 0.45, yPos + topOffset, w);
+                }
+                const heights = canvasImages.slice(-2).map(c => c.y + c.h - yPos);
+                yPos += Math.max(...heights) + GAP;
+
+            } else if (child.classList.contains('gallery-trio')) {
+                const imgEls = child.querySelectorAll('img');
+                const names = [...imgEls].map(i => i.getAttribute('src').split('/').pop());
+                const w = (CANVAS_W - 8) / 3;
+                let maxH = 0;
+
+                for (let i = 0; i < names.length; i++) {
+                    if (names[i] && urlMap[names[i]]) {
+                        await addToCanvasAt(names[i], urlMap[names[i]], i * (w + 4), yPos, w);
+                        const ci = canvasImages[canvasImages.length - 1];
+                        maxH = Math.max(maxH, ci.h);
+                    }
+                }
+                yPos += maxH + GAP;
+
+            } else if (child.classList.contains('gallery-pair')) {
+                const imgEls = child.querySelectorAll('img');
+                const names = [...imgEls].map(i => i.getAttribute('src').split('/').pop());
+                const w = (CANVAS_W - 4) / 2;
+                let maxH = 0;
+
+                for (let i = 0; i < names.length; i++) {
+                    if (names[i] && urlMap[names[i]]) {
+                        await addToCanvasAt(names[i], urlMap[names[i]], i * (w + 4), yPos, w);
+                        const ci = canvasImages[canvasImages.length - 1];
+                        maxH = Math.max(maxH, ci.h);
+                    }
+                }
+                yPos += maxH + GAP;
+            }
+        }
+
+        showCanvas(dh.name);
+        growCanvas();
+        showToast(`Loaded ${canvasImages.length} images from page`);
+
+    } catch (e) {
+        if (e.name !== 'AbortError') console.error(e);
+    }
+}
+
+function addToCanvasAt(name, url, x, y, w) {
+    return new Promise(resolve => {
+        // Mark as on canvas
+        const imgEntry = allImages.find(i => i.name === name);
+        if (imgEntry) imgEntry.onCanvas = true;
+
+        const tempImg = new Image();
+        tempImg.onload = () => {
+            const aspect = tempImg.naturalHeight / tempImg.naturalWidth;
+            const h = w * aspect;
+
+            const ci = {
+                id: nextId++,
+                imgIdx: allImages.findIndex(i => i.name === name),
+                name,
+                url,
+                x, y, w, h,
+                z: nextZ++,
+                naturalW: tempImg.naturalWidth,
+                naturalH: tempImg.naturalHeight
+            };
+            canvasImages.push(ci);
+            renderCanvasImage(ci);
+            resolve();
+        };
+        tempImg.src = url;
+    });
+}
+
+// ── Tray ──
 
 function renderTray() {
     tray.innerHTML = '';
@@ -295,17 +508,12 @@ function renderTray() {
         const div = document.createElement('div');
         div.className = 'tray-thumb' + (img.onCanvas ? ' used' : '');
         div.innerHTML = `<img src="${img.url}"><div class="fname">${img.name}</div>`;
-
-        // Double-click to add at next available position
         div.addEventListener('dblclick', () => addToCanvas(i));
-
-        // Drag from tray to canvas
         div.draggable = true;
         div.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('tray-index', i.toString());
             e.dataTransfer.effectAllowed = 'copy';
         });
-
         tray.appendChild(div);
     });
 }
@@ -329,7 +537,6 @@ function addToCanvas(imgIdx, x, y) {
     if (!img) return;
     img.onCanvas = true;
 
-    // Default: third width, maintain aspect
     const w = CANVAS_W / 3;
     const tempImg = new Image();
     tempImg.onload = () => {
@@ -370,7 +577,7 @@ function growCanvas() {
     canvasEl.style.minHeight = maxBottom + 'px';
 }
 
-// ── Render a canvas image ──
+// ── Render canvas image ──
 
 function renderCanvasImage(ci) {
     const existing = document.getElementById(`ci-${ci.id}`);
@@ -394,7 +601,6 @@ function renderCanvasImage(ci) {
         <div class="img-label">${ci.name} — ${Math.round(ci.w)}x${Math.round(ci.h)}</div>
     `;
 
-    // Mouse down on image = start drag
     div.addEventListener('mousedown', (e) => {
         if (e.target.classList.contains('handle')) return;
         e.preventDefault();
@@ -402,7 +608,6 @@ function renderCanvasImage(ci) {
         drag = { type: 'move', id: ci.id, startX: e.clientX, startY: e.clientY, origX: ci.x, origY: ci.y };
     });
 
-    // Mouse down on handle = start resize
     div.querySelectorAll('.handle').forEach(h => {
         h.addEventListener('mousedown', (e) => {
             e.preventDefault();
@@ -412,7 +617,6 @@ function renderCanvasImage(ci) {
         });
     });
 
-    // Right-click context menu
     div.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         selectImage(ci.id);
@@ -420,11 +624,6 @@ function renderCanvasImage(ci) {
     });
 
     canvasEl.appendChild(div);
-}
-
-function rerenderAll() {
-    canvasEl.querySelectorAll('.canvas-img').forEach(el => el.remove());
-    canvasImages.forEach(ci => renderCanvasImage(ci));
 }
 
 // ── Selection ──
@@ -440,7 +639,7 @@ canvasEl.addEventListener('mousedown', (e) => {
     if (e.target === canvasEl) { selectedId = null; selectImage(null); hideCtxMenu(); }
 });
 
-// ── Mouse move / up (drag + resize) ──
+// ── Mouse move/up with snapping ──
 
 document.addEventListener('mousemove', (e) => {
     if (!drag) return;
@@ -450,15 +649,30 @@ document.addEventListener('mousemove', (e) => {
     const dx = e.clientX - drag.startX;
     const dy = e.clientY - drag.startY;
 
+    clearGuides();
+
     if (drag.type === 'move') {
-        ci.x = Math.max(0, drag.origX + dx);
-        ci.y = Math.max(0, drag.origY + dy);
+        let newX = Math.max(0, drag.origX + dx);
+        let newY = Math.max(0, drag.origY + dy);
+
+        // Snap edges
+        const targets = getSnapTargets(ci.id);
+        const snappedLeft = snapValue(newX, targets, 'x');
+        const snappedRight = snapValue(newX + ci.w, targets, 'x');
+        const snappedTop = snapValue(newY, targets, 'y');
+        const snappedBottom = snapValue(newY + ci.h, targets, 'y');
+
+        if (snappedLeft !== newX) { newX = snappedLeft; showGuide('vertical', snappedLeft); }
+        else if (snappedRight !== newX + ci.w) { newX = snappedRight - ci.w; showGuide('vertical', snappedRight); }
+
+        if (snappedTop !== newY) { newY = snappedTop; showGuide('horizontal', snappedTop); }
+        else if (snappedBottom !== newY + ci.h) { newY = snappedBottom - ci.h; showGuide('horizontal', snappedBottom); }
+
+        ci.x = newX;
+        ci.y = newY;
     } else if (drag.type === 'resize') {
         const aspect = ci.naturalH / ci.naturalW;
-        let newW = drag.origW;
-        let newH = drag.origH;
-        let newX = drag.origX;
-        let newY = drag.origY;
+        let newW = drag.origW, newH = drag.origH, newX = drag.origX, newY = drag.origY;
 
         if (drag.handle === 'br') {
             newW = Math.max(80, drag.origW + dx);
@@ -478,6 +692,15 @@ document.addEventListener('mousemove', (e) => {
             newY = drag.origY + (drag.origH - newH);
         }
 
+        // Snap resize edges
+        const targets = getSnapTargets(ci.id);
+        const snappedRight = snapValue(newX + newW, targets, 'x');
+        if (snappedRight !== newX + newW && (drag.handle === 'br' || drag.handle === 'tr')) {
+            newW = snappedRight - newX;
+            newH = newW * aspect;
+            showGuide('vertical', snappedRight);
+        }
+
         ci.w = newW; ci.h = newH; ci.x = newX; ci.y = newY;
     }
 
@@ -493,7 +716,7 @@ document.addEventListener('mousemove', (e) => {
 });
 
 document.addEventListener('mouseup', () => {
-    if (drag) { drag = null; growCanvas(); }
+    if (drag) { drag = null; clearGuides(); growCanvas(); }
 });
 
 // ── Keyboard shortcuts ──
@@ -501,9 +724,7 @@ document.addEventListener('mouseup', () => {
 document.addEventListener('keydown', (e) => {
     const ci = canvasImages.find(c => c.id === selectedId);
 
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (ci) removeFromCanvas(ci.id);
-    }
+    if (e.key === 'Delete' || e.key === 'Backspace') { if (ci) removeFromCanvas(ci.id); }
     if (e.key === 'w' || e.key === 'W') { if (ci) setWidth(ci, CANVAS_W); }
     if (e.key === 'h' || e.key === 'H') { if (ci) setWidth(ci, CANVAS_W / 2); }
     if (e.key === 't' || e.key === 'T') { if (ci) setWidth(ci, CANVAS_W / 3); }
@@ -511,7 +732,6 @@ document.addEventListener('keydown', (e) => {
     if (e.key === '[') { if (ci) sendBack(ci); }
     if (e.key === 'Escape') { selectedId = null; selectImage(null); hideCtxMenu(); }
 
-    // Arrow keys to nudge
     if (ci && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
         e.preventDefault();
         const step = e.shiftKey ? 20 : 5;
@@ -526,30 +746,24 @@ document.addEventListener('keydown', (e) => {
 
 function setWidth(ci, w) {
     const aspect = ci.naturalH / ci.naturalW;
-    ci.w = w;
-    ci.h = w * aspect;
+    ci.w = w; ci.h = w * aspect;
     renderCanvasImage(ci);
     growCanvas();
 }
 
-function bringForward(ci) {
-    ci.z = nextZ++;
-    const el = document.getElementById(`ci-${ci.id}`);
-    if (el) el.style.zIndex = ci.z;
-}
+function bringForward(ci) { ci.z = nextZ++; document.getElementById(`ci-${ci.id}`).style.zIndex = ci.z; }
 
 function sendBack(ci) {
     const minZ = Math.min(...canvasImages.map(c => c.z));
     ci.z = minZ - 1;
-    const el = document.getElementById(`ci-${ci.id}`);
-    if (el) el.style.zIndex = ci.z;
+    document.getElementById(`ci-${ci.id}`).style.zIndex = ci.z;
 }
 
 function removeFromCanvas(id) {
     const idx = canvasImages.findIndex(c => c.id === id);
     if (idx === -1) return;
     const ci = canvasImages[idx];
-    allImages[ci.imgIdx].onCanvas = false;
+    if (ci.imgIdx >= 0) allImages[ci.imgIdx].onCanvas = false;
     canvasImages.splice(idx, 1);
     document.getElementById(`ci-${id}`)?.remove();
     selectedId = null;
@@ -569,12 +783,9 @@ document.getElementById('btnDelete').addEventListener('click', () => { if (selec
 // ── Context menu ──
 
 function showCtxMenu(x, y, id) {
-    ctxMenu.style.left = x + 'px';
-    ctxMenu.style.top = y + 'px';
-    ctxMenu.classList.add('show');
-    ctxMenu.dataset.targetId = id;
+    ctxMenu.style.left = x + 'px'; ctxMenu.style.top = y + 'px';
+    ctxMenu.classList.add('show'); ctxMenu.dataset.targetId = id;
 }
-
 function hideCtxMenu() { ctxMenu.classList.remove('show'); }
 
 document.addEventListener('click', (e) => { if (!ctxMenu.contains(e.target)) hideCtxMenu(); });
@@ -584,7 +795,6 @@ ctxMenu.querySelectorAll('button').forEach(btn => {
         const id = parseInt(ctxMenu.dataset.targetId);
         const ci = canvasImages.find(c => c.id === id);
         if (!ci) { hideCtxMenu(); return; }
-
         switch (btn.dataset.action) {
             case 'fit': setWidth(ci, CANVAS_W); break;
             case 'half': setWidth(ci, CANVAS_W / 2); break;
@@ -600,9 +810,7 @@ ctxMenu.querySelectorAll('button').forEach(btn => {
 // ── Export ──
 
 document.getElementById('btnExport').addEventListener('click', () => {
-    // Sort by Y position (top to bottom), then X (left to right)
     const sorted = [...canvasImages].sort((a, b) => a.y - b.y || a.x - b.x);
-
     const layout = {
         canvasWidth: CANVAS_W,
         images: sorted.map(ci => ({
@@ -616,7 +824,6 @@ document.getElementById('btnExport').addEventListener('click', () => {
     };
 
     const json = JSON.stringify(layout, null, 2);
-
     navigator.clipboard.writeText(json).then(() => {
         showToast('Layout copied — paste it to Claude');
     }).catch(() => {
@@ -632,8 +839,7 @@ document.getElementById('btnExport').addEventListener('click', () => {
 
 function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
