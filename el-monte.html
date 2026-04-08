@@ -62,9 +62,11 @@
             </blockquote>
         </div>
 
-        <!-- Full width -->
-        <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/el-monte/web/DSC04397.jpg" alt="El Monte exterior">
+        <!-- Video: dog2_02 — first half on scroll down, second half on scroll back up -->
+        <figure class="gallery-item full gallery-video">
+            <video muted playsinline preload="auto" class="scroll-split-video">
+                <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1775643620/dog2_nick_02_qkvjiv.mp4" type="video/mp4">
+            </video>
         </figure>
 
         <!-- Overlap: DSC04425 + DSC04435 -->
@@ -280,6 +282,51 @@
                     window.location.href = 'index.html#work';
                 }
             }, 600);
+        });
+    </script>
+
+    <!-- Scroll-triggered split video: first half down, second half up -->
+    <script>
+        document.querySelectorAll('.scroll-split-video').forEach(video => {
+            let midpoint = 0;
+            let phase = 'first'; // 'first' → 'waiting' → 'second' → 'done'
+
+            video.addEventListener('loadedmetadata', () => {
+                midpoint = video.duration / 2;
+            });
+
+            // Pause at midpoint during first half
+            video.addEventListener('timeupdate', () => {
+                if (phase === 'first' && video.currentTime >= midpoint && midpoint > 0) {
+                    video.pause();
+                    phase = 'waiting';
+                }
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (phase === 'first') {
+                            video.currentTime = 0;
+                            video.play();
+                        } else if (phase === 'waiting') {
+                            phase = 'second';
+                            video.play();
+                        }
+                    } else {
+                        // Left viewport
+                        if (phase === 'first') {
+                            video.pause();
+                        } else if (phase === 'second' || phase === 'done') {
+                            // Second half played — reset for next full cycle
+                            phase = 'first';
+                        }
+                        // 'waiting' stays as 'waiting' — midpoint hold persists
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            observer.observe(video);
         });
     </script>
 
