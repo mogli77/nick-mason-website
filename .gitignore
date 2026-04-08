@@ -20,7 +20,14 @@ assets/logo/preview_page*.png
 images/temp/
 
 # Full-res originals and SELECTS (only commit web-optimized versions)
+# Project root-level jpegs are full-res originals — only web/ subfolder is committed
+images/projects/*/*.jpg
+images/projects/*/*.JPG
+images/projects/*/*.jpeg
 images/projects/*/SELECTS/
+images/crew/*.jpg
+images/crew/*.JPG
+images/crew/*.jpeg
 images/crew/SELECTS/
 images/construction/*.jpg
 images/construction/*.JPG

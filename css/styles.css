@@ -511,8 +511,8 @@ footer {
 /* Project Gallery - Walker Warner inspired */
 .project-gallery {
     background: var(--color-bg);
-    padding: var(--space-xl) var(--space-lg);
-    max-width: 1400px;
+    padding: var(--space-xl) 0;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -584,6 +584,14 @@ footer {
 .gallery-item.full {
     width: 100%;
     margin: 5rem 0;
+    padding: 0;
+}
+
+/* Narrower full-width for breathing room */
+.gallery-item.full.inset {
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .gallery-video video {
@@ -597,6 +605,7 @@ footer {
     display: flex;
     align-items: flex-start;
     margin: 5rem 0;
+    padding: 0 6%;
 }
 
 .gallery-overlap .overlap-left {
@@ -630,6 +639,7 @@ footer {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 4px;
     margin: 5rem 0;
+    padding: 0 10%;
 }
 
 .gallery-trio .gallery-item {
@@ -648,6 +658,17 @@ footer {
     grid-template-columns: 1fr 1fr;
     gap: 4px;
     margin: 5rem 0;
+    padding: 0 3%;
+}
+
+/* Asymmetric pair — wide left, narrow right */
+.gallery-pair.wide-left {
+    grid-template-columns: 1.8fr 1fr;
+}
+
+/* Asymmetric pair — narrow left, wide right */
+.gallery-pair.wide-right {
+    grid-template-columns: 1fr 1.8fr;
 }
 
 .gallery-pair .gallery-item {
@@ -770,7 +791,18 @@ footer {
     }
 
     .project-gallery {
-        padding: var(--space-lg) var(--space-md);
+        padding: var(--space-lg) 0;
+    }
+
+    .gallery-overlap,
+    .gallery-trio,
+    .gallery-pair {
+        padding: 0 var(--space-md) !important;
+    }
+
+    .gallery-quote {
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
     }
 
     .gallery-text {
