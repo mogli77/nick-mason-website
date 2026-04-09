@@ -53,6 +53,12 @@ ALWAYS:
 - **Code integrity**: When making changes, verify existing functionality (especially nav scripts) still works. Past issues have occurred when updates broke the navigation system.
 - **Page transition events**: Use `pageshow` event instead of `DOMContentLoaded` for fade-in transitions to ensure animations fire when using browser back/forward buttons (bfcache compatibility).
 
+### Visual Verification Tool
+- **playwright-cli** (`@playwright/cli`) is the preferred tool for visual verification — more token-efficient than Playwright MCP, supports command chaining, and includes video recording
+- Installed globally via npm. Output directories (`.playwright-cli/`, `.playwright-mcp/`) are gitignored
+- Playwright MCP is still available as fallback but playwright-cli is preferred
+- Decision: Impeccable (AI design guidance) and awesome-design-md (brand design files) were evaluated and NOT adopted — CLAUDE.md already provides tailored guardrails for this project
+
 ### Image Pipeline
 - **NEVER re-process images with ImageMagick** — this caused quality degradation (darker, worse colors) in early iterations
 - User exports from Lightroom: JPEG, sRGB, quality 85-90, long edge 2400px, screen sharpening

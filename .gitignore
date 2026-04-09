@@ -36,3 +36,7 @@ images/construction/*.ARW
 
 # Local Netlify folder
 .netlify
+
+# Playwright CLI output
+.playwright-cli/
+.playwright-mcp/
