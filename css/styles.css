@@ -672,8 +672,8 @@ footer {
 }
 
 .gallery-overlap.feature-wide .feature-small {
-    width: 35%;
-    margin-right: -10%;
+    width: 25%;
+    margin-right: -5%;
     margin-top: 0;
     position: relative;
     z-index: 2;
@@ -681,7 +681,7 @@ footer {
 
 .gallery-overlap.feature-wide .feature-large {
     width: 75%;
-    margin-top: 110px;
+    margin-top: 90px;
     position: relative;
     z-index: 1;
 }
