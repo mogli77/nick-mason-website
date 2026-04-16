@@ -666,6 +666,25 @@ footer {
     box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
 }
 
+/* Inverted live-inset: video as base, still photo as inset overlay */
+.live-inset > .live-inset-base {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.live-inset > .live-inset-photo {
+    position: absolute;
+    bottom: 8%;
+    right: 6%;
+    width: 35%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    pointer-events: none;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+}
+
 /* Feature-wide overlap: small top-left image + larger lower-right video */
 .gallery-overlap.feature-wide {
     align-items: flex-start;
@@ -686,10 +705,40 @@ footer {
     z-index: 1;
 }
 
-.gallery-overlap.feature-wide .feature-large video {
+.gallery-overlap.feature-wide .feature-large video,
+.gallery-overlap.feature-wide .feature-large img {
     display: block;
     width: 100%;
     height: auto;
+}
+
+/* Feature-wide variant: large on left, small on right offset down-and-out */
+.gallery-overlap.feature-wide.large-left {
+    align-items: flex-end;
+}
+
+.gallery-overlap.feature-wide.large-left .feature-large {
+    width: 70%;
+    margin-top: 0;
+    margin-bottom: 80px;
+}
+
+.gallery-overlap.feature-wide.large-left .feature-small {
+    width: 38%;
+    margin-right: 0;
+    margin-left: -12%;
+    margin-top: 0;
+}
+
+/* Feature-wide variant: two portrait images — smaller proportions to keep section height sane */
+.gallery-overlap.feature-wide.tall-pair .feature-small {
+    width: 22%;
+    margin-top: 40px;
+}
+
+.gallery-overlap.feature-wide.tall-pair .feature-large {
+    width: 55%;
+    margin-top: 130px;
 }
 
 /* Reversed overlap - right image lower */
@@ -720,6 +769,19 @@ footer {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Center-wide trio: middle column is 1.5x the flanking columns,
+   with real gaps and natural aspect ratios (no cover-crop) */
+.gallery-trio.center-wide {
+    grid-template-columns: 2fr 3fr 2fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.gallery-trio.center-wide .gallery-item img {
+    height: auto;
+    object-fit: contain;
 }
 
 /* Two-image side by side (no overlap) */

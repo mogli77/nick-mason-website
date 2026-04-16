@@ -46,3 +46,6 @@ images/construction/*.ARW
 
 # Local backup files
 *.bak
+
+# Reference materials (design PDFs, etc.)
+REFERENCES/
