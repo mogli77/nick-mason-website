@@ -622,6 +622,76 @@ footer {
     z-index: 2;
 }
 
+/* Live-media: video layered full-cover over a still image (Walker Warner "live photo" effect) */
+.live-media {
+    position: relative;
+    overflow: hidden;
+}
+
+.live-media > img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.live-media > .live-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+/* Live-inset: small video positioned as inset overlay on a still image */
+.live-inset {
+    position: relative;
+}
+
+.live-inset > img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.live-inset > .live-inset-video {
+    position: absolute;
+    bottom: 6%;
+    right: 5%;
+    width: 55%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    pointer-events: none;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+}
+
+/* Feature-wide overlap: small top-left image + larger lower-right video */
+.gallery-overlap.feature-wide {
+    align-items: flex-start;
+}
+
+.gallery-overlap.feature-wide .feature-small {
+    width: 35%;
+    margin-right: -10%;
+    margin-top: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.gallery-overlap.feature-wide .feature-large {
+    width: 75%;
+    margin-top: 110px;
+    position: relative;
+    z-index: 1;
+}
+
+.gallery-overlap.feature-wide .feature-large video {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
 /* Reversed overlap - right image lower */
 .gallery-overlap.reverse .overlap-left {
     margin-top: 0;
@@ -825,7 +895,9 @@ footer {
     }
 
     .gallery-overlap .overlap-left,
-    .gallery-overlap .overlap-right {
+    .gallery-overlap .overlap-right,
+    .gallery-overlap.feature-wide .feature-small,
+    .gallery-overlap.feature-wide .feature-large {
         width: 100%;
         margin: 0;
     }

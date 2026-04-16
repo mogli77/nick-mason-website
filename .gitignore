@@ -40,3 +40,9 @@ images/construction/*.ARW
 # Playwright CLI output
 .playwright-cli/
 .playwright-mcp/
+
+# Claude Code local config (dev preview server config, etc.)
+.claude/
+
+# Local backup files
+*.bak
