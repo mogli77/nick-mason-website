@@ -643,6 +643,54 @@ footer {
     pointer-events: none;
 }
 
+/* Layered backdrop: full-width background image with two smaller "card" images overlaid */
+.layered-backdrop {
+    position: relative;
+    overflow: hidden;
+}
+
+.layered-backdrop > img:first-child {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.layered-backdrop .layered-card {
+    position: absolute;
+    pointer-events: none;
+}
+
+.layered-backdrop .card-left {
+    top: 25%;
+    left: 6%;
+    width: 42%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+}
+
+.layered-backdrop .card-right {
+    top: 10%;
+    right: 6%;
+    width: 28%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+}
+
+@media (max-width: 767px) {
+    .layered-backdrop .card-left {
+        width: 55%;
+        top: 35%;
+        left: 4%;
+    }
+    .layered-backdrop .card-right {
+        width: 38%;
+        top: 6%;
+        right: 4%;
+    }
+}
+
 /* Live-inset: small video positioned as inset overlay on a still image */
 .live-inset {
     position: relative;
