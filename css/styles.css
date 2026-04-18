@@ -1066,3 +1066,84 @@ footer {
         padding: var(--space-lg) var(--space-md);
     }
 }
+
+/* ============================================
+   CREW MARQUEE STRIP (landing page)
+   JS-driven auto-scroll with native overflow-x
+   and arrow-button manual advance.
+   ============================================ */
+
+.crew-strip {
+    padding: var(--space-lg) 0 var(--space-xl);
+    overflow: hidden;
+}
+
+/* Variant: sits directly under the About section, tighter top spacing */
+.crew-strip.crew-strip-about {
+    padding-top: 0;
+    margin-top: calc(var(--space-lg) * -1);
+}
+
+/* Stage wraps viewport + arrow buttons */
+.crew-strip-stage {
+    position: relative;
+}
+
+.crew-strip-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+
+.crew-strip-viewport::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.crew-strip-track {
+    display: flex;
+    gap: 1rem;
+    width: max-content;
+}
+
+.crew-strip-track img {
+    height: 340px;
+    width: auto;
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Arrow navigation buttons — minimal, match project-page back-arrow */
+.crew-strip-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    padding: var(--space-sm);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text);
+    opacity: 0.5;
+    transition: opacity var(--transition-fast);
+}
+
+.crew-strip-nav:hover {
+    opacity: 1;
+}
+
+.crew-strip-nav svg {
+    display: block;
+}
+
+.crew-strip-prev { left: var(--space-md); }
+.crew-strip-next { right: var(--space-md); }
+
+@media (max-width: 767px) {
+    .crew-strip-track img { height: 220px; }
+    .crew-strip-prev { left: 4px; }
+    .crew-strip-next { right: 4px; }
+}

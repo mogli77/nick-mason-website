@@ -125,6 +125,40 @@
         </div>
     </section>
 
+    <!-- Crew marquee strip (extension of About section) -->
+    <section class="crew-strip crew-strip-about" aria-label="Crew and construction photos">
+        <div class="crew-strip-stage">
+            <button type="button" class="crew-strip-nav crew-strip-prev" aria-label="Scroll left">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+            <div class="crew-strip-viewport">
+                <div class="crew-strip-track">
+                    <!-- Set 1 -->
+                    <img src="images/crew/web/R0009759.jpg" alt="">
+                    <img src="images/construction/web/R0009711.jpg" alt="">
+                    <img src="images/crew/web/DSC04811.jpg" alt="">
+                    <img src="images/construction/web/DSC04857.jpg" alt="">
+                    <img src="images/crew/web/DSC04620.jpg" alt="">
+                    <img src="images/construction/web/R0009860.jpg" alt="">
+                    <!-- Set 2 (duplicate for seamless loop) -->
+                    <img src="images/crew/web/R0009759.jpg" alt="" aria-hidden="true">
+                    <img src="images/construction/web/R0009711.jpg" alt="" aria-hidden="true">
+                    <img src="images/crew/web/DSC04811.jpg" alt="" aria-hidden="true">
+                    <img src="images/construction/web/DSC04857.jpg" alt="" aria-hidden="true">
+                    <img src="images/crew/web/DSC04620.jpg" alt="" aria-hidden="true">
+                    <img src="images/construction/web/R0009860.jpg" alt="" aria-hidden="true">
+                </div>
+            </div>
+            <button type="button" class="crew-strip-nav crew-strip-next" aria-label="Scroll right">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M9 6l6 6-6 6"/>
+                </svg>
+            </button>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
         <p class="footer-copyright">&copy; Nick Mason Construction Co.</p>
@@ -191,6 +225,92 @@
                 }, 600);
             });
         });
+    </script>
+
+    <!-- Crew Strip: auto-scroll + arrows, pauses only while hovered/touched -->
+    <script>
+        (() => {
+            const stage = document.querySelector('.crew-strip-stage');
+            if (!stage) return;
+            const viewport = stage.querySelector('.crew-strip-viewport');
+            const track = stage.querySelector('.crew-strip-track');
+            const prevBtn = stage.querySelector('.crew-strip-prev');
+            const nextBtn = stage.querySelector('.crew-strip-next');
+
+            const AUTO_PX_PER_TICK = 0.6; // ~36px/sec at 60fps
+            const INTERACTION_COOLDOWN_MS = 800; // brief pause after wheel/click
+            const ARROW_SCROLL_PX = 400;
+
+            let halfWidth = 0;
+            let isHovering = false;
+            let isTouching = false;
+            let interactionUntil = 0;
+            let rafId = null;
+
+            const recalc = () => {
+                // Track holds 2× the image set; half = one set's width
+                halfWidth = track.scrollWidth / 2;
+            };
+
+            const shouldPause = () =>
+                isHovering || isTouching || Date.now() < interactionUntil;
+
+            const tick = () => {
+                if (!shouldPause() && halfWidth > 0) {
+                    let next = viewport.scrollLeft + AUTO_PX_PER_TICK;
+                    if (next >= halfWidth) next -= halfWidth; // seamless wrap
+                    viewport.scrollLeft = next;
+                }
+                rafId = requestAnimationFrame(tick);
+            };
+
+            const bumpCooldown = () => {
+                interactionUntil = Date.now() + INTERACTION_COOLDOWN_MS;
+            };
+
+            // Hover = immediate pause; leaving = immediate resume
+            stage.addEventListener('mouseenter', () => { isHovering = true; });
+            stage.addEventListener('mouseleave', () => { isHovering = false; });
+
+            // Touch = pause while finger is down
+            stage.addEventListener('touchstart', () => { isTouching = true; }, { passive: true });
+            stage.addEventListener('touchend', () => { isTouching = false; bumpCooldown(); }, { passive: true });
+            stage.addEventListener('touchcancel', () => { isTouching = false; }, { passive: true });
+
+            // Wheel/arrow clicks: brief cooldown so auto doesn't fight user momentum
+            viewport.addEventListener('wheel', bumpCooldown, { passive: true });
+
+            viewport.addEventListener('scroll', () => {
+                // Seamless wrap: if user scrolls past the halfway mark, rewind
+                if (halfWidth > 0 && viewport.scrollLeft >= halfWidth) {
+                    viewport.scrollLeft -= halfWidth;
+                }
+            }, { passive: true });
+
+            prevBtn.addEventListener('click', () => {
+                bumpCooldown();
+                viewport.scrollBy({ left: -ARROW_SCROLL_PX, behavior: 'smooth' });
+            });
+            nextBtn.addEventListener('click', () => {
+                bumpCooldown();
+                viewport.scrollBy({ left: ARROW_SCROLL_PX, behavior: 'smooth' });
+            });
+
+            // Kick off after images decode so halfWidth is accurate
+            const images = track.querySelectorAll('img');
+            let loaded = 0;
+            const boot = () => {
+                recalc();
+                if (!rafId) rafId = requestAnimationFrame(tick);
+            };
+            if (images.length === 0) boot();
+            else images.forEach(img => {
+                if (img.complete) { if (++loaded === images.length) boot(); }
+                else img.addEventListener('load', () => { if (++loaded === images.length) boot(); }, { once: true });
+                img.addEventListener('error', () => { if (++loaded === images.length) boot(); }, { once: true });
+            });
+            window.addEventListener('resize', recalc);
+        })();
     </script>
 
 </body>

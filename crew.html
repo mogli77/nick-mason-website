@@ -12,41 +12,6 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css">
-    <style>
-        /* Freeform collage layout */
-        .collage {
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--space-lg);
-        }
-
-        .collage-group {
-            position: relative;
-            width: 100%;
-        }
-
-        .collage-group img {
-            position: absolute;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Mobile: stack vertically */
-        @media (max-width: 767px) {
-            .collage-group {
-                padding-bottom: 0 !important;
-            }
-            .collage-group img {
-                position: relative !important;
-                left: 0 !important;
-                top: auto !important;
-                width: 100% !important;
-                height: auto !important;
-                margin-bottom: 4px;
-            }
-        }
-    </style>
 </head>
 <body class="project-page fade-out">
     <!-- Navigation -->
@@ -61,41 +26,122 @@
         </ul>
     </nav>
 
-    <!-- Crew Header -->
-    <section style="padding: calc(var(--space-xl) + 60px) var(--space-lg) var(--space-lg);">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;">The Crew</h1>
-        </div>
-    </section>
+    <!-- Project Gallery -->
+    <section class="project-gallery">
 
-    <!-- Collage Layout -->
-    <section class="collage">
-        <!-- Group 1: Two overlapping landscape shots at top -->
-        <!-- Total height: max(114+304, 171+298) = max(418, 469) = 469 -->
-        <!-- As % of 1200: padding-bottom = 469/1200 * 100 = 39.08% -->
-        <div class="collage-group" style="padding-bottom: 39.1%;">
-            <img src="images/crew/web/DSC04620.jpg" alt="Crew at work"
-                 style="left: 10%; top: 24.3%; width: 37.9%; height: 64.8%;">
-            <img src="images/crew/web/DSC04674.jpg" alt="Crew members"
-                 style="left: 44.6%; top: 36.5%; width: 37.2%; height: 63.5%; z-index: 2;">
+        <!-- Title + opening quote (in place of hero) -->
+        <div class="gallery-quote">
+            <h1 style="font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; margin-bottom: var(--space-md); text-align: center;">The Crew</h1>
+            <blockquote>
+                A house is built by hands. The ones we trust with ours show up early,
+                stay late, and care about the cut no one will ever see.
+            </blockquote>
         </div>
 
-        <!-- Group 2: Portrait left + landscape right, overlapping -->
-        <!-- y range: 480 to max(480+598, 558+410) = max(1078, 968) = 1078 -->
-        <!-- height of group: 1078-480 = 598, gap from previous: 480-469 = 11px ≈ small margin -->
-        <!-- As % of 1200: padding-bottom = 598/1200 * 100 = 49.8% -->
-        <div class="collage-group" style="padding-bottom: 49.8%; margin-top: 1%;">
-            <img src="images/crew/web/DSC04811.jpg" alt="Crew member portrait"
-                 style="left: 7.6%; top: 0%; width: 33.3%; height: 100%;">
-            <img src="images/crew/web/DSC04824.jpg" alt="Crew on site"
-                 style="left: 43.1%; top: 13%; width: 51.1%; height: 68.6%; z-index: 2;">
+        <!-- Full-width: hand on framing — craft tone-setter -->
+        <figure class="gallery-item full">
+            <img class="parallax-img" src="images/crew/web/DSC04620.jpg" alt="Crew at work">
+        </figure>
+
+        <!-- Wide-left pair: environmental portraits -->
+        <div class="gallery-pair wide-left">
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/crew/web/DSC04811.jpg" alt="Crew portrait">
+            </figure>
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/crew/web/DSC04674.jpg" alt="Crew members">
+            </figure>
         </div>
 
-        <!-- Group 3: Full width shot -->
-        <div style="margin-top: 3%; padding: 0;">
-            <img src="images/crew/web/R0009759.jpg" alt="The full crew"
-                 style="width: 100%; height: auto; display: block;">
+        <!-- Overlap: construction + crew -->
+        <div class="gallery-overlap">
+            <figure class="gallery-item overlap-left">
+                <img class="parallax-img" src="images/construction/web/DSC04724.jpg" alt="Construction in progress">
+            </figure>
+            <figure class="gallery-item overlap-right">
+                <img class="parallax-img" src="images/crew/web/DSC04824.jpg" alt="Crew on site">
+            </figure>
         </div>
+
+        <!-- Center-wide trio: construction details -->
+        <div class="gallery-trio center-wide">
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/construction/web/R0009830.jpg" alt="Construction detail">
+            </figure>
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/construction/web/DSC04857.jpg" alt="Construction detail">
+            </figure>
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/construction/web/R0009849.jpg" alt="Construction detail">
+            </figure>
+        </div>
+
+        <!-- Mid quote -->
+        <div class="gallery-quote">
+            <blockquote>
+                Craft is a habit. It's what you do when nobody's watching —
+                and it's what the wood remembers.
+            </blockquote>
+        </div>
+
+        <!-- Feature-wide large-left: construction scene with crew face inset -->
+        <div class="gallery-overlap feature-wide large-left">
+            <figure class="gallery-item feature-large">
+                <img class="parallax-img" src="images/construction/web/R0009711.jpg" alt="Construction in progress">
+            </figure>
+            <figure class="gallery-item feature-small">
+                <img class="parallax-img" src="images/crew/web/DSC04670.jpg" alt="Crew portrait">
+            </figure>
+        </div>
+
+        <!-- Wide-right pair: person + process -->
+        <div class="gallery-pair wide-right">
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/crew/web/R0009744.jpg" alt="Crew portrait">
+            </figure>
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/construction/web/DSC04776.jpg" alt="Construction detail">
+            </figure>
+        </div>
+
+        <!-- Full-width: architectural detail -->
+        <figure class="gallery-item full">
+            <img class="parallax-img" src="images/construction/web/R0009860.jpg" alt="Architectural detail">
+        </figure>
+
+        <!-- Trio portraits -->
+        <div class="gallery-trio">
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/crew/web/R0009819.jpg" alt="Crew portrait">
+            </figure>
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/crew/web/R0009900.jpg" alt="Crew portrait">
+            </figure>
+            <figure class="gallery-item">
+                <img class="parallax-img" src="images/crew/web/R0009915.jpg" alt="Crew portrait">
+            </figure>
+        </div>
+
+        <!-- Overlap: crew + craft once more -->
+        <div class="gallery-overlap">
+            <figure class="gallery-item overlap-left">
+                <img class="parallax-img" src="images/crew/web/DSC04557.jpg" alt="Crew at work">
+            </figure>
+            <figure class="gallery-item overlap-right">
+                <img class="parallax-img" src="images/construction/web/DSC04861.jpg" alt="Construction detail">
+            </figure>
+        </div>
+
+        <!-- Full-width: quiet solo closer -->
+        <figure class="gallery-item full">
+            <img class="parallax-img" src="images/crew/web/R0009933.jpg" alt="Crew portrait">
+        </figure>
+
+        <!-- Full-width: group shot, final statement -->
+        <figure class="gallery-item full">
+            <img class="parallax-img" src="images/crew/web/R0009759.jpg" alt="The full crew">
+        </figure>
+
     </section>
 
     <!-- Footer -->
@@ -129,6 +175,27 @@
                 }, 600);
             });
         });
+    </script>
+
+    <!-- Parallax Script -->
+    <script>
+        const parallaxImages = document.querySelectorAll('.parallax-img');
+
+        function updateParallax() {
+            parallaxImages.forEach(img => {
+                const rect = img.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+
+                if (rect.top < windowHeight && rect.bottom > 0) {
+                    const scrollPercent = (windowHeight - rect.top) / (windowHeight + rect.height);
+                    const translateY = (scrollPercent - 0.5) * 60;
+                    img.style.transform = `translateY(${translateY}px)`;
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateParallax, { passive: true });
+        updateParallax();
     </script>
 </body>
 </html>
