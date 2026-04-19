@@ -133,21 +133,62 @@
                 </svg>
             </button>
             <div class="crew-strip-viewport">
-                <div class="crew-strip-track">
-                    <!-- Set 1 -->
+                <div class="crew-strip-track" data-crew-set>
+                    <!-- Set 1: crew + construction, interleaved at the top, construction tail -->
                     <img src="images/crew/web/R0009759.jpg" alt="">
                     <img src="images/construction/web/R0009711.jpg" alt="">
-                    <img src="images/crew/web/DSC04811.jpg" alt="">
+                    <img src="images/crew/web/DSC04811-2.jpg" alt="">
                     <img src="images/construction/web/DSC04857.jpg" alt="">
                     <img src="images/crew/web/DSC04620.jpg" alt="">
                     <img src="images/construction/web/R0009860.jpg" alt="">
-                    <!-- Set 2 (duplicate for seamless loop) -->
-                    <img src="images/crew/web/R0009759.jpg" alt="" aria-hidden="true">
-                    <img src="images/construction/web/R0009711.jpg" alt="" aria-hidden="true">
-                    <img src="images/crew/web/DSC04811.jpg" alt="" aria-hidden="true">
-                    <img src="images/construction/web/DSC04857.jpg" alt="" aria-hidden="true">
-                    <img src="images/crew/web/DSC04620.jpg" alt="" aria-hidden="true">
-                    <img src="images/construction/web/R0009860.jpg" alt="" aria-hidden="true">
+                    <img src="images/crew/web/R0009744.jpg" alt="">
+                    <img src="images/construction/web/DSC04724.jpg" alt="">
+                    <img src="images/crew/web/DSC04824.jpg" alt="">
+                    <img src="images/construction/web/R0009830.jpg" alt="">
+                    <img src="images/crew/web/R0009915.jpg" alt="">
+                    <img src="images/construction/web/DSC04876.jpg" alt="">
+                    <img src="images/crew/web/R0009900.jpg" alt="">
+                    <img src="images/construction/web/DSC04877.jpg" alt="">
+                    <img src="images/crew/web/DSC04557.jpg" alt="">
+                    <img src="images/construction/web/DSC04584.jpg" alt="">
+                    <img src="images/crew/web/DSC04670.jpg" alt="">
+                    <img src="images/construction/web/DSC04613.jpg" alt="">
+                    <img src="images/crew/web/DSC04674.jpg" alt="">
+                    <img src="images/construction/web/DSC04615.jpg" alt="">
+                    <img src="images/crew/web/R0009819.jpg" alt="">
+                    <img src="images/construction/web/DSC04616.jpg" alt="">
+                    <img src="images/crew/web/R0009933.jpg" alt="">
+                    <img src="images/construction/web/DSC04626.jpg" alt="">
+                    <img src="images/construction/web/DSC04607.jpg" alt="">
+                    <img src="images/construction/web/DSC04657.jpg" alt="">
+                    <img src="images/construction/web/DSC04662.jpg" alt="">
+                    <img src="images/construction/web/DSC04729.jpg" alt="">
+                    <img src="images/construction/web/DSC04743.jpg" alt="">
+                    <img src="images/construction/web/DSC04758.jpg" alt="">
+                    <img src="images/construction/web/DSC04776.jpg" alt="">
+                    <img src="images/construction/web/DSC04856.jpg" alt="">
+                    <img src="images/construction/web/DSC04861.jpg" alt="">
+                    <img src="images/construction/web/IMG_5177.jpg" alt="">
+                    <img src="images/construction/web/IMG_6157.jpg" alt="">
+                    <img src="images/construction/web/R0009690.jpg" alt="">
+                    <img src="images/construction/web/R0009700.jpg" alt="">
+                    <img src="images/construction/web/R0009716.jpg" alt="">
+                    <img src="images/construction/web/R0009793.jpg" alt="">
+                    <img src="images/construction/web/R0009796.jpg" alt="">
+                    <img src="images/construction/web/R0009822.jpg" alt="">
+                    <img src="images/construction/web/R0009828.jpg" alt="">
+                    <img src="images/construction/web/R0009831.jpg" alt="">
+                    <img src="images/construction/web/R0009835.jpg" alt="">
+                    <img src="images/construction/web/R0009839.jpg" alt="">
+                    <img src="images/construction/web/R0009845.jpg" alt="">
+                    <img src="images/construction/web/R0009846.jpg" alt="">
+                    <img src="images/construction/web/R0009849.jpg" alt="">
+                    <img src="images/construction/web/R0009854.jpg" alt="">
+                    <img src="images/construction/web/R0009861.jpg" alt="">
+                    <img src="images/construction/web/R0009867.jpg" alt="">
+                    <img src="images/construction/web/R0009884.jpg" alt="">
+                    <img src="images/construction/web/R0009952.jpg" alt="">
+                    <!-- Set 2 (appended by JS at runtime for seamless loop) -->
                 </div>
             </div>
             <button type="button" class="crew-strip-nav crew-strip-next" aria-label="Scroll right">
@@ -237,8 +278,16 @@
             const nextBtn = stage.querySelector('.crew-strip-next');
 
             const AUTO_PX_PER_TICK = 0.6; // ~36px/sec at 60fps
-            const INTERACTION_COOLDOWN_MS = 800; // brief pause after wheel/click
+            const INTERACTION_COOLDOWN_MS = 800;
             const ARROW_SCROLL_PX = 400;
+
+            // Duplicate the authored images so the track holds 2× set for seamless wrap
+            const originals = Array.from(track.children);
+            originals.forEach(node => {
+                const clone = node.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                track.appendChild(clone);
+            });
 
             let halfWidth = 0;
             let isHovering = false;
@@ -247,7 +296,6 @@
             let rafId = null;
 
             const recalc = () => {
-                // Track holds 2× the image set; half = one set's width
                 halfWidth = track.scrollWidth / 2;
             };
 
@@ -267,20 +315,16 @@
                 interactionUntil = Date.now() + INTERACTION_COOLDOWN_MS;
             };
 
-            // Hover = immediate pause; leaving = immediate resume
             stage.addEventListener('mouseenter', () => { isHovering = true; });
             stage.addEventListener('mouseleave', () => { isHovering = false; });
 
-            // Touch = pause while finger is down
             stage.addEventListener('touchstart', () => { isTouching = true; }, { passive: true });
             stage.addEventListener('touchend', () => { isTouching = false; bumpCooldown(); }, { passive: true });
             stage.addEventListener('touchcancel', () => { isTouching = false; }, { passive: true });
 
-            // Wheel/arrow clicks: brief cooldown so auto doesn't fight user momentum
             viewport.addEventListener('wheel', bumpCooldown, { passive: true });
 
             viewport.addEventListener('scroll', () => {
-                // Seamless wrap: if user scrolls past the halfway mark, rewind
                 if (halfWidth > 0 && viewport.scrollLeft >= halfWidth) {
                     viewport.scrollLeft -= halfWidth;
                 }
@@ -295,18 +339,29 @@
                 viewport.scrollBy({ left: ARROW_SCROLL_PX, behavior: 'smooth' });
             });
 
-            // Kick off after images decode so halfWidth is accurate
-            const images = track.querySelectorAll('img');
-            let loaded = 0;
+            // Start auto-scroll as soon as the first image has dimensions, then
+            // keep halfWidth in sync as remaining images trickle in.
+            const images = Array.from(track.querySelectorAll('img'));
             const boot = () => {
                 recalc();
                 if (!rafId) rafId = requestAnimationFrame(tick);
             };
-            if (images.length === 0) boot();
-            else images.forEach(img => {
-                if (img.complete) { if (++loaded === images.length) boot(); }
-                else img.addEventListener('load', () => { if (++loaded === images.length) boot(); }, { once: true });
-                img.addEventListener('error', () => { if (++loaded === images.length) boot(); }, { once: true });
+            const onImgSettled = () => recalc();
+
+            // Kick off immediately; recalc whenever any image finishes loading.
+            if (images.some(img => img.complete && img.naturalWidth > 0)) {
+                boot();
+            } else if (images.length) {
+                images[0].addEventListener('load', boot, { once: true });
+                images[0].addEventListener('error', boot, { once: true });
+            } else {
+                boot();
+            }
+            images.forEach(img => {
+                if (!img.complete) {
+                    img.addEventListener('load', onImgSettled, { once: true });
+                    img.addEventListener('error', onImgSettled, { once: true });
+                }
             });
             window.addEventListener('resize', recalc);
         })();
