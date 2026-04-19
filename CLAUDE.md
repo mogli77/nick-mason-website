@@ -52,6 +52,10 @@ ALWAYS:
 - **Nav scroll behavior**: On project pages (`.project-page`), nav slides up on scroll-down and reappears on scroll-up (0.8s transition). On index.html, nav stays fixed.
 - **Code integrity**: When making changes, verify existing functionality (especially nav scripts) still works. Past issues have occurred when updates broke the navigation system.
 - **Page transition events**: Use `pageshow` event instead of `DOMContentLoaded` for fade-in transitions to ensure animations fire when using browser back/forward buttons (bfcache compatibility).
+- **Crew strip / grey band**: `.crew-strip-about` is a Walker-Warner-style section-break band with background `#ebeae5`, padding `var(--space-lg)` top/bottom, and a centered "Behind the Build" title (`.crew-strip-title`) in Barlow Condensed 500, 0.25em letter-spacing, uppercase, muted color. Future band sections should reuse this visual pattern.
+- **Auto-scroll marquee — eased velocity model**: The crew strip uses a continuous eased-velocity approach (`VELOCITY_EASING = 0.04`, baseline `0.35 px/tick`). Wheel/trackpad input blends with the baseline; there is no hard pause on hover. Touch still pauses; arrow-click cooldown is 600ms. If adding more scrolling strip components, match this pattern rather than using hard on/off state.
+- **Lazy-loading in high-image-count strips**: Authored `<img>` tags in marquees or long galleries must carry `loading="lazy" decoding="async"`. `cloneNode(true)` propagates these attributes to duplicates automatically. The auto-scroll recalc already listens for `load` events so `halfWidth` updates as images stream in.
+- **Copy voice for project pages**: Grounded and concrete, no em dashes in body copy, no attribution. Let images inspire. Reflect Nick's hands-on approach, materials sourcing, and repurposing habit. Opening quotes set scene and mood; mid-gallery quotes zoom into a single material detail or decision. No sentimentality.
 
 ### Visual Verification Tool
 - **playwright-cli** (`@playwright/cli`) is the preferred tool for visual verification — more token-efficient than Playwright MCP, supports command chaining, and includes video recording
