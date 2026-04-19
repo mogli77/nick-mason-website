@@ -1078,10 +1078,31 @@ footer {
     overflow: hidden;
 }
 
-/* Variant: sits directly under the About section, tighter top spacing */
+/* Variant: sits directly under the About section as its own band,
+   subtly darker warm grey to create separation (Walker Warner-inspired) */
 .crew-strip.crew-strip-about {
-    padding-top: 0;
-    margin-top: calc(var(--space-lg) * -1);
+    background-color: #ebeae5;
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-lg);
+}
+
+.crew-strip-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-lg);
+}
+
+@media (max-width: 767px) {
+    .crew-strip-title {
+        font-size: 0.9rem;
+        letter-spacing: 0.2em;
+        margin-bottom: var(--space-md);
+    }
 }
 
 /* Stage wraps viewport + arrow buttons */

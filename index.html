@@ -75,8 +75,7 @@
     <!-- Quote -->
     <section class="quote-section">
         <blockquote class="quote-text">
-            Quote from Nick goes here—something about his philosophy,
-            craftsmanship, or approach to building.
+            The best part of the work is the part no one sees.
         </blockquote>
     </section>
 
@@ -87,14 +86,19 @@
         </div>
         <div class="about-content">
             <span class="section-label">About</span>
-            <h2 class="about-headline">Building With Integrity</h2>
+            <h2 class="about-headline">Close to the Work</h2>
             <p class="about-text">
-                A paragraph about the company—history, philosophy, what makes Nick
-                Mason Construction different.
+                Nick Mason Construction Co. builds custom homes along California's
+                Central Coast. Nick works his sites personally. He knows the crew
+                by name, he knows the wood by grain, and he's the first one to
+                look at a detail twice.
             </p>
             <p class="about-text">
-                A second paragraph if needed—maybe about the team, the region you
-                serve, or your approach to client relationships.
+                He ships materials from wherever the right ones live. He chooses
+                them one at a time. The knobs inside the walls get the same
+                attention as the ones you turn. What the site already has, he
+                uses. Old beams become new beams. Salvaged planks become benches.
+                The crew stays because the work is the kind worth staying for.
             </p>
 
             <!-- Contact Info -->
@@ -126,6 +130,7 @@
 
     <!-- Crew marquee strip (extension of About section) -->
     <section class="crew-strip crew-strip-about" aria-label="Crew and construction photos">
+        <h2 class="crew-strip-title">Behind the Build</h2>
         <div class="crew-strip-stage">
             <button type="button" class="crew-strip-nav crew-strip-prev" aria-label="Scroll left">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -267,7 +272,7 @@
         });
     </script>
 
-    <!-- Crew Strip: auto-scroll + arrows, pauses only while hovered/touched -->
+    <!-- Crew Strip: auto-scroll + arrows, pauses only during active touch/drag/wheel -->
     <script>
         (() => {
             const stage = document.querySelector('.crew-strip-stage');
@@ -277,8 +282,9 @@
             const prevBtn = stage.querySelector('.crew-strip-prev');
             const nextBtn = stage.querySelector('.crew-strip-next');
 
-            const AUTO_PX_PER_TICK = 0.6; // ~36px/sec at 60fps
-            const INTERACTION_COOLDOWN_MS = 800;
+            const AUTO_PX_PER_TICK = 0.35; // ~21px/sec baseline drift
+            const VELOCITY_EASING = 0.04; // per-frame approach to target (fluid ramp in/out)
+            const INTERACTION_COOLDOWN_MS = 600;
             const ARROW_SCROLL_PX = 400;
 
             // Duplicate the authored images so the track holds 2× set for seamless wrap
@@ -290,9 +296,9 @@
             });
 
             let halfWidth = 0;
-            let isHovering = false;
             let isTouching = false;
             let interactionUntil = 0;
+            let autoVelocity = 0; // eases toward AUTO_PX_PER_TICK or 0
             let rafId = null;
 
             const recalc = () => {
@@ -300,11 +306,13 @@
             };
 
             const shouldPause = () =>
-                isHovering || isTouching || Date.now() < interactionUntil;
+                isTouching || Date.now() < interactionUntil;
 
             const tick = () => {
-                if (!shouldPause() && halfWidth > 0) {
-                    let next = viewport.scrollLeft + AUTO_PX_PER_TICK;
+                const target = shouldPause() ? 0 : AUTO_PX_PER_TICK;
+                autoVelocity += (target - autoVelocity) * VELOCITY_EASING;
+                if (halfWidth > 0 && Math.abs(autoVelocity) > 0.001) {
+                    let next = viewport.scrollLeft + autoVelocity;
                     if (next >= halfWidth) next -= halfWidth; // seamless wrap
                     viewport.scrollLeft = next;
                 }
@@ -315,14 +323,12 @@
                 interactionUntil = Date.now() + INTERACTION_COOLDOWN_MS;
             };
 
-            stage.addEventListener('mouseenter', () => { isHovering = true; });
-            stage.addEventListener('mouseleave', () => { isHovering = false; });
-
             stage.addEventListener('touchstart', () => { isTouching = true; }, { passive: true });
             stage.addEventListener('touchend', () => { isTouching = false; bumpCooldown(); }, { passive: true });
             stage.addEventListener('touchcancel', () => { isTouching = false; }, { passive: true });
 
-            viewport.addEventListener('wheel', bumpCooldown, { passive: true });
+            // Wheel / trackpad: don't pause — let native scroll momentum blend with
+            // the baseline drift so interaction feels fluid instead of stop/start.
 
             viewport.addEventListener('scroll', () => {
                 if (halfWidth > 0 && viewport.scrollLeft >= halfWidth) {
