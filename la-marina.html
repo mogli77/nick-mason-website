@@ -208,6 +208,8 @@
         }
 
         function updateArrowColor() {
+            // Arrow is display:none at ≤1024px — skip the per-scroll DOM work
+            if (window.matchMedia('(max-width: 1024px)').matches) return;
             const arrowX = backArrow.getBoundingClientRect().left + 12;
             const arrowY = window.innerHeight / 2;
 
@@ -285,6 +287,8 @@
         const parallaxImages = document.querySelectorAll('.parallax-img');
 
         function updateParallax() {
+            // Skip on mobile — touch scroll + 0.1s transition reads as jitter
+            if (window.matchMedia('(max-width: 767px)').matches) return;
             parallaxImages.forEach(img => {
                 const rect = img.getBoundingClientRect();
                 const windowHeight = window.innerHeight;

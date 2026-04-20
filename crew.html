@@ -180,6 +180,8 @@
         const parallaxImages = document.querySelectorAll('.parallax-img');
 
         function updateParallax() {
+            // Skip on mobile — touch scroll + 0.1s transition reads as jitter
+            if (window.matchMedia('(max-width: 767px)').matches) return;
             parallaxImages.forEach(img => {
                 const rect = img.getBoundingClientRect();
                 const windowHeight = window.innerHeight;

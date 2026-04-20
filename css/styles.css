@@ -1168,3 +1168,43 @@ footer {
     .crew-strip-prev { left: 4px; }
     .crew-strip-next { right: 4px; }
 }
+
+/* ============================================
+   MOBILE: stability fixes for scroll jitter
+   ============================================
+   1. Use 100svh (small viewport height) for hero containers so the
+      looping video doesn't re-crop every time mobile browser chrome
+      (address bar) shows/hides during scroll.
+   2. Promote the hero video to its own compositor layer so paint is
+      cheap during scroll — combined with 100svh, this kills the
+      "weird scaling" symptom on iOS Safari.
+   3. Disable the parallax transform + transition on mobile — touch
+      scroll fires too many events and the 100ms ease lags behind the
+      finger, which reads as jitter. The JS handler also early-returns
+      on mobile (see per-page parallax scripts) to avoid the cost of
+      getBoundingClientRect loops.
+   4. Drop the project-grid img hover transition on mobile — there's no
+      hover on touch, but the transition still forces a composite on
+      every repaint. Cheap repaints matter on long scroll surfaces.
+   ============================================ */
+@media (max-width: 767px) {
+    .hero,
+    .project-hero {
+        height: 100svh;
+    }
+
+    .hero-media {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+    }
+
+    .parallax-img {
+        transition: none;
+        transform: none !important;
+        will-change: auto;
+    }
+
+    .project-item img {
+        transition: none;
+    }
+}
