@@ -284,15 +284,50 @@ nav.nav-dark .logo-svg {
     color: rgba(255,255,255,0.8);
 }
 
-/* Mobile: single column */
+/* Mobile: single column, editorial captions below each image
+   (no hover on touch, so the desktop overlay is replaced with a
+   quiet typographic caption — Walker Warner / magazine-spread feel) */
 @media (max-width: 767px) {
     .project-grid {
         grid-template-columns: 1fr;
+        gap: var(--space-xl);
     }
-    
+
+    /* Let the article grow to image-height + caption-height */
+    .project-item,
     .project-item.tall {
-        grid-row: span 1;
+        aspect-ratio: auto;
+        grid-row: auto;
+        overflow: visible;
+    }
+
+    /* Image keeps its shape via aspect-ratio; caption flows below in normal layout */
+    .project-item img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4/3;
+    }
+
+    .project-item.tall img {
         aspect-ratio: 3/4;
+    }
+
+    /* Caption: static block below the image, not an overlay */
+    .project-info {
+        position: static;
+        opacity: 1;
+        transform: none;
+        padding: var(--space-sm) var(--space-md) 0;
+        background: none;
+    }
+
+    .project-title {
+        color: var(--color-text);
+        text-shadow: none;
+    }
+
+    .project-location {
+        color: var(--color-text-muted);
     }
 }
 
