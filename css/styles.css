@@ -1237,3 +1237,57 @@ nav.nav-hidden {
         transition: none;
     }
 }
+
+/* ============================================
+   ACCESSIBILITY: focus-visible + reduced-motion
+   ============================================ */
+
+/* Visible keyboard focus rings on interactive elements. :focus-visible
+   only lights up on keyboard focus (not mouse click), so pointer users
+   never see these; keyboard/AT users always do. */
+.nav-links a:focus-visible,
+.project-link:focus-visible,
+.crew-strip-nav:focus-visible,
+.back-arrow-fixed:focus-visible,
+.back-to-work:focus-visible,
+.about-contact a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+    opacity: 1;
+}
+
+/* Project-grid links use white-on-image, so mirror that for the ring. */
+.project-link:focus-visible {
+    outline-color: #fff;
+}
+
+/* Respect OS-level reduced motion:
+   - disable smooth scroll
+   - disable all named transitions
+   - disable parallax + project-grid hover scale
+   - disable page fade (snaps into place instead)
+   Autoplay videos are opted out at the JS layer (see js/main.js). */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+
+    body { transition: none; }
+
+    nav,
+    .parallax-img,
+    .project-item img,
+    .project-info,
+    .back-arrow,
+    .back-arrow-fixed,
+    .back-to-work,
+    .logo-main,
+    .logo-sub,
+    .logo-svg,
+    .nav-links a,
+    .crew-strip-nav {
+        transition: none !important;
+    }
+
+    .project-item:hover img {
+        transform: none;
+    }
+}

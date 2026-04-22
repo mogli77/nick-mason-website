@@ -65,23 +65,23 @@
         <!-- Top overlap: R0010071 (large, left) + DSC05077 (small, bottom-right) -->
         <div class="gallery-overlap feature-wide large-left">
             <figure class="gallery-item feature-large">
-                <img class="parallax-img" src="images/projects/la-marina/web/R0010071.jpg" alt="La Marina entry">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/R0010071.jpg" alt="La Marina entry">
             </figure>
             <figure class="gallery-item feature-small">
-                <img class="parallax-img" src="images/projects/la-marina/web/DSC05077.jpg" alt="La Marina fruit tree shadow">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/DSC05077.jpg" alt="La Marina fruit tree shadow">
             </figure>
         </div>
 
         <!-- Trio: R0010047, R0010232 (wider center), R0010008 -->
         <div class="gallery-trio center-wide">
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/la-marina/web/R0010047.jpg" alt="La Marina interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/R0010047.jpg" alt="La Marina interior">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/la-marina/web/R0010232.jpg" alt="La Marina interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/R0010232.jpg" alt="La Marina interior">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/la-marina/web/R0010008.jpg" alt="La Marina interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/R0010008.jpg" alt="La Marina interior">
             </figure>
         </div>
 
@@ -95,19 +95,19 @@
         <!-- Trio: DSC05118, DSC05172, DSC05062 -->
         <div class="gallery-trio">
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/la-marina/web/DSC05118.jpg" alt="La Marina interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/DSC05118.jpg" alt="La Marina interior">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/la-marina/web/DSC05172.jpg" alt="La Marina interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/DSC05172.jpg" alt="La Marina interior">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/la-marina/web/DSC05062.jpg" alt="La Marina palms">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/DSC05062.jpg" alt="La Marina palms">
             </figure>
         </div>
 
         <!-- DSC05214 full-width pool reflection -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/la-marina/web/DSC05214.jpg" alt="La Marina pool">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/DSC05214.jpg" alt="La Marina pool">
         </figure>
 
         <!-- Mid quote -->
@@ -127,29 +127,29 @@
 
         <!-- DSC04912 full-width modern exterior -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/la-marina/web/DSC04912.jpg" alt="La Marina exterior">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/DSC04912.jpg" alt="La Marina exterior">
         </figure>
 
         <!-- Trio: R0010077, R0010078, DSC04932 -->
         <div class="gallery-trio">
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/la-marina/web/R0010077.jpg" alt="La Marina bedroom">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/R0010077.jpg" alt="La Marina bedroom">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/la-marina/web/R0010078.jpg" alt="La Marina bathroom">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/R0010078.jpg" alt="La Marina bathroom">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/la-marina/web/DSC04932.jpg" alt="La Marina interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/DSC04932.jpg" alt="La Marina interior">
             </figure>
         </div>
 
         <!-- Kayak overlap: R0010242 (top-left) + DSC04942 (bottom-right), similar sizes -->
         <div class="gallery-overlap reverse">
             <figure class="gallery-item overlap-left">
-                <img class="parallax-img" src="images/projects/la-marina/web/R0010242.jpg" alt="La Marina pool edge">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/R0010242.jpg" alt="La Marina pool edge">
             </figure>
             <figure class="gallery-item overlap-right">
-                <img class="parallax-img" src="images/projects/la-marina/web/DSC04942.jpg" alt="La Marina pool with paddleboard">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/la-marina/web/DSC04942.jpg" alt="La Marina pool with paddleboard">
             </figure>
         </div>
 
@@ -185,7 +185,10 @@
         let lastScrollY = 0;
 
         function updateNavPosition() {
-            const scrollY = window.scrollY;
+            const scrollY = Math.max(window.scrollY, 0);
+            // 4px deadband to prevent flicker during iOS elastic / momentum
+            // micro-reversals.
+            if (Math.abs(scrollY - lastScrollY) < 4) return;
             if (scrollY > lastScrollY && scrollY > 80) {
                 nav.classList.add('nav-hidden');
             } else {
@@ -288,8 +291,8 @@
         const parallaxImages = document.querySelectorAll('.parallax-img');
 
         function updateParallax() {
-            // Skip on mobile — touch scroll + 0.1s transition reads as jitter
-            if (window.matchMedia('(max-width: 767px)').matches) return;
+            // Skip on any touch / coarse-pointer device and respect reduced-motion.
+            if (window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)').matches) return;
             parallaxImages.forEach(img => {
                 const rect = img.getBoundingClientRect();
                 const windowHeight = window.innerHeight;

@@ -83,7 +83,7 @@
     <!-- About & Contact -->
     <section class="about-section" id="contact">
         <div class="about-image">
-            <img src="images/about/contactpage_collage_02.png" alt="Nick Mason Construction">
+            <img loading="lazy" decoding="async" src="images/about/contactpage_collage_02.png" alt="Nick Mason Construction">
         </div>
         <div class="about-content">
             <span class="section-label">About</span>
@@ -213,7 +213,10 @@
         let lastScrollY = 0;
 
         function updateNavPosition() {
-            const scrollY = window.scrollY;
+            const scrollY = Math.max(window.scrollY, 0);
+            // 4px deadband: ignore tiny jitters (iOS elastic/rubber-band
+            // scroll, momentum micro-reversals) so the nav doesn't flicker.
+            if (Math.abs(scrollY - lastScrollY) < 4) return;
             if (scrollY > lastScrollY && scrollY > 80) {
                 nav.classList.add('nav-hidden');
             } else {

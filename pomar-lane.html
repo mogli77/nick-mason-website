@@ -64,36 +64,36 @@
 
         <!-- DSC09028 full-width (bench on terracotta) -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09028.jpg" alt="Pomar Lane exterior bench">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09028.jpg" alt="Pomar Lane exterior bench">
         </figure>
 
         <!-- Kitchen_DSC09133 full-width -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/pomar-lane/web/Kitchen_DSC09133.jpg" alt="Pomar Lane kitchen">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/Kitchen_DSC09133.jpg" alt="Pomar Lane kitchen">
         </figure>
 
         <!-- Layered: DSC09395 full-width background with Gallery_DSC09092 + Dining_DSC09156 overlays -->
         <figure class="gallery-item full layered-backdrop">
-            <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09395.jpg" alt="Pomar Lane floor detail">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09395.jpg" alt="Pomar Lane floor detail">
             <img class="layered-card card-left" src="images/projects/pomar-lane/web/Gallery_DSC09092.jpg" alt="Pomar Lane gallery">
             <img class="layered-card card-right" src="images/projects/pomar-lane/web/Dining_DSC09156_.jpg" alt="Pomar Lane dining">
         </figure>
 
         <!-- DSC09304 full-width (bedroom through doorway) -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09304.jpg" alt="Pomar Lane bedroom">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09304.jpg" alt="Pomar Lane bedroom">
         </figure>
 
         <!-- Landscape/detail trio: DSC09352, DSC09363, DSC09374 -->
         <div class="gallery-trio">
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09352.jpg" alt="Pomar Lane detail">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09352.jpg" alt="Pomar Lane detail">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09363.jpg" alt="Pomar Lane garden">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09363.jpg" alt="Pomar Lane garden">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09374.jpg" alt="Pomar Lane detail">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09374.jpg" alt="Pomar Lane detail">
             </figure>
         </div>
 
@@ -107,27 +107,27 @@
 
         <!-- DSC09309 full-width (lawn with home) -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09309.jpg" alt="Pomar Lane exterior">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09309.jpg" alt="Pomar Lane exterior">
         </figure>
 
         <!-- Gallery_DSC09086 full-width (gallery hallway) -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/pomar-lane/web/Gallery_DSC09086.jpg" alt="Pomar Lane gallery hallway">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/Gallery_DSC09086.jpg" alt="Pomar Lane gallery hallway">
         </figure>
 
         <!-- Pair: DSC09457 + DSC09235 -->
         <div class="gallery-pair">
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09457.jpg" alt="Pomar Lane detail">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09457.jpg" alt="Pomar Lane detail">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09235.jpg" alt="Pomar Lane bathroom">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09235.jpg" alt="Pomar Lane bathroom">
             </figure>
         </div>
 
         <!-- DSC09052 full-width (pond) with water_bubbles_01 inset -->
         <figure class="gallery-item full live-inset">
-            <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09052.jpg" alt="Pomar Lane pond">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/pomar-lane/web/DSC09052.jpg" alt="Pomar Lane pond">
             <video class="live-inset-video autoplay-on-view" autoplay muted loop playsinline preload="auto">
                 <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1776377096/water_bubbles_01_d3ppl4.mp4" type="video/mp4">
             </video>
@@ -158,7 +158,10 @@
         let lastScrollY = 0;
 
         function updateNavPosition() {
-            const scrollY = window.scrollY;
+            const scrollY = Math.max(window.scrollY, 0);
+            // 4px deadband to prevent flicker during iOS elastic / momentum
+            // micro-reversals.
+            if (Math.abs(scrollY - lastScrollY) < 4) return;
             if (scrollY > lastScrollY && scrollY > 80) {
                 nav.classList.add('nav-hidden');
             } else {
@@ -261,8 +264,8 @@
         const parallaxImages = document.querySelectorAll('.parallax-img');
 
         function updateParallax() {
-            // Skip on mobile — touch scroll + 0.1s transition reads as jitter
-            if (window.matchMedia('(max-width: 767px)').matches) return;
+            // Skip on any touch / coarse-pointer device and respect reduced-motion.
+            if (window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)').matches) return;
             parallaxImages.forEach(img => {
                 const rect = img.getBoundingClientRect();
                 const windowHeight = window.innerHeight;

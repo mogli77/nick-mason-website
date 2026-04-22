@@ -64,30 +64,30 @@
 
         <!-- DSC04397 full-width -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/el-monte/web/DSC04397.jpg" alt="El Monte exterior">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/DSC04397.jpg" alt="El Monte exterior">
         </figure>
 
         <!-- First trio: R0009646, 000062170025, R0009639 -->
         <div class="gallery-trio">
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/el-monte/web/R0009646.jpg" alt="El Monte interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/R0009646.jpg" alt="El Monte interior">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/el-monte/web/000062170025.jpg" alt="El Monte on film">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/000062170025.jpg" alt="El Monte on film">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/el-monte/web/R0009639.jpg" alt="El Monte interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/R0009639.jpg" alt="El Monte interior">
             </figure>
         </div>
 
         <!-- 000062150007 full-width (dog at doorway) -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/el-monte/web/000062150007.jpg" alt="El Monte exterior">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/000062150007.jpg" alt="El Monte exterior">
         </figure>
 
         <!-- DSC04435 full-width with fan_01 video as inset overlay -->
         <figure class="gallery-item full live-inset">
-            <img class="parallax-img" src="images/projects/el-monte/web/DSC04435.jpg" alt="El Monte interior detail">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/DSC04435.jpg" alt="El Monte interior detail">
             <video class="live-inset-video autoplay-on-view" autoplay muted loop playsinline preload="auto">
                 <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1776357798/fan_01_dz6n2g.mp4" type="video/mp4">
             </video>
@@ -104,31 +104,31 @@
         <!-- Middle trio: R0009676, R0009654, R0009661 -->
         <div class="gallery-trio">
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/el-monte/web/R0009676.jpg" alt="El Monte interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/R0009676.jpg" alt="El Monte interior">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/el-monte/web/R0009654.jpg" alt="El Monte interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/R0009654.jpg" alt="El Monte interior">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/el-monte/web/R0009661.jpg" alt="El Monte interior">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/R0009661.jpg" alt="El Monte interior">
             </figure>
         </div>
 
         <!-- DSC04425 full-width (living room) -->
         <figure class="gallery-item full">
-            <img class="parallax-img" src="images/projects/el-monte/web/DSC04425.jpg" alt="El Monte living room">
+            <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/DSC04425.jpg" alt="El Monte living room">
         </figure>
 
         <!-- Last trio: DSC04531, 000062170033, DSC04463 -->
         <div class="gallery-trio">
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/el-monte/web/DSC04531.jpg" alt="El Monte detail">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/DSC04531.jpg" alt="El Monte detail">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/el-monte/web/000062170033.jpg" alt="El Monte on film">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/000062170033.jpg" alt="El Monte on film">
             </figure>
             <figure class="gallery-item">
-                <img class="parallax-img" src="images/projects/el-monte/web/DSC04463.jpg" alt="El Monte detail">
+                <img loading="lazy" decoding="async" class="parallax-img" src="images/projects/el-monte/web/DSC04463.jpg" alt="El Monte detail">
             </figure>
         </div>
 
@@ -164,7 +164,10 @@
         let lastScrollY = 0;
 
         function updateNavPosition() {
-            const scrollY = window.scrollY;
+            const scrollY = Math.max(window.scrollY, 0);
+            // 4px deadband to prevent flicker during iOS elastic / momentum
+            // micro-reversals.
+            if (Math.abs(scrollY - lastScrollY) < 4) return;
             if (scrollY > lastScrollY && scrollY > 80) {
                 nav.classList.add('nav-hidden');
             } else {
@@ -267,8 +270,10 @@
         const parallaxImages = document.querySelectorAll('.parallax-img');
 
         function updateParallax() {
-            // Skip on mobile — touch scroll + 0.1s transition reads as jitter
-            if (window.matchMedia('(max-width: 767px)').matches) return;
+            // Skip on any touch / coarse-pointer device (phones + tablets +
+            // iPads in landscape) and respect reduced-motion. Touch scroll
+            // fires too many events for the 0.1s ease to keep up; reads as jitter.
+            if (window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)').matches) return;
             parallaxImages.forEach(img => {
                 const rect = img.getBoundingClientRect();
                 const windowHeight = window.innerHeight;
