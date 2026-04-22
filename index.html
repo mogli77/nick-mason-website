@@ -204,19 +204,31 @@
 
     <script src="js/main.js"></script>
     <script>
-        // Nav color change based on what section is behind it
+        // Nav color change based on what section is behind it,
+        // plus slide-up-on-scroll-down / reveal-on-scroll-up
+        // (matches project-page behavior).
         const nav = document.querySelector('nav');
         const hero = document.querySelector('.hero');
         const projectsSection = document.querySelector('.projects-section');
         const quoteSection = document.querySelector('.quote-section');
-        
+
+        let lastScrollY = 0;
+
+        function updateNavPosition() {
+            const scrollY = window.scrollY;
+            if (scrollY > lastScrollY && scrollY > 80) {
+                nav.classList.add('nav-hidden');
+            } else {
+                nav.classList.remove('nav-hidden');
+            }
+            lastScrollY = scrollY;
+        }
+
         function updateNavColor() {
             const scrollPosition = window.scrollY;
             const navHeight = nav.offsetHeight;
-            const heroBottom = hero.offsetHeight;
-            const projectsBottom = projectsSection.offsetTop + projectsSection.offsetHeight;
             const quoteTop = quoteSection.offsetTop;
-            
+
             // Over hero or projects = light (white text)
             // Over quote, about, footer = dark (black text)
             if (scrollPosition + navHeight < quoteTop) {
@@ -227,14 +239,18 @@
                 nav.classList.add('nav-dark');
             }
         }
-        
+
         // Initial state
         nav.classList.add('nav-light');
-        
+
         // Update on scroll
-        window.addEventListener('scroll', updateNavColor);
-        
+        window.addEventListener('scroll', () => {
+            updateNavPosition();
+            updateNavColor();
+        }, { passive: true });
+
         // Update on load
+        updateNavPosition();
         updateNavColor();
     </script>
 

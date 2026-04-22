@@ -496,15 +496,13 @@ footer {
     text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Project pages: nav slides up/down based on scroll direction */
-.project-page nav {
-    position: fixed;
-    top: 0;
+/* Nav slides up/down based on scroll direction (all pages) */
+nav {
     transform: translateY(0);
     transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.project-page nav.nav-hidden {
+nav.nav-hidden {
     transform: translateY(-100%);
 }
 

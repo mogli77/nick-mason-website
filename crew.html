@@ -149,9 +149,23 @@
 
     <script src="js/main.js"></script>
     <script>
-        // Nav stays dark on this page (no hero video/image)
+        // Nav stays dark on this page (no hero video/image).
+        // Also slides up on scroll-down / reveals on scroll-up (matches other pages).
         const nav = document.querySelector('nav');
         nav.classList.add('nav-dark');
+
+        let lastScrollY = 0;
+        function updateNavPosition() {
+            const scrollY = window.scrollY;
+            if (scrollY > lastScrollY && scrollY > 80) {
+                nav.classList.add('nav-hidden');
+            } else {
+                nav.classList.remove('nav-hidden');
+            }
+            lastScrollY = scrollY;
+        }
+        window.addEventListener('scroll', updateNavPosition, { passive: true });
+        updateNavPosition();
     </script>
 
     <!-- Page Transition Script -->
