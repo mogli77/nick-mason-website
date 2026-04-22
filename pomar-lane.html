@@ -127,7 +127,7 @@
         <!-- DSC09052 full-width (pond) with water_bubbles_01 inset -->
         <figure class="gallery-item full live-inset">
             <img class="parallax-img" src="images/projects/pomar-lane/web/DSC09052.jpg" alt="Pomar Lane pond">
-            <video class="live-inset-video" autoplay muted loop playsinline preload="auto">
+            <video class="live-inset-video autoplay-on-view" autoplay muted loop playsinline preload="auto">
                 <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1776377096/water_bubbles_01_d3ppl4.mp4" type="video/mp4">
             </video>
         </figure>
@@ -276,6 +276,28 @@
 
         window.addEventListener('scroll', updateParallax, { passive: true });
         updateParallax();
+    </script>
+
+    <!-- Ensure autoplay-on-view videos actually play. Safari and mobile
+         Chromium both sometimes swallow autoplay for videos that haven't
+         been on-screen yet; this nudges .play() when they enter view. -->
+    <script>
+        (() => {
+            const vids = document.querySelectorAll('video.autoplay-on-view');
+            if (!vids.length) return;
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const v = entry.target;
+                        if (v.paused) {
+                            const p = v.play();
+                            if (p && p.catch) p.catch(() => {}); // ignore autoplay rejections
+                        }
+                    }
+                });
+            }, { threshold: 0.15 });
+            vids.forEach(v => io.observe(v));
+        })();
     </script>
 
 </body>
