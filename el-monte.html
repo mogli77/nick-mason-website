@@ -133,7 +133,7 @@
 
         <!-- Full-width dog_nick_01 video -->
         <figure class="gallery-item full gallery-video">
-            <video autoplay muted loop playsinline>
+            <video class="autoplay-on-view" autoplay muted loop playsinline preload="auto">
                 <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1775616599/dog_nick_01_lcn0pv.mp4" type="video/mp4">
             </video>
         </figure>
@@ -327,6 +327,27 @@
 
         window.addEventListener('scroll', updateParallax, { passive: true });
         updateParallax();
+    </script>
+
+    <!-- Ensure autoplay-on-view videos actually play on mobile Chromium,
+         which sometimes swallows autoplay for offscreen videos. -->
+    <script>
+        (() => {
+            const vids = document.querySelectorAll('video.autoplay-on-view');
+            if (!vids.length) return;
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const v = entry.target;
+                        if (v.paused) {
+                            const p = v.play();
+                            if (p && p.catch) p.catch(() => {}); // ignore autoplay rejections
+                        }
+                    }
+                });
+            }, { threshold: 0.15 });
+            vids.forEach(v => io.observe(v));
+        })();
     </script>
 
 </body>

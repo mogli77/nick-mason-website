@@ -292,6 +292,7 @@
             let isTouching = false;
             let interactionUntil = 0;
             let autoVelocity = 0; // eases toward AUTO_PX_PER_TICK or 0
+            let subPixel = 0;     // accumulates fractional px between frames
             let rafId = null;
 
             const recalc = () => {
@@ -301,13 +302,25 @@
             const shouldPause = () =>
                 isTouching || Date.now() < interactionUntil;
 
+            // Mobile Chromium (Chrome/Brave Android) rounds scrollLeft to
+            // integers when assigned. The old code added 0.35px/frame which
+            // rounded away to 0, leaving the marquee static. We now
+            // accumulate fractional velocity in subPixel and only assign
+            // scrollLeft when at least 1 whole pixel has built up. Desktop
+            // behavior is visually identical (60fps step vs smooth fractional).
             const tick = () => {
                 const target = shouldPause() ? 0 : AUTO_PX_PER_TICK;
                 autoVelocity += (target - autoVelocity) * VELOCITY_EASING;
                 if (halfWidth > 0 && Math.abs(autoVelocity) > 0.001) {
-                    let next = viewport.scrollLeft + autoVelocity;
-                    if (next >= halfWidth) next -= halfWidth; // seamless wrap
-                    viewport.scrollLeft = next;
+                    subPixel += autoVelocity;
+                    const whole = subPixel > 0 ? Math.floor(subPixel) : Math.ceil(subPixel);
+                    if (whole !== 0) {
+                        subPixel -= whole;
+                        let next = viewport.scrollLeft + whole;
+                        if (next >= halfWidth) next -= halfWidth; // seamless wrap
+                        if (next < 0) next += halfWidth;
+                        viewport.scrollLeft = next;
+                    }
                 }
                 rafId = requestAnimationFrame(tick);
             };

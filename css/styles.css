@@ -1172,17 +1172,18 @@ footer {
 /* ============================================
    MOBILE: stability fixes for scroll jitter
    ============================================
-   1. Pin the hero container to 100svh (small viewport height) so iOS
-      Safari's URL-bar collapse can't grow the hero — if it grew, the
-      object-fit:cover video would visibly scale up as the container
-      got taller.
-   2. `contain: layout paint` on the hero creates an isolation boundary
-      so scroll-driven layout shifts elsewhere can't trigger the video
-      layer to re-rasterize (which is what reads as "weird scale up"
-      during scroll on iOS).
-   3. Explicit object-position + will-change:auto on the video so Webkit
-      doesn't promote the video to its own composite layer — a promoted
-      video layer re-scales on iOS when scroll offset changes.
+   1. Hero height is pinned via a --hero-h custom property that JS sets
+      to window.innerHeight (in px) at load + orientationchange. This
+      bypasses viewport-unit re-interpretation during URL-bar collapse
+      animations on Chromium mobile (Brave/Chrome Android) which was
+      causing the object-fit:cover video to visibly scale up during
+      scroll. Falls back to 100svh for no-JS. 100svh alone fixed iOS
+      Safari but not Chromium — the pixel lock fixes both.
+   2. `contain: layout paint` isolates the hero from scroll-driven
+      layout shifts elsewhere on the page.
+   3. Explicit object-position + will-change:auto on the video so no
+      browser promotes it to its own compositor layer (promoted video
+      layers re-rasterize during scroll, which reads as scaling).
    4. Disable the parallax transform + transition on mobile — touch
       scroll fires too many events and the 100ms ease lags behind the
       finger, which reads as jitter. The JS handler also early-returns
@@ -1195,9 +1196,9 @@ footer {
 @media (max-width: 767px) {
     .hero,
     .project-hero {
-        height: 100svh;
-        min-height: 100svh;
-        max-height: 100svh;
+        height: var(--hero-h, 100svh);
+        min-height: var(--hero-h, 100svh);
+        max-height: var(--hero-h, 100svh);
         contain: layout paint;
     }
 
