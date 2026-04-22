@@ -35,11 +35,12 @@
     <!-- Project Hero -->
     <section class="project-hero">
         <video
-            class="hero-media"
+            class="hero-media autoplay-on-view"
             autoplay
             muted
             loop
             playsinline
+            preload="auto"
         >
             <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1776379229/green_03_dlhhaw.mp4" type="video/mp4">
         </video>
@@ -276,28 +277,6 @@
 
         window.addEventListener('scroll', updateParallax, { passive: true });
         updateParallax();
-    </script>
-
-    <!-- Ensure autoplay-on-view videos actually play. Safari and mobile
-         Chromium both sometimes swallow autoplay for videos that haven't
-         been on-screen yet; this nudges .play() when they enter view. -->
-    <script>
-        (() => {
-            const vids = document.querySelectorAll('video.autoplay-on-view');
-            if (!vids.length) return;
-            const io = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const v = entry.target;
-                        if (v.paused) {
-                            const p = v.play();
-                            if (p && p.catch) p.catch(() => {}); // ignore autoplay rejections
-                        }
-                    }
-                });
-            }, { threshold: 0.15 });
-            vids.forEach(v => io.observe(v));
-        })();
     </script>
 
 </body>

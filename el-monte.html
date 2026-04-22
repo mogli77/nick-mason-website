@@ -35,11 +35,12 @@
     <!-- Project Hero -->
     <section class="project-hero">
         <video
-            class="hero-media"
+            class="hero-media autoplay-on-view"
             autoplay
             muted
             loop
             playsinline
+            preload="auto"
         >
             <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1775596909/fire_nick_02_q5n2n0.mp4" type="video/mp4">
         </video>
@@ -261,51 +262,6 @@
         });
     </script>
 
-    <!-- Scroll-triggered split video: first half down, second half up -->
-    <script>
-        document.querySelectorAll('.scroll-split-video').forEach(video => {
-            let midpoint = 0;
-            let phase = 'first'; // 'first' → 'waiting' → 'second' → 'done'
-
-            video.addEventListener('loadedmetadata', () => {
-                midpoint = video.duration / 2;
-            });
-
-            // Pause at midpoint during first half
-            video.addEventListener('timeupdate', () => {
-                if (phase === 'first' && video.currentTime >= midpoint && midpoint > 0) {
-                    video.pause();
-                    phase = 'waiting';
-                }
-            });
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        if (phase === 'first') {
-                            video.currentTime = 0;
-                            video.play();
-                        } else if (phase === 'waiting') {
-                            phase = 'second';
-                            video.play();
-                        }
-                    } else {
-                        // Left viewport
-                        if (phase === 'first') {
-                            video.pause();
-                        } else if (phase === 'second' || phase === 'done') {
-                            // Second half played — reset for next full cycle
-                            phase = 'first';
-                        }
-                        // 'waiting' stays as 'waiting' — midpoint hold persists
-                    }
-                });
-            }, { threshold: 0.3 });
-
-            observer.observe(video);
-        });
-    </script>
-
     <!-- Parallax Script -->
     <script>
         const parallaxImages = document.querySelectorAll('.parallax-img');
@@ -327,27 +283,6 @@
 
         window.addEventListener('scroll', updateParallax, { passive: true });
         updateParallax();
-    </script>
-
-    <!-- Ensure autoplay-on-view videos actually play on mobile Chromium,
-         which sometimes swallows autoplay for offscreen videos. -->
-    <script>
-        (() => {
-            const vids = document.querySelectorAll('video.autoplay-on-view');
-            if (!vids.length) return;
-            const io = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const v = entry.target;
-                        if (v.paused) {
-                            const p = v.play();
-                            if (p && p.catch) p.catch(() => {}); // ignore autoplay rejections
-                        }
-                    }
-                });
-            }, { threshold: 0.15 });
-            vids.forEach(v => io.observe(v));
-        })();
     </script>
 
 </body>

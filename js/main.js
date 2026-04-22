@@ -25,25 +25,98 @@
         if (mql.matches) {
             document.documentElement.style.setProperty('--hero-h', window.innerHeight + 'px');
         } else {
-            // Above the breakpoint: clear the pixel lock so desktop styles
-            // (or the CSS 100svh fallback) take over cleanly.
             document.documentElement.style.removeProperty('--hero-h');
         }
     };
 
     apply();
 
-    // Orientation change: re-pin after UA settles the new viewport.
     window.addEventListener('orientationchange', () => {
         setTimeout(apply, 150);
     });
 
-    // Breakpoint crossing (e.g. tablet rotate, desktop resize to narrow window).
-    // Register unconditionally so desktop→mobile resize also gets the lock.
     if (mql.addEventListener) {
         mql.addEventListener('change', apply);
     } else if (mql.addListener) {
-        // Safari < 14 fallback
-        mql.addListener(apply);
+        mql.addListener(apply); // Safari < 14
     }
+})();
+
+/* --------------------------------------------
+   Autoplay-on-view: ensure videos with .autoplay-on-view actually play
+   --------------------------------------------
+   The <video autoplay muted loop playsinline> handshake is brittle across
+   browsers. It can silently fail on:
+     - Safari (macOS + iOS) for videos below the fold
+     - iOS Safari Low Power Mode (can't fix, but don't make it worse)
+     - Mobile Chromium for offscreen videos with preload="none" default
+     - Any browser after bfcache restoration (pageshow)
+
+   We use an IntersectionObserver to nudge .play() when each video enters
+   view, AND force the muted/playsInline properties in JS (Safari ignores
+   the HTML attribute in some states), AND wait for readyState before
+   trying if the video isn't loaded yet, AND retry on canplay if the first
+   attempt rejects. This covers all the known failure modes short of
+   Low Power Mode.
+   -------------------------------------------- */
+(function autoplayOnView() {
+    const vids = document.querySelectorAll('video.autoplay-on-view');
+    if (!vids.length) return;
+
+    const tryPlay = (v) => {
+        // Safari: force the attributes in JS too. The HTML `muted` attribute
+        // sets the initial state but can be desynced by bfcache / navigation.
+        v.muted = true;
+        v.playsInline = true;
+        v.defaultMuted = true;
+
+        const attempt = () => {
+            const p = v.play();
+            if (p && typeof p.catch === 'function') {
+                p.catch(() => {
+                    // First play() rejected — wait for the media pipeline
+                    // to be further along, then try once more.
+                    v.addEventListener('canplay', () => {
+                        const p2 = v.play();
+                        if (p2 && typeof p2.catch === 'function') {
+                            p2.catch(() => { /* give up quietly */ });
+                        }
+                    }, { once: true });
+                });
+            }
+        };
+
+        // HAVE_CURRENT_DATA (2) is enough to start playback
+        if (v.readyState >= 2) {
+            attempt();
+        } else {
+            v.addEventListener('loadeddata', attempt, { once: true });
+            // If the video element hasn't started loading at all, force it.
+            // (preload="none" defaulted browsers won't have loaded anything yet.)
+            if (v.readyState === 0) {
+                try { v.load(); } catch (e) { /* noop */ }
+            }
+        }
+    };
+
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && entry.target.paused) {
+                tryPlay(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    vids.forEach(v => io.observe(v));
+
+    // bfcache restoration: a video that was playing on the previous visit
+    // can come back paused with readyState already high.
+    window.addEventListener('pageshow', () => {
+        vids.forEach(v => {
+            if (!v.paused) return;
+            const r = v.getBoundingClientRect();
+            const inView = r.top < window.innerHeight && r.bottom > 0;
+            if (inView) tryPlay(v);
+        });
+    });
 })();
