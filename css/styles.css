@@ -204,6 +204,1129 @@ nav.nav-dark .logo-svg {
     pointer-events: none;
 }
 
+.hero-content {
+    position: absolute;
+    left: var(--space-lg);
+    bottom: var(--space-lg);
+    z-index: 2;
+    color: #fff;
+}
+
+.hero-kicker {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-xs);
+    text-shadow: 0 1px 5px rgba(0,0,0,0.35);
+}
+
+.hero-title {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 0.95;
+    text-transform: uppercase;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.35);
+}
+
+/* ============================================
+   HOMEPAGE MAGAZINE SPREADS
+   ============================================ */
+
+.home-page {
+    background-color: #f8f7f4;
+}
+
+html.home-document {
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: 0;
+}
+
+.home-page .home-hero {
+    min-height: 640px;
+    height: var(--hero-h, 100svh);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.home-page .home-hero .hero-overlay {
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.2) 0%,
+        rgba(0,0,0,0.03) 34%,
+        rgba(0,0,0,0) 58%,
+        rgba(0,0,0,0.34) 100%
+    );
+}
+
+.image-scroll {
+    background-color: #f8f7f4;
+}
+
+.magazine-spread {
+    min-height: 640px;
+    height: 100svh;
+    padding: clamp(2.5rem, 5vh, 4rem) clamp(0.75rem, 2.5vw, 2rem) clamp(0.75rem, 2vh, 1.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f8f7f4;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.spread-canvas {
+    position: relative;
+    width: min(1360px, 96vw);
+    height: min(900px, 88svh);
+}
+
+.mag-frame {
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+    background: #dedbd2;
+    z-index: 1;
+}
+
+.mag-frame img,
+.mag-frame video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.home-page .about-section-home,
+.home-page .crew-strip-about,
+.home-page footer {
+    scroll-snap-align: start;
+}
+
+.spread-pool-intro.magazine-spread {
+    padding: 0;
+    background: #000;
+}
+
+.spread-pool-intro .spread-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.pool-intro-a {
+    inset: 0;
+}
+
+.spread-pool-intro .mag-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.28) 0%,
+        rgba(0,0,0,0.02) 38%,
+        rgba(0,0,0,0.2) 100%
+    );
+    pointer-events: none;
+}
+
+.spread-garden .spread-canvas {
+    width: min(1120px, 90vw);
+    height: min(760px, 82svh);
+}
+
+.garden-a {
+    left: 0;
+    top: 0;
+    width: 48.5%;
+    height: 100%;
+}
+
+.garden-b {
+    right: 0;
+    top: 0;
+    width: 48.5%;
+    height: 48%;
+}
+
+.garden-c {
+    right: 0;
+    bottom: 0;
+    width: 48.5%;
+    height: 48%;
+}
+
+.spread-bench .spread-canvas {
+    width: min(720px, 62vw);
+    height: min(820px, 84svh);
+}
+
+.bench-a {
+    inset: 0;
+}
+
+.spread-la-marina-cluster .spread-canvas {
+    width: min(1120px, 90vw);
+    height: min(780px, 82svh);
+}
+
+.marina-a {
+    left: 0;
+    top: 0;
+    bottom: auto;
+    width: 45%;
+    height: 100%;
+}
+
+.marina-b {
+    right: 0;
+    top: 0;
+    width: 52%;
+    height: 48%;
+}
+
+.marina-c {
+    right: 0;
+    bottom: 0;
+    width: 52%;
+    height: 48%;
+}
+
+.spread-pool-pair .spread-canvas {
+    width: min(820px, 76vw);
+    height: min(760px, 82svh);
+}
+
+.pool-pair-a,
+.pool-pair-b {
+    top: 0;
+    width: 48%;
+    height: 100%;
+}
+
+.pool-pair-a {
+    left: 0;
+}
+
+.pool-pair-b {
+    right: 0;
+}
+
+.spread-video-wide .spread-canvas,
+.spread-pool-hero .spread-canvas,
+.spread-skylight .spread-canvas,
+.spread-living-large .spread-canvas,
+.spread-pomar-hero .spread-canvas {
+    width: min(1400px, 96vw);
+    height: min(900px, 88svh);
+}
+
+.video-wide-a,
+.pool-hero-a,
+.skylight-a,
+.living-large-a,
+.pomar-hero-a {
+    inset: 0;
+}
+
+.spread-skylight .spread-canvas {
+    width: min(1240px, 92vw);
+    height: min(800px, 82svh);
+}
+
+.spread-ceiling-dog .spread-canvas {
+    width: min(1320px, 94vw);
+    height: min(840px, 86svh);
+}
+
+.ceiling-a {
+    left: 4%;
+    bottom: 2%;
+    width: 76%;
+    height: 78%;
+    z-index: 2;
+}
+
+.ceiling-b {
+    right: 2%;
+    top: 10%;
+    width: 35%;
+    height: 48%;
+    z-index: 4;
+}
+
+.ceiling-c {
+    left: 12%;
+    top: 0;
+    width: 32%;
+    height: 25%;
+    z-index: 3;
+}
+
+.spread-interiors .spread-canvas {
+    width: min(1180px, 90vw);
+    height: min(720px, 78svh);
+}
+
+.interiors-a,
+.interiors-b,
+.interiors-c {
+    width: 36%;
+    height: 70%;
+}
+
+.interiors-a {
+    left: 0;
+    top: 16%;
+}
+
+.interiors-b {
+    left: 32%;
+    top: 6%;
+    z-index: 2;
+}
+
+.interiors-c {
+    right: 0;
+    top: 18%;
+}
+
+.spread-el-monte .spread-canvas {
+    width: min(1300px, 94vw);
+    height: min(820px, 84svh);
+}
+
+.elmonte-a {
+    left: 0;
+    top: 7%;
+    width: 44%;
+    height: 47%;
+}
+
+.elmonte-b {
+    right: 2%;
+    top: 4%;
+    width: 55%;
+    height: 35%;
+    z-index: 2;
+}
+
+.elmonte-c {
+    right: 0;
+    bottom: 2%;
+    width: 58%;
+    height: 40%;
+    z-index: 3;
+}
+
+.spread-bird .spread-canvas {
+    width: min(780px, 64vw);
+    height: min(520px, 60svh);
+}
+
+.bird-a {
+    inset: 0;
+}
+
+.spread-wood-wall .spread-canvas {
+    width: min(1400px, 96vw);
+    height: min(900px, 88svh);
+}
+
+.wood-wall-c {
+    inset: 0;
+}
+
+.wood-wall-a {
+    left: 8%;
+    top: 20%;
+    width: 36%;
+    height: 48%;
+    z-index: 3;
+}
+
+.wood-wall-b {
+    right: 8%;
+    top: 18%;
+    width: 38%;
+    height: 50%;
+    z-index: 2;
+}
+
+.spread-materials .spread-canvas {
+    width: min(760px, 62vw);
+    height: min(840px, 86svh);
+}
+
+.materials-a {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 48%;
+}
+
+.materials-b {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 48%;
+}
+
+.spread-bath-trio .spread-canvas {
+    width: min(1180px, 88vw);
+    height: min(700px, 76svh);
+}
+
+.bath-a,
+.bath-b,
+.bath-c {
+    top: 8%;
+    width: 34%;
+    height: 82%;
+}
+
+.bath-a { left: 0; }
+.bath-b {
+    left: 33%;
+    top: 0;
+    z-index: 2;
+}
+.bath-c { right: 0; }
+
+.spread-pond .spread-canvas {
+    width: min(1300px, 94vw);
+    height: min(840px, 86svh);
+}
+
+.pond-a {
+    inset: 0;
+}
+
+.pond-b {
+    right: 6%;
+    bottom: 8%;
+    width: 48%;
+    height: 32%;
+    z-index: 2;
+}
+
+.spread-quiet-room .spread-canvas {
+    width: min(1180px, 88vw);
+    height: min(840px, 86svh);
+}
+
+.quiet-a {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 60%;
+}
+
+.quiet-b {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 34%;
+}
+
+.spread-dog-close .spread-canvas {
+    width: min(1280px, 92vw);
+    height: min(860px, 86svh);
+}
+
+.dog-close-a {
+    left: 2%;
+    top: 0;
+    width: 88%;
+    height: 62%;
+    z-index: 2;
+}
+
+.dog-close-b {
+    right: 2%;
+    bottom: 0;
+    width: 72%;
+    height: 40%;
+    z-index: 1;
+}
+
+/* Combined PDF source-of-truth layouts */
+.magazine-spread {
+    padding: clamp(5.25rem, 9vh, 6.75rem) clamp(1rem, 3vw, 2.75rem) clamp(1.5rem, 3vh, 2.75rem);
+}
+
+.mag-frame {
+    box-shadow: none;
+}
+
+.spread-garden .spread-canvas {
+    width: min(1040px, 82vw);
+    height: min(650px, 72svh);
+}
+
+.garden-a {
+    left: 0;
+    top: 0;
+    width: 47%;
+    height: 100%;
+}
+
+.garden-b {
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 47%;
+}
+
+.garden-c {
+    right: 0;
+    bottom: 0;
+    width: 50%;
+    height: 47%;
+}
+
+.spread-bench .spread-canvas {
+    width: min(340px, 34vw);
+    height: min(560px, 68svh);
+}
+
+.spread-la-marina-cluster .spread-canvas {
+    width: min(1080px, 84vw);
+    height: min(640px, 72svh);
+}
+
+.marina-a {
+    left: 0;
+    top: 0;
+    width: 39.5%;
+    height: 100%;
+}
+
+.marina-b {
+    right: 0;
+    top: 0;
+    width: 59.5%;
+    height: 49%;
+}
+
+.marina-c {
+    right: 0;
+    bottom: 0;
+    width: 59.5%;
+    height: 49%;
+}
+
+.spread-pool-pair .spread-canvas {
+    width: min(1180px, 92vw);
+    height: min(820px, 84svh);
+}
+
+.pool-pair-a {
+    left: 0;
+    top: 0;
+    width: 49.2%;
+    height: 100%;
+}
+
+.pool-pair-b {
+    right: 0;
+    top: 0;
+    width: 49.2%;
+    height: 100%;
+}
+
+.spread-video-wide.magazine-spread {
+    padding: 0;
+}
+
+.spread-video-wide .spread-canvas {
+    width: 100vw;
+    height: 100svh;
+}
+
+.video-wide-a {
+    inset: 0;
+}
+
+.spread-pool-hero.magazine-spread {
+    display: block;
+    height: auto;
+    min-height: 100svh;
+    padding: 0;
+    overflow: visible;
+}
+
+.spread-pool-hero .spread-canvas {
+    width: 100vw;
+    height: auto;
+}
+
+.pool-hero-frame {
+    position: relative;
+    inset: auto;
+    width: 100vw;
+    height: auto;
+    aspect-ratio: 1603 / 2400;
+    background: #f8f7f4;
+    overflow: visible;
+}
+
+.pool-hero-frame img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    transform: none;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.spread-skylight .spread-canvas {
+    width: min(1100px, 82vw);
+    height: min(680px, 76svh);
+}
+
+.spread-mini-duo .spread-canvas {
+    width: min(540px, 48vw);
+    height: min(220px, 32svh);
+}
+
+.mini-duo-a,
+.mini-duo-b {
+    top: 0;
+    width: 48%;
+    height: 100%;
+}
+
+.mini-duo-a { left: 0; }
+.mini-duo-b { right: 0; }
+
+.spread-ceiling-dog .spread-canvas {
+    width: min(1220px, 82vw, 88svh);
+    height: auto;
+    aspect-ratio: 1 / 0.92;
+    overflow: visible;
+}
+
+.spread-ceiling-dog .mag-frame img {
+    object-fit: contain;
+}
+
+.ceiling-a {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2400 / 1603;
+    bottom: auto;
+    z-index: 1;
+}
+
+.ceiling-b {
+    right: 8%;
+    top: 12%;
+    width: 34%;
+    height: auto;
+    aspect-ratio: 2400 / 1603;
+    bottom: auto;
+    z-index: 3;
+}
+
+.ceiling-c {
+    left: 0;
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4240 / 2832;
+    z-index: 2;
+}
+
+.spread-el-monte-trio .spread-canvas {
+    width: min(1180px, 86vw);
+    height: auto;
+    aspect-ratio: 2 / 1;
+}
+
+.el-monte-trio-a,
+.el-monte-trio-b,
+.el-monte-trio-c {
+    top: 0;
+    width: 33.3334%;
+    height: 100%;
+}
+
+.el-monte-trio-a {
+    left: 0;
+}
+
+.el-monte-trio-b {
+    left: 33.3333%;
+}
+
+.el-monte-trio-c {
+    right: 0;
+}
+
+.spread-el-monte-small .spread-canvas {
+    width: min(1500px, 92vw);
+    height: auto;
+    aspect-ratio: 3 / 1;
+}
+
+.small-grid-a,
+.small-grid-d {
+    top: 0;
+    height: 100%;
+}
+
+.small-grid-a {
+    left: 0;
+    width: 50%;
+}
+
+.small-grid-d {
+    left: auto;
+    right: 0;
+    bottom: auto;
+    width: 50%;
+}
+
+.spread-el-monte .spread-canvas {
+    width: min(1500px, 90vw);
+    height: auto;
+    aspect-ratio: 1.42 / 1;
+}
+
+.elmonte-a {
+    left: 0;
+    top: 0;
+    width: 46.7%;
+    height: 100%;
+    z-index: 1;
+}
+
+.elmonte-b {
+    right: 0;
+    top: 0;
+    width: 53.3%;
+    height: 50%;
+    z-index: 2;
+}
+
+.elmonte-c {
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: 53.3%;
+    height: 50%;
+    z-index: 3;
+}
+
+.spread-rock-living .spread-canvas {
+    width: min(1220px, 86vw);
+    height: min(760px, 80svh);
+}
+
+.rock-living-a {
+    left: 0;
+    top: 0;
+    width: 55%;
+    height: 28%;
+}
+
+.rock-living-b {
+    right: 3%;
+    top: 3%;
+    width: 32%;
+    height: 34%;
+    z-index: 3;
+}
+
+.rock-living-c {
+    left: 9%;
+    bottom: 0;
+    width: 76%;
+    height: 58%;
+    z-index: 2;
+}
+
+.spread-bird .spread-canvas {
+    width: min(400px, 36vw);
+    height: min(250px, 36svh);
+}
+
+.spread-wood-wall .spread-canvas {
+    width: min(1120px, 84vw);
+    height: min(720px, 78svh);
+}
+
+.wood-wall-c {
+    inset: 0;
+}
+
+.wood-wall-a {
+    left: 20%;
+    top: 25%;
+    width: 27%;
+    height: 30%;
+    z-index: 3;
+}
+
+.wood-wall-b {
+    right: 21%;
+    top: 25%;
+    width: 27%;
+    height: 30%;
+    z-index: 3;
+}
+
+.spread-wood-film .spread-canvas {
+    width: min(1180px, 86vw);
+    height: min(740px, 78svh);
+}
+
+.wood-film-bg {
+    inset: 0;
+}
+
+.wood-film-bg img {
+    position: absolute;
+    inset: 0;
+    filter: brightness(0.66);
+}
+
+.wood-film-a {
+    left: 17%;
+    top: 31%;
+    width: 31%;
+    height: 34%;
+    z-index: 3;
+}
+
+.wood-film-b {
+    right: 17%;
+    top: 31%;
+    width: 31%;
+    height: 34%;
+    z-index: 3;
+}
+
+.spread-la-marina-sauna.magazine-spread {
+    padding: clamp(5.25rem, 9vh, 6.75rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 4vh, 3rem);
+}
+
+.spread-la-marina-sauna .spread-canvas {
+    width: min(1320px, 88vw);
+    height: min(760px, 78svh);
+}
+
+.sauna-a {
+    inset: 0;
+}
+
+.spread-pomar-hero.magazine-spread {
+    padding: 0;
+}
+
+.spread-pomar-hero .spread-canvas {
+    width: 100vw;
+    height: 100svh;
+}
+
+.spread-materials .spread-canvas {
+    width: min(560px, 42vw);
+    height: min(690px, 76svh);
+}
+
+.materials-a,
+.materials-b {
+    left: 0;
+    width: 100%;
+    height: 50%;
+}
+
+.materials-a { top: 0; }
+.materials-b { bottom: 0; }
+
+.spread-bath-trio .spread-canvas {
+    width: min(1320px, 86vw);
+    height: min(620px, 72svh);
+}
+
+.bath-a,
+.bath-b,
+.bath-c {
+    top: 0;
+    width: 33.3334%;
+    height: 100%;
+}
+
+.bath-a { left: 0; }
+.bath-b { left: 33.3333%; }
+.bath-c { right: 0; }
+
+.spread-pond.magazine-spread {
+    padding: 0;
+}
+
+.spread-pond .spread-canvas {
+    width: 100vw;
+    height: 100svh;
+}
+
+.pond-a {
+    inset: 0;
+}
+
+.pond-b {
+    right: 12vw;
+    bottom: 15vh;
+    width: min(560px, 34vw);
+    height: auto;
+    aspect-ratio: 16 / 9;
+    z-index: 2;
+}
+
+.pond-b video {
+    object-fit: contain;
+    background: #27302c;
+}
+
+.spread-el-monte-bath .spread-canvas {
+    width: min(1120px, 84vw);
+    height: min(640px, 72svh);
+}
+
+.el-bath-a,
+.el-bath-b,
+.el-bath-c {
+    top: 0;
+    width: 33.3334%;
+    height: 100%;
+}
+
+.el-bath-a { left: 0; }
+.el-bath-b { left: 33.3333%; }
+.el-bath-c { right: 0; }
+
+.spread-shadow-fan .spread-canvas {
+    width: min(1180px, 86vw);
+    height: min(720px, 76svh);
+}
+
+.shadow-fan-a {
+    inset: 0;
+}
+
+.shadow-fan-b {
+    right: 10%;
+    bottom: 13%;
+    width: 36%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    z-index: 2;
+}
+
+.shadow-fan-b video {
+    object-fit: contain;
+    background: #22231f;
+}
+
+.spread-interior-trio .spread-canvas {
+    width: min(1320px, 86vw);
+    height: min(650px, 74svh);
+}
+
+.interior-trio-a,
+.interior-trio-b,
+.interior-trio-c {
+    top: 0;
+    width: 32%;
+    height: 100%;
+}
+
+.interior-trio-a { left: 0; }
+.interior-trio-b { left: 34%; }
+.interior-trio-c { right: 0; }
+
+.spread-la-marina-two.magazine-spread {
+    padding: 0;
+}
+
+.spread-la-marina-two .spread-canvas {
+    width: 100vw;
+    height: 100svh;
+}
+
+.marina-two-a,
+.marina-two-b {
+    top: 0;
+    width: 50%;
+    height: 100%;
+}
+
+.marina-two-a { left: 0; }
+.marina-two-b { right: 0; }
+
+.spread-ceiling-cove .spread-canvas {
+    width: min(940px, 76vw);
+    height: min(520px, 62svh);
+}
+
+.ceiling-cove-a {
+    inset: 0;
+}
+
+.spread-stone-pair .spread-canvas {
+    width: min(560px, 48vw);
+    height: min(440px, 54svh);
+}
+
+.stone-pair-a,
+.stone-pair-b {
+    top: 0;
+    width: 49%;
+    height: 100%;
+}
+
+.stone-pair-a { left: 0; }
+.stone-pair-b { right: 0; }
+
+.spread-view-pair .spread-canvas {
+    width: min(860px, 70vw);
+    height: min(420px, 52svh);
+}
+
+.view-pair-a {
+    left: 0;
+    top: 0;
+    width: 64%;
+    height: 100%;
+}
+
+.view-pair-b {
+    right: 0;
+    top: 0;
+    width: 32%;
+    height: 100%;
+}
+
+.spread-details-trio .spread-canvas {
+    width: min(680px, 56vw);
+    height: min(280px, 40svh);
+}
+
+.details-trio-a,
+.details-trio-b,
+.details-trio-c {
+    top: 0;
+    width: 32%;
+    height: 100%;
+}
+
+.details-trio-a { left: 0; }
+.details-trio-b { left: 34%; }
+.details-trio-c { right: 0; }
+
+.spread-imag-detail .spread-canvas {
+    width: min(520px, 44vw);
+    height: min(250px, 34svh);
+}
+
+.imag-detail-a {
+    inset: 0;
+}
+
+.spread-exterior-dog .spread-canvas {
+    width: min(900px, 72vw);
+    height: min(430px, 54svh);
+}
+
+.exterior-dog-a {
+    left: 0;
+    top: 0;
+    width: 30%;
+    height: 100%;
+}
+
+.exterior-dog-b {
+    right: 0;
+    top: 0;
+    width: 66%;
+    height: 100%;
+}
+
+.spread-shadow-grid .spread-canvas {
+    width: min(800px, 66vw);
+    height: min(520px, 62svh);
+}
+
+.shadow-grid-a {
+    left: 0;
+    top: 0;
+    width: 47%;
+    height: 100%;
+}
+
+.shadow-grid-b {
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 52%;
+}
+
+.shadow-grid-c {
+    right: 0;
+    bottom: 0;
+    width: 50%;
+    height: 44%;
+}
+
+.spread-dog-close .spread-canvas {
+    width: min(1100px, 84vw);
+    height: min(790px, 84svh);
+}
+
+.dog-close-a {
+    left: 0;
+    top: 0;
+    width: 82%;
+    height: 58%;
+    z-index: 1;
+}
+
+.dog-close-c {
+    right: 0;
+    top: 36%;
+    width: 34%;
+    height: 25%;
+    z-index: 3;
+}
+
+.dog-close-b {
+    right: 0;
+    bottom: 0;
+    width: 78%;
+    height: 42%;
+    z-index: 2;
+}
+
+.home-page .about-section-home {
+    height: 100svh;
+    min-height: 640px;
+    padding: clamp(6rem, 13vh, 8rem) clamp(2rem, 6vw, 5rem) clamp(2rem, 6vh, 4rem);
+    align-items: center;
+    align-content: center;
+    scroll-margin-top: 0;
+}
+
 /* ============================================
    PROJECTS GRID - Masonry Style
    ============================================ */
@@ -422,11 +1545,24 @@ nav.nav-dark .logo-svg {
 /* Contact info within about section */
 .about-contact {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-md);
     margin-top: var(--space-lg);
     padding-top: var(--space-lg);
     border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.about-section-home {
+    padding-top: var(--space-xl);
+}
+
+.about-section-home .about-image img {
+    left: 0;
+    top: 0;
+    transform: none;
+    height: min(58svh, 520px);
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
 }
 
 .about-contact-item h4 {
@@ -455,6 +1591,254 @@ nav.nav-dark .logo-svg {
     .about-contact {
         grid-template-columns: 1fr;
         gap: var(--space-md);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+    .magazine-spread {
+        padding-left: clamp(2rem, 5vw, 4rem);
+        padding-right: clamp(2rem, 5vw, 4rem);
+    }
+
+    .spread-canvas {
+        width: min(920px, 84vw);
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-content {
+        left: var(--space-md);
+        right: var(--space-md);
+        bottom: var(--space-md);
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        letter-spacing: 0.11em;
+    }
+
+    .hero-kicker {
+        font-size: 0.85rem;
+    }
+
+    .magazine-spread {
+        height: auto;
+        min-height: auto;
+        padding: 4.5rem 1.25rem 1rem;
+    }
+
+    .spread-canvas,
+    .spread-pool-intro .spread-canvas,
+    .spread-garden .spread-canvas,
+    .spread-bench .spread-canvas,
+    .spread-la-marina-cluster .spread-canvas,
+    .spread-pool-pair .spread-canvas,
+    .spread-video-wide .spread-canvas,
+    .spread-pool-hero .spread-canvas,
+    .spread-skylight .spread-canvas,
+    .spread-ceiling-dog .spread-canvas,
+    .spread-el-monte-trio .spread-canvas,
+    .spread-el-monte-small .spread-canvas,
+    .spread-interiors .spread-canvas,
+    .spread-el-monte .spread-canvas,
+    .spread-bird .spread-canvas,
+    .spread-wood-wall .spread-canvas,
+    .spread-materials .spread-canvas,
+    .spread-bath-trio .spread-canvas,
+    .spread-pond .spread-canvas,
+    .spread-quiet-room .spread-canvas,
+    .spread-dog-close .spread-canvas {
+        width: 100%;
+        height: auto;
+        display: grid;
+        gap: 0.65rem;
+    }
+
+    .mag-frame,
+    .pool-intro-a,
+    .garden-a,
+    .garden-b,
+    .garden-c,
+    .bench-a,
+    .marina-a,
+    .marina-b,
+    .marina-c,
+    .pool-pair-a,
+    .pool-pair-b,
+    .video-wide-a,
+    .pool-intro-a,
+    .pool-hero-a,
+    .skylight-a,
+    .ceiling-a,
+    .ceiling-b,
+    .ceiling-c,
+    .el-monte-trio-a,
+    .el-monte-trio-b,
+    .el-monte-trio-c,
+    .small-grid-a,
+    .small-grid-d,
+    .interiors-a,
+    .interiors-b,
+    .interiors-c,
+    .elmonte-a,
+    .elmonte-b,
+    .elmonte-c,
+    .bird-a,
+    .wood-wall-a,
+    .wood-wall-b,
+    .wood-wall-c,
+    .pomar-hero-a,
+    .materials-a,
+    .materials-b,
+    .bath-a,
+    .bath-b,
+    .bath-c,
+    .pond-a,
+    .pond-b,
+    .quiet-a,
+    .quiet-b,
+    .dog-close-a,
+    .dog-close-b {
+        position: relative;
+        inset: auto;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        width: 100%;
+        height: auto;
+    }
+
+    .mag-frame {
+        aspect-ratio: 4 / 3;
+    }
+
+    .bench-a,
+    .garden-a,
+    .marina-a,
+    .ceiling-b,
+    .materials-a,
+    .materials-b,
+    .bath-a,
+    .bath-b,
+    .bath-c {
+        aspect-ratio: 4 / 5;
+    }
+
+    .video-wide-a,
+    .pool-hero-a,
+    .skylight-a,
+    .living-large-a,
+    .pomar-hero-a,
+    .dog-close-b {
+        aspect-ratio: 16 / 10;
+    }
+
+    .about-section-home {
+        padding-top: var(--space-lg);
+        min-height: auto;
+        height: auto;
+    }
+
+    .about-section-home .about-image img {
+        height: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    .magazine-spread {
+        height: auto;
+        min-height: auto;
+        padding: 4.5rem 1.25rem 1rem;
+    }
+
+    .magazine-spread .spread-canvas {
+        width: 100%;
+        height: auto;
+        display: grid;
+        gap: 0.65rem;
+    }
+
+    .magazine-spread .mag-frame {
+        position: relative;
+        inset: auto;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        width: 100%;
+        height: auto;
+        z-index: 1;
+    }
+
+    .magazine-spread .mag-frame {
+        aspect-ratio: 4 / 3;
+    }
+
+    .spread-el-monte-trio .mag-frame,
+    .spread-bench .mag-frame,
+    .spread-la-marina-cluster .marina-a,
+    .spread-pool-pair .mag-frame,
+    .spread-el-monte-bath .mag-frame,
+    .spread-bath-trio .mag-frame,
+    .spread-interior-trio .mag-frame,
+    .spread-la-marina-two .mag-frame,
+    .spread-stone-pair .mag-frame {
+        aspect-ratio: 4 / 5;
+    }
+
+    .spread-video-wide .mag-frame,
+    .spread-pool-hero .mag-frame,
+    .spread-skylight .mag-frame,
+    .spread-la-marina-sauna .mag-frame,
+    .spread-pomar-hero .mag-frame,
+    .spread-ceiling-cove .mag-frame,
+    .spread-dog-close .dog-close-b {
+        aspect-ratio: 16 / 10;
+    }
+}
+
+@media (max-width: 767px) {
+    .spread-pool-hero.magazine-spread {
+        display: block;
+        height: auto;
+        min-height: 100svh;
+        padding: 0;
+        overflow: visible;
+    }
+
+    .spread-pool-hero .spread-canvas {
+        display: block;
+        width: 100vw;
+        height: auto;
+    }
+
+    .spread-pool-hero .pool-hero-frame {
+        position: relative;
+        inset: auto;
+        width: 100vw;
+        height: auto;
+        aspect-ratio: 1603 / 2400;
+        overflow: visible;
+    }
+
+    .spread-pool-hero .pool-hero-frame img {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        transform: none;
+        object-fit: cover;
+        object-position: center top;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.home-document {
+        scroll-behavior: auto;
+        scroll-snap-type: y proximity;
     }
 }
 

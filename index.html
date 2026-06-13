@@ -1,199 +1,640 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="home-document">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nick Mason Construction Co. is a full-service construction firm specializing in custom residential and commercial building in Santa Barbara and Los Angeles.">
     <title>Nick Mason Construction Co.</title>
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    
+
     <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="fade-out">
+<body class="fade-out home-page">
     <!-- Navigation -->
     <nav>
-        <a href="index.html" class="logo">
+        <a href="#top" class="logo" aria-label="Nick Mason Construction Co. home">
             <img src="assets/logo/nick-mason-logo.svg" alt="Nick Mason Construction Co." class="logo-svg">
         </a>
         <ul class="nav-links">
-            <li><a href="#work">Work</a></li>
-            <li><a href="#contact">About</a></li>
+            <li><a href="#about">About</a></li>
         </ul>
     </nav>
 
-    <!-- Hero - Video loop -->
-    <section class="hero">
-        <video
-            class="hero-media autoplay-on-view"
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="auto"
-        >
-            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776365013/rock_03_g6ucb6.mp4" type="video/mp4">
-        </video>
-        <div class="hero-overlay"></div>
-    </section>
+    <main id="top">
+        <!-- Hero - first image/video in the new continuous scroll -->
+        <section class="hero home-hero" aria-label="La Marina residence pool video">
+            <video
+                class="hero-media autoplay-on-view"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                aria-label="La Marina pool and bench video"
+            >
+                <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596060/pool_nick_tyeuiq.mp4" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+        </section>
 
-    <!-- Projects Grid -->
-    <section class="projects-section" id="work">
-        <div class="project-grid">
-            <article class="project-item">
-                <a href="pomar-lane.html" class="project-link">
-                    <img src="images/projects/pomar-lane/web/DSC09026_1.jpg" alt="Pomar Lane Residence">
-                    <div class="project-info">
-                        <h3 class="project-title">Pomar Lane</h3>
-                        <span class="project-location">Santa Barbara, CA</span>
-                    </div>
-                </a>
-            </article>
-            <article class="project-item tall">
-                <a href="la-marina.html" class="project-link">
-                    <img src="images/projects/la-marina/web/R0010232.jpg" alt="La Marina Residence">
-                    <div class="project-info">
-                        <h3 class="project-title">La Marina</h3>
-                        <span class="project-location">Santa Barbara, CA</span>
-                    </div>
-                </a>
-            </article>
-            <article class="project-item">
-                <a href="el-monte.html" class="project-link">
-                    <img src="images/projects/el-monte/web/DSC04489_2.jpg" alt="El Monte Residence">
-                    <div class="project-info">
-                        <h3 class="project-title">El Monte</h3>
-                        <span class="project-location">Santa Barbara, CA</span>
-                    </div>
-                </a>
-            </article>
-        </div>
-    </section>
-
-    <!-- Quote -->
-    <section class="quote-section">
-        <blockquote class="quote-text">
-            The best part of the work is the part no one sees.
-        </blockquote>
-    </section>
-
-    <!-- About & Contact -->
-    <section class="about-section" id="contact">
-        <div class="about-image">
-            <img loading="lazy" decoding="async" src="images/about/contactpage_collage_02.png" alt="Nick Mason Construction">
-        </div>
-        <div class="about-content">
-            <span class="section-label">About</span>
-            <h2 class="about-headline">Close to the Work</h2>
-            <p class="about-text">
-                Nick Mason Construction Co. builds custom homes along California's
-                Central Coast. Nick works his sites personally. He knows the crew
-                by name, he knows the wood by grain, and he's the first one to
-                look at a detail twice.
-            </p>
-            <p class="about-text">
-                He ships materials from wherever the right ones live. He chooses
-                them one at a time. What's behind the wall gets the same attention
-                as what's in front of it. What the site already has, he uses.
-                Old beams become new beams. Salvaged planks become benches. The
-                crew stays because the work is the kind worth staying for.
-            </p>
-
-            <!-- Contact Info -->
-            <div class="about-contact">
-                <div class="about-contact-item">
-                    <h4>Contact</h4>
-                    <p>
-                        <a href="mailto:info@nickmason.com">info@nickmason.com</a><br>
-                        <a href="tel:+1XXXXXXXXXX">XXX.XXX.XXXX</a>
-                    </p>
+        <!-- Scroll-snapped magazine spreads inspired by the new layout references -->
+        <section class="image-scroll" aria-label="Selected Nick Mason Construction work">
+            <section class="magazine-spread spread-garden" aria-label="Garden and exterior spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame garden-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/DSC09363.JPG" alt="Garden patio with hedges and stone pavers">
+                    </figure>
+                    <figure class="mag-frame garden-b">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Dense green hedge and garden lawn video"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/v1776379229/green_03_dlhhaw.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                    <figure class="mag-frame garden-c">
+                        <img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09028.jpg" alt="Pomar Lane exterior with garden terrace">
+                    </figure>
                 </div>
-                <div class="about-contact-item">
-                    <h4>Location</h4>
-                    <p>
-                        Address Line 1<br>
-                        City, State ZIP
-                    </p>
+            </section>
+
+            <section class="magazine-spread spread-bench" aria-label="Stone bench spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame bench-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/R0010023.JPG" alt="Stone bench on grass at La Marina">
+                    </figure>
                 </div>
-                <div class="about-contact-item">
-                    <h4>Follow</h4>
-                    <p>
-                        <a href="#">Instagram</a><br>
-                        <a href="#">LinkedIn</a>
-                    </p>
+            </section>
+
+            <section class="magazine-spread spread-la-marina-cluster" aria-label="La Marina interior and exterior spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame marina-a">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010232.jpg" alt="La Marina interior looking out to the sauna and garden">
+                    </figure>
+                    <figure class="mag-frame marina-b">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/58-A001C0013_250313_Y0PG01.jpg" alt="Overhead view of the La Marina pool court">
+                    </figure>
+                    <figure class="mag-frame marina-c">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010071.jpg" alt="La Marina exterior entry and wood cladding">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-pool-pair" aria-label="La Marina pool detail spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame pool-pair-a">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04942.jpg" alt="La Marina pool with yellow paddleboard">
+                    </figure>
+                    <figure class="mag-frame pool-pair-b">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010242.jpg" alt="La Marina side pool and cedar wall">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-video-wide" aria-label="Palm tree video spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame video-wide-a">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Palm tree video at La Marina"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1600,c_limit,vc_h264,f_mp4/v1775596062/palmtree_nick_xnkxc9.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-pool-hero" aria-label="Large pool reflection spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame pool-hero-a pool-hero-frame">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05214.jpg" alt="La Marina pool reflection and lime tree">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-skylight" aria-label="Skylight spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame skylight-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/DSC05304.jpg" alt="Dark room with skylight">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-mini-duo" aria-label="Small foliage and dark detail spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame mini-duo-a">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05077.jpg" alt="Leaf shadow on a pale wall">
+                    </figure>
+                    <figure class="mag-frame mini-duo-b">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/IMAG0033.JPG" alt="Dark leafy detail">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-ceiling-dog" aria-label="Ceiling and dog spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame ceiling-a">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04472.jpg" alt="El Monte ceiling and pendant light">
+                    </figure>
+                    <figure class="mag-frame ceiling-b">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05049.jpg" alt="Dog resting inside La Marina residence">
+                    </figure>
+                    <figure class="mag-frame ceiling-c">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/DSC04438.jpg" alt="Reflected ceiling and window detail">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-el-monte-trio" aria-label="El Monte interior and garden trio">
+                <div class="spread-canvas">
+                    <figure class="mag-frame el-monte-trio-a">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009646.jpg" alt="El Monte living room and ceiling detail">
+                    </figure>
+                    <figure class="mag-frame el-monte-trio-b">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009639.jpg" alt="El Monte kitchen and shelving detail">
+                    </figure>
+                    <figure class="mag-frame el-monte-trio-c">
+                        <img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09374.jpg" alt="Garden table with bowl of lemons">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-el-monte-small" aria-label="El Monte exterior and dog video">
+                <div class="spread-canvas">
+                    <figure class="mag-frame small-grid-a">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04397.jpg" alt="El Monte exterior gate and entry">
+                    </figure>
+                    <figure class="mag-frame small-grid-d">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Dog close-up video at El Monte"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775616599/dog_nick_01_lcn0pv.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-el-monte" aria-label="El Monte living room composition">
+                <div class="spread-canvas">
+                    <figure class="mag-frame elmonte-a">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170031.jpg" alt="El Monte exterior guest house">
+                    </figure>
+                    <figure class="mag-frame elmonte-b">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/R0009612.JPG" alt="People standing in a finished living room">
+                    </figure>
+                    <figure class="mag-frame elmonte-c">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Fire detail video at El Monte"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596909/fire_nick_02_q5n2n0.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-rock-living" aria-label="El Monte rock texture and living room spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame rock-living-a">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Rock texture video at El Monte"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776365013/rock_03_g6ucb6.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                    <figure class="mag-frame rock-living-b">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170025.jpg" alt="El Monte interior detail on film">
+                    </figure>
+                    <figure class="mag-frame rock-living-c">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04425.jpg" alt="El Monte finished living room">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-bird" aria-label="Small detail spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame bird-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/DSC04895.jpg" alt="Small bird detail on dark tile">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-wood-wall" aria-label="Wood wall image spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame wood-wall-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/R0010194.JPG" alt="Woman and dog by sauna door">
+                    </figure>
+                    <figure class="mag-frame wood-wall-b">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/R0010032.JPG" alt="Hand holding foliage outside La Marina">
+                    </figure>
+                    <figure class="mag-frame wood-wall-c">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Wood grain video at La Marina"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1600,c_limit,vc_h264,f_mp4/v1776364859/wood_01_dewmhw.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-wood-film" aria-label="La Marina wood wall and film detail spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame wood-film-bg">
+                        <img
+                            loading="lazy"
+                            decoding="async"
+                            src="images/more website photo selects/DSC05332.jpg"
+                            alt="La Marina wood ceiling shadow detail"
+                        >
+                    </figure>
+                    <figure class="mag-frame wood-film-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/000062160022.jpg" alt="La Marina exterior detail on film">
+                    </figure>
+                    <figure class="mag-frame wood-film-b">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/000062160011.jpg" alt="La Marina exterior wall and garden on film">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-la-marina-sauna" aria-label="La Marina sauna exterior spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame sauna-a">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04912.jpg" alt="La Marina exterior sauna and cedar wall">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-pomar-hero" aria-label="Pomar Lane exterior spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame pomar-hero-a">
+                        <img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09026_1.jpg" alt="Pomar Lane exterior and garden entry">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-materials" aria-label="Material details spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame materials-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/DSC04703.jpg" alt="Gravel texture detail">
+                    </figure>
+                    <figure class="mag-frame materials-b">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/DSC04801.jpg" alt="Stone and shadow detail">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-bath-trio" aria-label="Interior bath detail spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame bath-a">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010077.jpg" alt="Warm bath detail">
+                    </figure>
+                    <figure class="mag-frame bath-b">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010078.jpg" alt="La Marina bathroom detail">
+                    </figure>
+                    <figure class="mag-frame bath-c">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04932.jpg" alt="La Marina window and interior detail">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-pond" aria-label="Pond and water spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame pond-a">
+                        <img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09052.jpg" alt="Pomar Lane pond and water plants">
+                    </figure>
+                    <figure class="mag-frame pond-b">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Water movement video at Pomar Lane"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776377096/water_bubbles_01_d3ppl4.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-el-monte-bath" aria-label="El Monte bathroom and interior spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame el-bath-a">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009676.jpg" alt="El Monte bathroom doorway detail">
+                    </figure>
+                    <figure class="mag-frame el-bath-b">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009654.jpg" alt="El Monte shower and bath detail">
+                    </figure>
+                    <figure class="mag-frame el-bath-c">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009661.jpg" alt="El Monte architectural window detail">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-shadow-fan" aria-label="El Monte ceiling shadow and fan video spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame shadow-fan-a">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04435.jpg" alt="El Monte ceiling shadow and pendant detail">
+                    </figure>
+                    <figure class="mag-frame shadow-fan-b">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Fan shadow video at El Monte"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776357798/fan_01_dz6n2g.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-interior-trio" aria-label="La Marina interior trio spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame interior-trio-a">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05118.jpg" alt="Person walking up a stair with a dog">
+                    </figure>
+                    <figure class="mag-frame interior-trio-b">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05172.jpg" alt="Ocean view through triangular windows">
+                    </figure>
+                    <figure class="mag-frame interior-trio-c">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05062.jpg" alt="Palm trees from below">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-la-marina-two" aria-label="La Marina two image interior spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame marina-two-a">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010047.jpg" alt="La Marina sitting room with artwork">
+                    </figure>
+                    <figure class="mag-frame marina-two-b">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010008.jpg" alt="La Marina built-in shelves and window">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-ceiling-cove" aria-label="Ceiling cove spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame ceiling-cove-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/DSC05227.jpg" alt="White paneled ceiling detail">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-stone-pair" aria-label="Stone texture pair spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame stone-pair-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/DSC04876.jpg" alt="Loose stones and shadow">
+                    </figure>
+                    <figure class="mag-frame stone-pair-b">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/DSC04877.jpg" alt="Cut stone pavers in sun">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-view-pair" aria-label="Ocean view and exterior pair spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame view-pair-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/54-A001C0057_250313_Y0PG01.jpg" alt="Santa Barbara coastline view">
+                    </figure>
+                    <figure class="mag-frame view-pair-b">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/000062160010.jpg" alt="La Marina exterior from the street">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-details-trio" aria-label="Fire flower and wall detail trio">
+                <div class="spread-canvas">
+                    <figure class="mag-frame details-trio-a">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04531.jpg" alt="El Monte wall and light detail">
+                    </figure>
+                    <figure class="mag-frame details-trio-b">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170033.jpg" alt="El Monte exterior planting and shadow on film">
+                    </figure>
+                    <figure class="mag-frame details-trio-c">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04463.jpg" alt="Wall shadow detail">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-imag-detail" aria-label="Quiet surface detail">
+                <div class="spread-canvas">
+                    <figure class="mag-frame imag-detail-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/IMAG0054.JPG" alt="Soft green surface detail">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-exterior-dog" aria-label="Exterior and dog spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame exterior-dog-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects/000062170032.jpg" alt="Planting detail in front of an exterior wall">
+                    </figure>
+                    <figure class="mag-frame exterior-dog-b">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062150007.jpg" alt="Dog outside a finished residence">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-shadow-grid" aria-label="Shadow and interior detail spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame shadow-grid-a">
+                        <img loading="lazy" decoding="async" src="images/more website photo selects 2/DSC04649.jpg" alt="Soft wall and shadow detail">
+                    </figure>
+                    <figure class="mag-frame shadow-grid-b">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04463.jpg" alt="Architectural shadow on a wall">
+                    </figure>
+                    <figure class="mag-frame shadow-grid-c">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Fan shadow video at El Monte"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776357798/fan_01_dz6n2g.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-dog-close" aria-label="Dog and ocean closing spread">
+                <div class="spread-canvas">
+                    <figure class="mag-frame dog-close-a">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04489.jpg" alt="Dog framed by exterior entry at El Monte">
+                    </figure>
+                    <figure class="mag-frame dog-close-c">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05251.jpg" alt="Person smiling on a sofa with a dog">
+                    </figure>
+                    <figure class="mag-frame dog-close-b">
+                        <video
+                            class="autoplay-on-view"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            aria-label="Ocean light video from Nick Mason Construction project"
+                        >
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:best,w_1920,c_limit,vc_h264,f_mp4/v1775604634/ocean_nick_02_gafg2s.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+        </section>
+
+        <!-- About & Contact -->
+        <section class="about-section about-section-home" id="about">
+            <div class="about-image">
+                <img loading="lazy" decoding="async" src="images/more website photo selects/R0009612.JPG" alt="Nick Mason Construction Co. project walkthrough inside a finished residence">
+            </div>
+            <div class="about-content">
+                <span class="section-label">About</span>
+                <h2 class="about-headline">Full-Service Building</h2>
+                <p class="about-text">
+                    Nick Mason Construction Co. is a full-service construction firm
+                    specializing in custom residential and commercial building.
+                    Founded in 2016 by Nick Mason and a close group of friends and
+                    subcontractors, the company works hands-on from early planning
+                    through final detail.
+                </p>
+                <p class="about-text">
+                    Based between Santa Barbara and Los Angeles, the firm builds with
+                    a steady focus on craft, site, material, and the people who make
+                    the work possible.
+                </p>
+
+                <!-- Contact Info -->
+                <div class="about-contact">
+                    <div class="about-contact-item">
+                        <h4>Contact</h4>
+                        <p>
+                            <a href="mailto:info@nickmason.com">info@nickmason.com</a><br>
+                            <a href="tel:+1XXXXXXXXXX">XXX.XXX.XXXX</a>
+                        </p>
+                    </div>
+                    <div class="about-contact-item">
+                        <h4>Location</h4>
+                        <p>
+                            Santa Barbara, CA<br>
+                            Los Angeles, CA
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Crew marquee strip (extension of About section) -->
-    <section class="crew-strip crew-strip-about" aria-label="Crew and construction photos">
-        <h2 class="crew-strip-title">Behind the Build</h2>
-        <div class="crew-strip-stage">
-            <button type="button" class="crew-strip-nav crew-strip-prev" aria-label="Scroll left">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M15 18l-6-6 6-6"/>
-                </svg>
-            </button>
-            <div class="crew-strip-viewport">
-                <div class="crew-strip-track" data-crew-set>
-                    <!-- Set 1: crew + construction, interleaved at the top, construction tail -->
-                    <img loading="lazy" decoding="async" src="images/crew/web/R0009759.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009711.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/DSC04811-2.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04857.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/DSC04620.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009860.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/R0009744.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04724.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/DSC04824.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/R0009915.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04876.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/R0009900.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04877.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/DSC04557.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04584.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/DSC04670.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04613.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/DSC04674.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/R0009819.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/crew/web/R0009933.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04657.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04662.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04729.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04743.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04758.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04776.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04856.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/DSC04861.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/IMG_5177.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/IMG_6157.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009690.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009700.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009716.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009793.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009822.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009831.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009845.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009846.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009854.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009861.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009867.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009884.jpg" alt="">
-                    <img loading="lazy" decoding="async" src="images/construction/web/R0009952.jpg" alt="">
-                    <!-- Set 2 (appended by JS at runtime for seamless loop) -->
+        <!-- Crew marquee strip (extension of About section) -->
+        <section class="crew-strip crew-strip-about" aria-label="Crew and construction photos">
+            <h2 class="crew-strip-title">Work in Progress</h2>
+            <div class="crew-strip-stage">
+                <button type="button" class="crew-strip-nav crew-strip-prev" aria-label="Scroll left">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <div class="crew-strip-viewport">
+                    <div class="crew-strip-track" data-crew-set>
+                        <!-- Set 1: crew + construction, interleaved at the top, construction tail -->
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009759.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009711.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04811-2.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04857.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04620.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009860.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009744.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04724.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04824.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009915.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04876.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009900.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04877.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04557.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04584.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04670.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04613.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04674.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009819.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009933.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04657.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04662.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04729.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04743.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04758.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04776.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04856.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04861.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/IMG_5177.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/IMG_6157.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009690.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009700.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009716.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009793.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009822.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009831.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009845.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009846.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009854.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009861.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009867.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009884.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009952.jpg" alt="">
+                        <!-- Set 2 (appended by JS at runtime for seamless loop) -->
+                    </div>
                 </div>
+                <button type="button" class="crew-strip-nav crew-strip-next" aria-label="Scroll right">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 6l6 6-6 6"/>
+                    </svg>
+                </button>
             </div>
-            <button type="button" class="crew-strip-nav crew-strip-next" aria-label="Scroll right">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M9 6l6 6-6 6"/>
-                </svg>
-            </button>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -201,38 +642,20 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script src="js/spread-editor.js"></script>
     <script>
-        // Nav color change based on what section is behind it,
-        // plus slide-up-on-scroll-down / reveal-on-scroll-up
-        // (matches project-page behavior).
+        // Homepage nav: white over the hero video, black over the clean magazine pages.
         const nav = document.querySelector('nav');
         const hero = document.querySelector('.hero');
-        const projectsSection = document.querySelector('.projects-section');
-        const quoteSection = document.querySelector('.quote-section');
-
-        let lastScrollY = 0;
-
-        function updateNavPosition() {
-            const scrollY = Math.max(window.scrollY, 0);
-            // 4px deadband: ignore tiny jitters (iOS elastic/rubber-band
-            // scroll, momentum micro-reversals) so the nav doesn't flicker.
-            if (Math.abs(scrollY - lastScrollY) < 4) return;
-            if (scrollY > lastScrollY && scrollY > 80) {
-                nav.classList.add('nav-hidden');
-            } else {
-                nav.classList.remove('nav-hidden');
-            }
-            lastScrollY = scrollY;
-        }
 
         function updateNavColor() {
-            const scrollPosition = window.scrollY;
+            if (!nav || !hero) return;
+            const scrollPosition = Math.max(window.scrollY, 0);
             const navHeight = nav.offsetHeight;
-            const quoteTop = quoteSection.offsetTop;
+            const heroBottom = hero.offsetTop + hero.offsetHeight;
+            const overHero = scrollPosition + navHeight < heroBottom - 20;
 
-            // Over hero or projects = light (white text)
-            // Over quote, about, footer = dark (black text)
-            if (scrollPosition + navHeight < quoteTop) {
+            if (overHero) {
                 nav.classList.remove('nav-dark');
                 nav.classList.add('nav-light');
             } else {
@@ -241,17 +664,14 @@
             }
         }
 
-        // Initial state
-        nav.classList.add('nav-light');
+        nav?.classList.add('nav-light');
 
-        // Update on scroll
         window.addEventListener('scroll', () => {
-            updateNavPosition();
             updateNavColor();
         }, { passive: true });
+        window.addEventListener('resize', updateNavColor);
+        window.addEventListener('pageshow', updateNavColor);
 
-        // Update on load
-        updateNavPosition();
         updateNavColor();
     </script>
 
@@ -297,7 +717,7 @@
             const INTERACTION_COOLDOWN_MS = 600;
             const ARROW_SCROLL_PX = 400;
 
-            // Duplicate the authored images so the track holds 2× set for seamless wrap
+            // Duplicate the authored images so the track holds 2x set for seamless wrap
             const originals = Array.from(track.children);
             originals.forEach(node => {
                 const clone = node.cloneNode(true);
@@ -363,7 +783,7 @@
             stage.addEventListener('touchend', () => { isTouching = false; bumpCooldown(); }, { passive: true });
             stage.addEventListener('touchcancel', () => { isTouching = false; }, { passive: true });
 
-            // Wheel / trackpad: don't pause — let native scroll momentum blend with
+            // Wheel / trackpad: don't pause - let native scroll momentum blend with
             // the baseline drift so interaction feels fluid instead of stop/start.
 
             viewport.addEventListener('scroll', () => {
@@ -412,6 +832,5 @@
             window.addEventListener('resize', recalc);
         })();
     </script>
-
 </body>
 </html>
