@@ -54,6 +54,381 @@
 })();
 
 /* --------------------------------------------
+   Homepage page-turn scroll
+   --------------------------------------------
+   Native CSS scroll snap moves at browser-defined speed, which can feel
+   abrupt on trackpads. On the homepage we keep CSS snap as a no-JS
+   fallback, then replace it with a controlled one-page-at-a-time motion.
+   -------------------------------------------- */
+(function pageTurnScroll() {
+    const root = document.documentElement;
+    const body = document.body;
+    const isHome = root.classList.contains('home-document') && body.classList.contains('home-page');
+    const isLayoutEditMode = new URLSearchParams(window.location.search).get('layout') === 'edit';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    if (!isHome || isLayoutEditMode || reduceMotion.matches) return;
+
+    const sectionSelector = '.home-hero, .magazine-spread, .about-section-home, .crew-strip-about, footer';
+    const freeScrollSelector = '.spread-tall';
+    const wheelThreshold = 72;
+    const freeScrollBoundaryThreshold = 16;
+    const touchThreshold = 58;
+    const freeScrollEdge = 6;
+    const minDuration = 860;
+    const maxDuration = 1160;
+    let snapPoints = [];
+    let activeIndex = 0;
+    let isAnimating = false;
+    let wheelDelta = 0;
+    let wheelResetTimer = null;
+    let touchStartY = 0;
+    let touchCurrentY = 0;
+    let touchLastY = 0;
+    let touchUsedNativeScroll = false;
+
+    root.classList.add('page-turn-enabled');
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const easeInOutCubic = (t) => (
+        t < 0.5
+            ? 4 * t * t * t
+            : 1 - Math.pow(-2 * t + 2, 3) / 2
+    );
+
+    const getPageMax = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+    function buildSnapPoints() {
+        const points = [];
+
+        document.querySelectorAll(sectionSelector).forEach(section => {
+            const top = Math.round(section.offsetTop);
+            points.push(top);
+        });
+
+        snapPoints = Array.from(new Set(points
+            .map(point => clamp(point, 0, getPageMax()))
+            .sort((a, b) => a - b)
+        ));
+
+        activeIndex = getNearestIndex();
+    }
+
+    function getNearestIndex() {
+        const y = window.scrollY || window.pageYOffset || 0;
+        let nearest = 0;
+        let nearestDistance = Infinity;
+
+        snapPoints.forEach((point, index) => {
+            const distance = Math.abs(point - y);
+            if (distance < nearestDistance) {
+                nearest = index;
+                nearestDistance = distance;
+            }
+        });
+
+        return nearest;
+    }
+
+    function getActiveFreeScrollSection() {
+        const y = window.scrollY || window.pageYOffset || 0;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        let activeSection = null;
+        let activeOverlap = 0;
+
+        document.querySelectorAll(freeScrollSelector).forEach(section => {
+            const top = section.offsetTop;
+            const bottom = top + section.offsetHeight;
+            const overlap = Math.min(y + viewportHeight, bottom) - Math.max(y, top);
+
+            if (overlap > activeOverlap) {
+                activeSection = section;
+                activeOverlap = overlap;
+            }
+        });
+
+        return activeOverlap > viewportHeight * 0.1 ? activeSection : null;
+    }
+
+    function canNativeScrollFreeSection(section, direction) {
+        if (!section || !direction) return false;
+
+        const y = window.scrollY || window.pageYOffset || 0;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const top = section.offsetTop;
+        const bottomLimit = Math.max(top, top + section.offsetHeight - viewportHeight);
+
+        if (direction > 0) return y < bottomLimit - freeScrollEdge;
+        return y > top + freeScrollEdge;
+    }
+
+    function scrollFreeSection(section, deltaY) {
+        if (!section || !deltaY) return;
+
+        const y = window.scrollY || window.pageYOffset || 0;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const top = section.offsetTop;
+        const bottomLimit = Math.max(top, top + section.offsetHeight - viewportHeight);
+        const nextY = clamp(y + deltaY, top, bottomLimit);
+
+        window.scrollTo(0, nextY);
+        activeIndex = getNearestIndex();
+    }
+
+    function moveFromFreeScrollBoundary(section, direction) {
+        if (isAnimating) return;
+
+        if (!section || !direction) {
+            moveBy(direction);
+            return;
+        }
+
+        // Lazy full-width images can change section heights after first paint.
+        // Rebuild right before handoff so the next page target is not stale.
+        buildSnapPoints();
+
+        const sectionTop = clamp(Math.round(section.offsetTop), 0, getPageMax());
+        const sectionIndex = snapPoints.reduce((winner, point, index) => {
+            const currentDistance = Math.abs(point - sectionTop);
+            const winnerDistance = Math.abs(snapPoints[winner] - sectionTop);
+            return currentDistance < winnerDistance ? index : winner;
+        }, 0);
+
+        animateTo(sectionIndex + direction);
+    }
+
+    function animateTo(index) {
+        if (!snapPoints.length) buildSnapPoints();
+
+        const nextIndex = clamp(index, 0, snapPoints.length - 1);
+        const startY = window.scrollY || window.pageYOffset || 0;
+        const endY = snapPoints[nextIndex];
+        const distance = Math.abs(endY - startY);
+
+        if (distance < 2) {
+            activeIndex = nextIndex;
+            return;
+        }
+
+        const duration = clamp(distance * 0.78, minDuration, maxDuration);
+        const startedAt = performance.now();
+        isAnimating = true;
+        activeIndex = nextIndex;
+
+        function step(now) {
+            const progress = clamp((now - startedAt) / duration, 0, 1);
+            const y = startY + (endY - startY) * easeInOutCubic(progress);
+            window.scrollTo(0, y);
+
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            } else {
+                window.scrollTo(0, endY);
+                window.setTimeout(() => {
+                    isAnimating = false;
+                }, 90);
+            }
+        }
+
+        window.requestAnimationFrame(step);
+    }
+
+    function moveBy(direction) {
+        if (isAnimating || !direction) return;
+        buildSnapPoints();
+        activeIndex = getNearestIndex();
+        animateTo(activeIndex + direction);
+    }
+
+    function resetWheelDeltaSoon() {
+        window.clearTimeout(wheelResetTimer);
+        wheelResetTimer = window.setTimeout(() => {
+            wheelDelta = 0;
+        }, 180);
+    }
+
+    function onWheel(event) {
+        if (event.ctrlKey || event.metaKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+
+        const direction = event.deltaY > 0 ? 1 : -1;
+        const freeScrollSection = getActiveFreeScrollSection();
+
+        if (canNativeScrollFreeSection(freeScrollSection, direction)) {
+            event.preventDefault();
+            if (!isAnimating) {
+                scrollFreeSection(freeScrollSection, event.deltaY);
+            }
+            wheelDelta = 0;
+            window.clearTimeout(wheelResetTimer);
+            return;
+        }
+
+        event.preventDefault();
+        if (isAnimating) return;
+
+        wheelDelta += event.deltaY;
+        resetWheelDeltaSoon();
+
+        if (freeScrollSection && Math.abs(wheelDelta) >= freeScrollBoundaryThreshold) {
+            const turnDirection = wheelDelta > 0 ? 1 : -1;
+            wheelDelta = 0;
+            moveFromFreeScrollBoundary(freeScrollSection, turnDirection);
+            return;
+        }
+
+        if (Math.abs(wheelDelta) >= wheelThreshold) {
+            const turnDirection = wheelDelta > 0 ? 1 : -1;
+            wheelDelta = 0;
+            if (freeScrollSection) {
+                moveFromFreeScrollBoundary(freeScrollSection, turnDirection);
+            } else {
+                moveBy(turnDirection);
+            }
+        }
+    }
+
+    function onKeydown(event) {
+        const tagName = document.activeElement?.tagName;
+        const isTyping = tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT' || document.activeElement?.isContentEditable;
+        if (isTyping) return;
+
+        const nextKeys = ['ArrowDown', 'PageDown', ' '];
+        const prevKeys = ['ArrowUp', 'PageUp'];
+        let direction = 0;
+
+        if (nextKeys.includes(event.key) && !event.shiftKey) direction = 1;
+        if ((event.key === ' ' && event.shiftKey) || prevKeys.includes(event.key)) direction = -1;
+        if (event.key === 'Home') {
+            event.preventDefault();
+            animateTo(0);
+            return;
+        }
+        if (event.key === 'End') {
+            event.preventDefault();
+            animateTo(snapPoints.length - 1);
+            return;
+        }
+
+        if (direction) {
+            const freeScrollSection = getActiveFreeScrollSection();
+            if (canNativeScrollFreeSection(freeScrollSection, direction)) {
+                const scrollAmount = event.key === 'ArrowDown' || event.key === 'ArrowUp'
+                    ? 80 * direction
+                    : (window.innerHeight || document.documentElement.clientHeight) * 0.82 * direction;
+
+                event.preventDefault();
+                scrollFreeSection(freeScrollSection, scrollAmount);
+                return;
+            }
+
+            event.preventDefault();
+            if (freeScrollSection) {
+                moveFromFreeScrollBoundary(freeScrollSection, direction);
+            } else {
+                moveBy(direction);
+            }
+        }
+    }
+
+    function onTouchStart(event) {
+        if (!event.touches.length) return;
+        touchStartY = event.touches[0].clientY;
+        touchCurrentY = touchStartY;
+        touchLastY = touchStartY;
+        touchUsedNativeScroll = false;
+    }
+
+    function onTouchMove(event) {
+        if (!event.touches.length) return;
+        touchCurrentY = event.touches[0].clientY;
+
+        const delta = touchStartY - touchCurrentY;
+        const moveDelta = touchLastY - touchCurrentY;
+        const direction = delta > 0 ? 1 : -1;
+        const moveDirection = moveDelta > 0 ? 1 : -1;
+        const freeScrollSection = getActiveFreeScrollSection();
+
+        if (
+            touchUsedNativeScroll ||
+            (Math.abs(delta) > 6 && canNativeScrollFreeSection(freeScrollSection, direction))
+        ) {
+            event.preventDefault();
+            if (Math.abs(moveDelta) > 0 && canNativeScrollFreeSection(freeScrollSection, moveDirection)) {
+                scrollFreeSection(freeScrollSection, moveDelta);
+            }
+            touchLastY = touchCurrentY;
+            touchUsedNativeScroll = true;
+            return;
+        }
+
+        event.preventDefault();
+        touchLastY = touchCurrentY;
+    }
+
+    function onTouchEnd() {
+        if (isAnimating || touchUsedNativeScroll) return;
+
+        const delta = touchStartY - touchCurrentY;
+        if (Math.abs(delta) >= touchThreshold) {
+            const direction = delta > 0 ? 1 : -1;
+            const freeScrollSection = getActiveFreeScrollSection();
+
+            if (freeScrollSection) {
+                moveFromFreeScrollBoundary(freeScrollSection, direction);
+            } else {
+                moveBy(direction);
+            }
+        }
+    }
+
+    function onHashClick(event) {
+        const link = event.target.closest('a[href^="#"]');
+        if (!link) return;
+
+        const hash = link.getAttribute('href');
+        if (!hash || hash === '#') return;
+
+        const target = document.querySelector(hash);
+        if (!target) return;
+
+        event.preventDefault();
+        buildSnapPoints();
+
+        const targetY = target.offsetTop;
+        const targetIndex = snapPoints.reduce((winner, point, index) => {
+            const currentDistance = Math.abs(point - targetY);
+            const winnerDistance = Math.abs(snapPoints[winner] - targetY);
+            return currentDistance < winnerDistance ? index : winner;
+        }, 0);
+
+        animateTo(targetIndex);
+        history.pushState(null, '', hash);
+    }
+
+    buildSnapPoints();
+
+    document.querySelectorAll(`${sectionSelector} img, ${sectionSelector} video`).forEach(media => {
+        if (media.tagName === 'IMG' && !media.complete) {
+            media.addEventListener('load', buildSnapPoints, { once: true });
+        }
+
+        if (media.tagName === 'VIDEO') {
+            media.addEventListener('loadedmetadata', buildSnapPoints, { once: true });
+        }
+    });
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('keydown', onKeydown);
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('resize', buildSnapPoints);
+    window.addEventListener('load', buildSnapPoints);
+    window.addEventListener('pageshow', buildSnapPoints);
+    document.addEventListener('click', onHashClick);
+})();
+
+/* --------------------------------------------
    Autoplay-on-view: robust cross-browser autoplay
    --------------------------------------------
    The <video autoplay muted loop playsinline> handshake is brittle on
