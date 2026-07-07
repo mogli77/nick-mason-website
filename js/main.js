@@ -64,12 +64,22 @@
     const root = document.documentElement;
     const body = document.body;
     const isHome = root.classList.contains('home-document') && body.classList.contains('home-page');
-    const isLayoutEditMode = new URLSearchParams(window.location.search).get('layout') === 'edit';
+    const params = new URLSearchParams(window.location.search);
+    const isLayoutEditMode = params.get('layout') === 'edit';
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     if (!isHome || isLayoutEditMode || reduceMotion.matches) return;
 
-    const sectionSelector = '.home-hero, .magazine-spread, .about-section-home, .crew-strip-about, footer';
+    // Comparison mode: ?scroll=free disables the page-turn AND the CSS
+    // snap fallback so the homepage scrolls like a normal long page.
+    if (params.get('scroll') === 'free') {
+        root.classList.add('free-scroll');
+        return;
+    }
+
+    // About is the LAST snap point. The crew strip and footer below it
+    // scroll natively (see freeZone gates in the input handlers).
+    const sectionSelector = '.home-hero, .magazine-spread, .about-section-home';
     const freeScrollSelector = '.spread-tall';
     const wheelThreshold = 72;
     const freeScrollBoundaryThreshold = 16;
@@ -86,6 +96,7 @@
     let touchCurrentY = 0;
     let touchLastY = 0;
     let touchUsedNativeScroll = false;
+    let touchInFreeZone = false;
 
     root.classList.add('page-turn-enabled');
 
@@ -97,6 +108,24 @@
     );
 
     const getPageMax = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+    // Everything from the About section down (crew strip, footer) scrolls
+    // natively. Returns the y where the free zone starts, or null.
+    function getFreeZoneTop() {
+        const about = document.querySelector('.about-section-home');
+        return about ? clamp(Math.round(about.offsetTop), 0, getPageMax()) : null;
+    }
+
+    // True when this input should be left to native scrolling: at or past
+    // the About top, scrolling down — or scrolling up while still clearly
+    // below the About top (about hasn't reached the top of the screen yet).
+    function isNativeZoneScroll(direction) {
+        const zoneTop = getFreeZoneTop();
+        if (zoneTop === null) return false;
+        const y = window.scrollY || window.pageYOffset || 0;
+        if (y < zoneTop - freeScrollEdge) return false;
+        return direction > 0 || y > zoneTop + freeScrollEdge;
+    }
 
     function buildSnapPoints() {
         const points = [];
@@ -194,15 +223,41 @@
             return currentDistance < winnerDistance ? index : winner;
         }, 0);
 
-        animateTo(sectionIndex + direction);
+        animateTo(sectionIndex + direction, direction);
     }
 
-    function animateTo(index) {
+    // Where a page turn should land for a given snap index. Turning UP
+    // into a taller-than-viewport free-scroll section (.spread-tall)
+    // enters at its BOTTOM edge, so the image reveals in reverse as you
+    // keep scrolling up — instead of jumping over it to its top.
+    function snapDestination(index, direction) {
+        const top = snapPoints[index];
+
+        if (direction < 0) {
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+            const sections = document.querySelectorAll(freeScrollSelector);
+
+            for (const section of sections) {
+                const sectionTop = clamp(Math.round(section.offsetTop), 0, getPageMax());
+                if (sectionTop !== top) continue;
+                const bottomEntry = clamp(
+                    section.offsetTop + section.offsetHeight - viewportHeight,
+                    0,
+                    getPageMax()
+                );
+                if (bottomEntry > top + 2) return bottomEntry;
+            }
+        }
+
+        return top;
+    }
+
+    function animateTo(index, direction = 0) {
         if (!snapPoints.length) buildSnapPoints();
 
         const nextIndex = clamp(index, 0, snapPoints.length - 1);
         const startY = window.scrollY || window.pageYOffset || 0;
-        const endY = snapPoints[nextIndex];
+        const endY = snapDestination(nextIndex, direction);
         const distance = Math.abs(endY - startY);
 
         if (distance < 2) {
@@ -237,7 +292,7 @@
         if (isAnimating || !direction) return;
         buildSnapPoints();
         activeIndex = getNearestIndex();
-        animateTo(activeIndex + direction);
+        animateTo(activeIndex + direction, direction);
     }
 
     function resetWheelDeltaSoon() {
@@ -251,6 +306,14 @@
         if (event.ctrlKey || event.metaKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
         const direction = event.deltaY > 0 ? 1 : -1;
+
+        // Below the About top: hand the wheel back to the browser.
+        if (!isAnimating && isNativeZoneScroll(direction)) {
+            wheelDelta = 0;
+            window.clearTimeout(wheelResetTimer);
+            return;
+        }
+
         const freeScrollSection = getActiveFreeScrollSection();
 
         if (canNativeScrollFreeSection(freeScrollSection, direction)) {
@@ -310,6 +373,9 @@
         }
 
         if (direction) {
+            // Below the About top: native key scrolling.
+            if (!isAnimating && isNativeZoneScroll(direction)) return;
+
             const freeScrollSection = getActiveFreeScrollSection();
             if (canNativeScrollFreeSection(freeScrollSection, direction)) {
                 const scrollAmount = event.key === 'ArrowDown' || event.key === 'ArrowUp'
@@ -331,21 +397,36 @@
     }
 
     function onTouchStart(event) {
-        if (!event.touches.length) return;
+        if (!event.touches.length || event.touches.length > 1) return;
         touchStartY = event.touches[0].clientY;
         touchCurrentY = touchStartY;
         touchLastY = touchStartY;
         touchUsedNativeScroll = false;
+        touchInFreeZone = false;
     }
 
     function onTouchMove(event) {
         if (!event.touches.length) return;
+        // Multi-touch = pinch zoom. Never preventDefault it, and don't
+        // treat the gesture as a page turn on touchend.
+        if (event.touches.length > 1) {
+            touchUsedNativeScroll = true;
+            return;
+        }
         touchCurrentY = event.touches[0].clientY;
 
         const delta = touchStartY - touchCurrentY;
         const moveDelta = touchLastY - touchCurrentY;
         const direction = delta > 0 ? 1 : -1;
         const moveDirection = moveDelta > 0 ? 1 : -1;
+
+        // Below the About top: leave the whole gesture to native scrolling.
+        if (touchInFreeZone) return;
+        if (isNativeZoneScroll(moveDirection)) {
+            touchInFreeZone = true;
+            return;
+        }
+
         const freeScrollSection = getActiveFreeScrollSection();
 
         if (
@@ -366,7 +447,7 @@
     }
 
     function onTouchEnd() {
-        if (isAnimating || touchUsedNativeScroll) return;
+        if (isAnimating || touchUsedNativeScroll || touchInFreeZone) return;
 
         const delta = touchStartY - touchCurrentY;
         if (Math.abs(delta) >= touchThreshold) {
