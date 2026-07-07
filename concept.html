@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en" class="home-document">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nick Mason Construction Co. is a full-service construction firm specializing in custom residential and commercial building in Santa Barbara and Los Angeles.">
+    <title>Nick Mason Construction Co. — Concept</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="data:,">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Concept-only refinements (kept out of styles.css on purpose) -->
+    <style>
+        /* Hero scroll cue - fades out after the first page turn */
+        .scroll-cue {
+            position: absolute;
+            left: 50%;
+            bottom: 2.2rem;
+            transform: translateX(-50%);
+            z-index: 3;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-weight: 300;
+            font-size: 0.9rem;
+            letter-spacing: 0.14em;
+            color: #fff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+            animation: cue-pulse 3.4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .scroll-cue.is-hidden {
+            animation: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        @keyframes cue-pulse {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 0.3; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .scroll-cue { animation: none; opacity: 0.7; }
+        }
+
+        /* Chapter folios - magazine-style location captions on the
+           first spread of each project chapter */
+        .chapter-folio {
+            position: absolute;
+            z-index: 4;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-weight: 300;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            color: var(--color-text-muted);
+            white-space: nowrap;
+        }
+
+        .sp-pool-pair .chapter-folio { left: 16%; bottom: 2.6%; }
+        .sp-facade-dog .chapter-folio { left: 9.85%; bottom: 2.6%; }
+
+        /* On full-bleed imagery the folio sits on the photo in white */
+        .chapter-folio.folio-on-image {
+            left: clamp(1.5rem, 4vw, 3.5rem);
+            bottom: 2rem;
+            color: #fff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+        }
+
+        @media (max-width: 767px) {
+            .chapter-folio,
+            .chapter-folio.folio-on-image {
+                position: static;
+                order: -1;
+                color: var(--color-text-muted);
+                text-shadow: none;
+            }
+        }
+
+        /* Materials spread: side-by-side swatches with paper between,
+           instead of two textures butted into one dark stack */
+        .sp-materials .fr-materials-0 { left: 16%; top: 33%; width: 31%; height: 34%; }
+        .sp-materials .fr-materials-1 { left: 53%; top: 33%; width: 31%; height: 34%; }
+
+        /* Wood-ceiling shadow runs full-bleed to break the run of
+           identical contained frames (section class changed inline) */
+        .sp-wood-shadow .fr-wood-shadow-0 { left: 0; top: 0; width: 100%; height: 100%; }
+    </style>
+</head>
+<body class="fade-out home-page">
+    <!-- Navigation -->
+    <nav>
+        <a href="#top" class="logo" aria-label="Nick Mason Construction Co. home">
+            <img src="assets/logo/nick-mason-logo.svg" alt="Nick Mason Construction Co." class="logo-svg">
+        </a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+        </ul>
+    </nav>
+
+    <main id="top">
+        <!-- Hero - first image/video in the new continuous scroll -->
+        <section class="hero home-hero" data-nav-theme="light" aria-label="La Marina residence pool video">
+            <video
+                class="hero-media autoplay-on-view"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                aria-label="La Marina pool and bench video"
+            >
+                <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596060/pool_nick_tyeuiq.mp4" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+            <div class="scroll-cue" aria-hidden="true">Scroll</div>
+        </section>
+
+        <!-- Scroll-snapped magazine spreads inspired by the new layout references -->
+        <section class="image-scroll" aria-label="Selected Nick Mason Construction work">
+            <section class="magazine-spread spread-contained sp-pool-pair" aria-label="La Marina pool pair">
+                <div class="spread-canvas">
+                    <span class="chapter-folio">La Marina &mdash; Santa Barbara</span>
+                    <figure class="mag-frame fr-pool-pair-0">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04942.jpg" alt="Lap pool with yellow paddleboard">
+                    </figure>
+                    <figure class="mag-frame fr-pool-pair-1">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010242.jpg" alt="Side pool and cedar fence">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-drone" aria-label="La Marina aerial view">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-drone-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/58-A001C0013_250313_Y0PG01.jpg" alt="Aerial view of the La Marina property">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-marina-pair" aria-label="La Marina interior and entry">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-marina-pair-0">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010232.jpg" alt="La Marina interior opening to the garden">
+                    </figure>
+                    <figure class="mag-frame fr-marina-pair-1">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010071.jpg" alt="La Marina entry and wood cladding">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-bench" aria-label="Stone bench">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-bench-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/R0010023.jpg" alt="Carved stone bench on the lawn">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-fullbleed sp-palm" data-nav-theme="light" aria-label="Palm tree video">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-palm-0">
+                        <video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Palm tree video">
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596062/palmtree_nick_xnkxc9.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-tall sp-pool-hero" aria-label="La Marina pool reflection">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-pool-hero-0">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05214.jpg" alt="Pool reflection and lime tree">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-skylight" aria-label="Skylight">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-skylight-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/DSC05304.jpg" alt="Dark room with glowing skylight">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-fullbleed sp-marina-two" aria-label="La Marina interiors">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-marina-two-0">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010047.jpg" alt="Sitting room with artwork">
+                    </figure>
+                    <figure class="mag-frame fr-marina-two-1">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010008.jpg" alt="Built-in shelves and window">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-bath-pair" aria-label="Bedroom and bath">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-bath-pair-0">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010077.jpg" alt="Bedroom lamplight">
+                    </figure>
+                    <figure class="mag-frame fr-bath-pair-1">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010078.jpg" alt="Glass shower and bath">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-fullbleed sp-wood-shadow" data-nav-theme="light" aria-label="Wood ceiling shadow">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-wood-shadow-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/DSC05332.jpg" alt="Shadow across the wood ceiling">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-sauna" aria-label="Cedar sauna">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-sauna-0">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04912.jpg" alt="Cedar sauna exterior">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-overlay sp-avocado-sauna" data-nav-theme="light" aria-label="Avocado and sauna over wood">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-avocado-sauna-0">
+                        <video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Avocado and sauna over wood video">
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776364859/wood_01_dewmhw.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                    <figure class="mag-frame fr-avocado-sauna-1">
+                        <img loading="lazy" decoding="async" src="images/selects/web/R0010194.jpg" alt="Cedar sauna doors at golden hour">
+                    </figure>
+                    <figure class="mag-frame fr-avocado-sauna-2">
+                        <img loading="lazy" decoding="async" src="images/selects/web/R0010032.jpg" alt="Hand holding avocados on the tree">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-ocean-window" aria-label="Ocean through window wall">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-ocean-window-0">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05172.jpg" alt="Ocean view through the window wall">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-dark-pair" aria-label="Stairs and palms">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-dark-pair-0">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05118.jpg" alt="Person on the stair with a dog">
+                    </figure>
+                    <figure class="mag-frame fr-dark-pair-1">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05062.jpg" alt="Palm canopy from below">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-facade-dog" aria-label="El Monte facade and dog">
+                <div class="spread-canvas">
+                    <span class="chapter-folio">El Monte &mdash; Santa Barbara</span>
+                    <figure class="mag-frame fr-facade-dog-0">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04397.jpg" alt="El Monte facade and gate">
+                    </figure>
+                    <figure class="mag-frame fr-facade-dog-1">
+                        <video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="El Monte facade and dog video">
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775616599/dog_nick_01_lcn0pv.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-guest-fire" aria-label="Guest house and fire">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-guest-fire-0">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170031.jpg" alt="El Monte guest house on film">
+                    </figure>
+                    <figure class="mag-frame fr-guest-fire-1">
+                        <video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Guest house and fire video">
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596909/fire_nick_02_q5n2n0.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-fullbleed sp-rock-video" data-nav-theme="light" aria-label="Rock texture video">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-rock-video-0">
+                        <video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Rock texture video">
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776365013/rock_03_g6ucb6.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-living" aria-label="El Monte living room">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-living-0">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04425.jpg" alt="El Monte living room">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-tall sp-living-tall" aria-label="Sunlit living room">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-living-tall-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/R0009619.jpg" alt="Sunlit living room with fig tree">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-ceiling-cove" aria-label="Ceiling cove">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-ceiling-cove-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/DSC05227.jpg" alt="White paneled ceiling cove">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-pendant-dog" aria-label="Pendant ceiling and dog">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-pendant-dog-0">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04472.jpg" alt="Vaulted ceiling and pendant light">
+                    </figure>
+                    <figure class="mag-frame fr-pendant-dog-1">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05049.jpg" alt="Dog resting in the sun">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-el-bath" aria-label="Hallway and bath">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-el-bath-0">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009676.jpg" alt="Hallway sightline">
+                    </figure>
+                    <figure class="mag-frame fr-el-bath-1">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009654.jpg" alt="Shower and bath at El Monte">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-floor-shadow" aria-label="Floor shadow">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-floor-shadow-0">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04435.jpg" alt="Afternoon shadows on the floor">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-details" aria-label="Fan and hardware detail">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-details-0">
+                        <video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Fan and hardware detail video">
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1280,c_limit,vc_h264,f_mp4/v1776357798/fan_01_dz6n2g.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                    <figure class="mag-frame fr-details-1">
+                        <img loading="lazy" decoding="async" src="images/selects/web/DSC04895.jpg" alt="Hardware detail on cedar">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-detail-pair" aria-label="Wall and shadow details">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-detail-pair-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/DSC04649.jpg" alt="Soft wall and corner">
+                    </figure>
+                    <figure class="mag-frame fr-detail-pair-1">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04463.jpg" alt="Shadow across the tiles">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-overlay sp-imag" aria-label="Concrete and bloom">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-imag-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/IMAG0054.jpg" alt="Concrete surface">
+                    </figure>
+                    <figure class="mag-frame fr-imag-1">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170033.jpg" alt="Bloom on film">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-bath-foot" aria-label="Bath floor footprints">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-bath-foot-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/DSC05016.jpg" alt="Footprints across the bath floor">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-fullbleed sp-pomar-hero" aria-label="Pomar Lane garden entry">
+                <div class="spread-canvas">
+                    <span class="chapter-folio folio-on-image">Pomar Lane &mdash; Santa Barbara</span>
+                    <figure class="mag-frame fr-pomar-hero-0">
+                        <img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09026_1.jpg" alt="Pomar Lane garden entry">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-pergola" aria-label="Pomar Lane pergola">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-pergola-0">
+                        <img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09028.jpg" alt="Pomar Lane pergola and stone table">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-garden-pair" aria-label="Patio and lemons">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-garden-pair-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/DSC09363.jpg" alt="Pomar Lane patio with cafe table">
+                    </figure>
+                    <figure class="mag-frame fr-garden-pair-1">
+                        <img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09374.jpg" alt="Bowl of lemons on the garden table">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-hedge" aria-label="Garden hedge video">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-hedge-0">
+                        <video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Garden hedge video">
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1600,c_limit,vc_h264,f_mp4/v1776379229/green_03_dlhhaw.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-materials" aria-label="Gravel and stone">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-materials-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/DSC04703.jpg" alt="Gravel texture">
+                    </figure>
+                    <figure class="mag-frame fr-materials-1">
+                        <img loading="lazy" decoding="async" src="images/selects/web/DSC04801.jpg" alt="Cut stone pavers">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-fullbleed sp-pond" aria-label="Pomar Lane pond">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-pond-0">
+                        <img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09052.jpg" alt="Pomar Lane pond and water plants">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-coastline" aria-label="Santa Barbara coastline">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-coastline-0">
+                        <img loading="lazy" decoding="async" src="images/selects/web/54-A001C0057_250313_Y0PG01.jpg" alt="Palm-lined street meeting the ocean">
+                    </figure>
+                    <figure class="mag-frame fr-coastline-1">
+                        <img loading="lazy" decoding="async" src="images/selects/web/000062160010.jpg" alt="La Marina exterior on film">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-contained sp-closer-dog" aria-label="Dog in the walkway">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-closer-dog-0">
+                        <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04489.jpg" alt="Dog framed in the walkway">
+                    </figure>
+                </div>
+            </section>
+
+            <section class="magazine-spread spread-fullbleed sp-closer-ocean" data-nav-theme="light" aria-label="Ocean at dusk video">
+                <div class="spread-canvas">
+                    <figure class="mag-frame fr-closer-ocean-0">
+                        <video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Ocean at dusk video">
+                            <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:best,w_1920,c_limit,vc_h264,f_mp4/v1775604634/ocean_nick_02_gafg2s.mp4" type="video/mp4">
+                        </video>
+                    </figure>
+                </div>
+            </section>
+        </section>
+
+        <!-- About & Contact -->
+        <section class="about-section about-section-home" id="about">
+            <div class="about-image">
+                <img loading="lazy" decoding="async" src="images/more website photo selects 2/planter.png" alt="Planter detail at a Nick Mason Construction Co. project">
+            </div>
+            <div class="about-content">
+                <span class="section-label">About</span>
+                <h2 class="about-headline">Full-Service Building</h2>
+                <p class="about-text">
+                    Nick Mason Construction Co. is a full-service construction firm
+                    specializing in custom residential and commercial building.
+                    Founded in 2016 by Nick Mason and a close group of friends and
+                    subcontractors, the company works hands-on from early planning
+                    through final detail.
+                </p>
+                <p class="about-text">
+                    Based between Santa Barbara and Los Angeles, the firm builds with
+                    a steady focus on craft, site, material, and the people who make
+                    the work possible.
+                </p>
+
+                <!-- Contact Info -->
+                <div class="about-contact">
+                    <div class="about-contact-item">
+                        <h4>Contact</h4>
+                        <p>
+                            <a href="mailto:info@nickmason.com">info@nickmason.com</a><br>
+                            <a href="tel:+1XXXXXXXXXX">XXX.XXX.XXXX</a>
+                        </p>
+                    </div>
+                    <div class="about-contact-item">
+                        <h4>Location</h4>
+                        <p>
+                            Santa Barbara, CA<br>
+                            Los Angeles, CA
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew marquee strip (extension of About section) -->
+        <section class="crew-strip crew-strip-about" aria-label="Crew and construction photos">
+            <h2 class="crew-strip-title">Work in Progress</h2>
+            <div class="crew-strip-stage">
+                <button type="button" class="crew-strip-nav crew-strip-prev" aria-label="Scroll left">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <div class="crew-strip-viewport">
+                    <div class="crew-strip-track" data-crew-set>
+                        <!-- Set 1: crew + construction, interleaved at the top, construction tail -->
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009759.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009711.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04811-2.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04857.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04620.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009860.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009744.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04724.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04824.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009915.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04876.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009900.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04877.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04557.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04584.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04670.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04613.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04674.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009819.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009933.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04657.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04662.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04729.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04743.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04758.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04776.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04856.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04861.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/IMG_5177.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/IMG_6157.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009690.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009700.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009716.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009793.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009822.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009831.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009845.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009846.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009854.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009861.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009867.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009884.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009952.jpg" alt="">
+                        <!-- Set 2 (appended by JS at runtime for seamless loop) -->
+                    </div>
+                </div>
+                <button type="button" class="crew-strip-nav crew-strip-next" aria-label="Scroll right">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 6l6 6-6 6"/>
+                    </svg>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-copyright">&copy; Nick Mason Construction Co.</p>
+    </footer>
+
+    <script src="js/main.js?v=page-turn-6"></script>
+    <script src="js/spread-editor.js"></script>
+    <script>
+        // Homepage nav: color follows the active spread; visibility follows scroll intent.
+        const nav = document.querySelector('nav');
+        const navThemeSections = Array.from(document.querySelectorAll(
+            '.home-hero, .magazine-spread, .about-section-home, .crew-strip-about, footer'
+        ));
+        const isLayoutEditMode = new URLSearchParams(window.location.search).get('layout') === 'edit';
+        const canHoverNav = window.matchMedia('(hover: hover) and (pointer: fine)');
+        const canAnyHoverNav = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
+        const navHideAfter = 120;
+        const navScrollDelta = 6;
+        const navMouseIdleDelay = 1800;
+        let activeNavSection = null;
+        let lastScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+        let navTicking = false;
+        let navMouseIdleTimer = null;
+
+        function updateNavColor() {
+            if (!nav) return;
+
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+            activeNavSection = navThemeSections.reduce((winner, section) => {
+                const rect = section.getBoundingClientRect();
+                const visibleHeight = Math.max(
+                    0,
+                    Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0)
+                );
+
+                if (!winner || visibleHeight > winner.visibleHeight) {
+                    return { section, visibleHeight };
+                }
+                return winner;
+            }, null)?.section;
+            const theme = activeNavSection?.dataset.navTheme || 'dark';
+
+            if (theme === 'light') {
+                nav.classList.remove('nav-dark');
+                nav.classList.add('nav-light');
+            } else {
+                nav.classList.remove('nav-light');
+                nav.classList.add('nav-dark');
+            }
+        }
+
+        function showNav() {
+            nav?.classList.remove('nav-hidden');
+        }
+
+        function hideNav() {
+            if (!isLayoutEditMode) {
+                nav?.classList.remove('nav-pointer-reveal');
+                nav?.classList.add('nav-hidden');
+            }
+        }
+
+        function isNavPinned() {
+            return Boolean(
+                isLayoutEditMode ||
+                activeNavSection?.classList.contains('about-section-home') ||
+                Math.max(window.scrollY || window.pageYOffset || 0, 0) <= navHideAfter ||
+                nav?.matches(':hover') ||
+                nav?.contains(document.activeElement)
+            );
+        }
+
+        function scheduleMouseIdleHide() {
+            window.clearTimeout(navMouseIdleTimer);
+
+            navMouseIdleTimer = window.setTimeout(() => {
+                if (!isNavPinned()) {
+                    hideNav();
+                }
+            }, navMouseIdleDelay);
+        }
+
+        function updateNavVisibility() {
+            if (!nav) return;
+
+            if (isLayoutEditMode || activeNavSection?.classList.contains('about-section-home')) {
+                showNav();
+                return;
+            }
+
+            const currentScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+            const scrollDelta = currentScrollY - lastScrollY;
+
+            if (currentScrollY <= navHideAfter) {
+                showNav();
+            } else if (scrollDelta > navScrollDelta) {
+                hideNav();
+            } else if (scrollDelta < -navScrollDelta) {
+                showNav();
+            }
+
+            lastScrollY = currentScrollY;
+        }
+
+        function updateNav() {
+            navTicking = false;
+            updateNavColor();
+            updateNavVisibility();
+        }
+
+        function requestNavUpdate() {
+            if (navTicking) return;
+            navTicking = true;
+            window.requestAnimationFrame(updateNav);
+        }
+
+        function revealNavOnPointerMove(event) {
+            const isMouseLikePointer = !event.pointerType || event.pointerType === 'mouse' || event.pointerType === 'pen';
+
+            if (isMouseLikePointer && (canHoverNav.matches || canAnyHoverNav.matches)) {
+                nav?.classList.add('nav-pointer-reveal');
+                showNav();
+                scheduleMouseIdleHide();
+            }
+        }
+
+        nav?.classList.add('nav-light');
+
+        window.addEventListener('scroll', requestNavUpdate, { passive: true });
+        window.addEventListener('resize', () => {
+            lastScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+            updateNavColor();
+            updateNavVisibility();
+        });
+        window.addEventListener('pageshow', () => {
+            lastScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+            updateNavColor();
+            updateNavVisibility();
+        });
+        window.addEventListener('hashchange', () => {
+            showNav();
+            updateNavColor();
+        });
+        window.addEventListener('mousemove', revealNavOnPointerMove, { passive: true });
+        window.addEventListener('pointermove', revealNavOnPointerMove, { passive: true });
+        nav?.addEventListener('focusin', showNav);
+        nav?.addEventListener('focusout', scheduleMouseIdleHide);
+        nav?.addEventListener('mouseenter', showNav);
+        nav?.addEventListener('mouseleave', scheduleMouseIdleHide);
+
+        updateNavColor();
+        updateNavVisibility();
+    </script>
+
+    <!-- Page Transition Script -->
+    <script>
+        // Fade in on page load (pageshow fires on back/forward navigation too)
+        window.addEventListener('pageshow', () => {
+            document.body.classList.remove('fade-out');
+        });
+
+        // Fade out before navigating
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+
+                // Skip hash links and external links
+                if (href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('tel')) {
+                    return;
+                }
+
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 600);
+            });
+        });
+    </script>
+
+    <!-- Crew Strip: auto-scroll + arrows, pauses only during active touch/drag/wheel -->
+    <script>
+        (() => {
+            const stage = document.querySelector('.crew-strip-stage');
+            if (!stage) return;
+            const viewport = stage.querySelector('.crew-strip-viewport');
+            const track = stage.querySelector('.crew-strip-track');
+            const prevBtn = stage.querySelector('.crew-strip-prev');
+            const nextBtn = stage.querySelector('.crew-strip-next');
+
+            const AUTO_PX_PER_TICK = 0.35; // ~21px/sec baseline drift
+            const VELOCITY_EASING = 0.04; // per-frame approach to target (fluid ramp in/out)
+            const INTERACTION_COOLDOWN_MS = 600;
+            const ARROW_SCROLL_PX = 400;
+
+            // Duplicate the authored images so the track holds 2x set for seamless wrap
+            const originals = Array.from(track.children);
+            originals.forEach(node => {
+                const clone = node.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                track.appendChild(clone);
+            });
+
+            let halfWidth = 0;
+            let isTouching = false;
+            let interactionUntil = 0;
+            let autoVelocity = 0; // eases toward activeTickPx or 0
+            let rafId = null;
+
+            // Feature-detect fractional scrollLeft support. Safari (mobile +
+            // desktop) and recent Firefox accept sub-pixel values. Mobile
+            // Chromium rounds to integers on assign. We detect once (after
+            // halfWidth is non-zero) and branch: fractional browsers keep the
+            // original silky 0.35px/tick with easing; integer browsers snap
+            // to 1px/tick without easing so motion is exactly 1px/frame
+            // (smooth at 60fps, no sub-pixel stall that reads as stepping).
+            let supportsFractional = null;
+            let activeTickPx = AUTO_PX_PER_TICK;
+
+            const recalc = () => {
+                halfWidth = track.scrollWidth / 2;
+            };
+
+            const detectFractional = () => {
+                if (supportsFractional !== null || halfWidth <= 0) return;
+                const saved = viewport.scrollLeft;
+                viewport.scrollLeft = 0.5;
+                supportsFractional = viewport.scrollLeft > 0.1 && viewport.scrollLeft < 0.9;
+                viewport.scrollLeft = saved;
+                activeTickPx = supportsFractional ? AUTO_PX_PER_TICK : 1;
+            };
+
+            const shouldPause = () =>
+                isTouching || Date.now() < interactionUntil;
+
+            const tick = () => {
+                const target = shouldPause() ? 0 : activeTickPx;
+                if (supportsFractional !== false) {
+                    // Fractional path (Safari, desktop): eased sub-pixel motion.
+                    autoVelocity += (target - autoVelocity) * VELOCITY_EASING;
+                } else {
+                    // Integer path (mobile Chromium): snap to target, 1px/frame.
+                    autoVelocity = target;
+                }
+                if (halfWidth > 0 && Math.abs(autoVelocity) > 0.001) {
+                    let next = viewport.scrollLeft + autoVelocity;
+                    if (next >= halfWidth) next -= halfWidth; // seamless wrap
+                    if (next < 0) next += halfWidth;
+                    viewport.scrollLeft = next;
+                }
+                rafId = requestAnimationFrame(tick);
+            };
+
+            const bumpCooldown = () => {
+                interactionUntil = Date.now() + INTERACTION_COOLDOWN_MS;
+            };
+
+            stage.addEventListener('touchstart', () => { isTouching = true; }, { passive: true });
+            stage.addEventListener('touchend', () => { isTouching = false; bumpCooldown(); }, { passive: true });
+            stage.addEventListener('touchcancel', () => { isTouching = false; }, { passive: true });
+
+            // Wheel / trackpad: don't pause - let native scroll momentum blend with
+            // the baseline drift so interaction feels fluid instead of stop/start.
+
+            viewport.addEventListener('scroll', () => {
+                if (halfWidth > 0 && viewport.scrollLeft >= halfWidth) {
+                    viewport.scrollLeft -= halfWidth;
+                }
+            }, { passive: true });
+
+            prevBtn.addEventListener('click', () => {
+                bumpCooldown();
+                viewport.scrollBy({ left: -ARROW_SCROLL_PX, behavior: 'smooth' });
+            });
+            nextBtn.addEventListener('click', () => {
+                bumpCooldown();
+                viewport.scrollBy({ left: ARROW_SCROLL_PX, behavior: 'smooth' });
+            });
+
+            // Start auto-scroll as soon as the first image has dimensions, then
+            // keep halfWidth in sync as remaining images trickle in.
+            const images = Array.from(track.querySelectorAll('img'));
+            const boot = () => {
+                recalc();
+                detectFractional();
+                if (!rafId) rafId = requestAnimationFrame(tick);
+            };
+            const onImgSettled = () => {
+                recalc();
+                detectFractional();
+            };
+
+            // Kick off immediately; recalc whenever any image finishes loading.
+            if (images.some(img => img.complete && img.naturalWidth > 0)) {
+                boot();
+            } else if (images.length) {
+                images[0].addEventListener('load', boot, { once: true });
+                images[0].addEventListener('error', boot, { once: true });
+            } else {
+                boot();
+            }
+            images.forEach(img => {
+                if (!img.complete) {
+                    img.addEventListener('load', onImgSettled, { once: true });
+                    img.addEventListener('error', onImgSettled, { once: true });
+                }
+            });
+            window.addEventListener('resize', recalc);
+        })();
+    </script>
+    <!-- Concept: hide the hero scroll cue after the first page turn -->
+    <script>
+        (() => {
+            const cue = document.querySelector('.scroll-cue');
+            if (!cue) return;
+            const hideCue = () => {
+                if ((window.scrollY || 0) > 60) {
+                    cue.classList.add('is-hidden');
+                    window.removeEventListener('scroll', hideCue);
+                }
+            };
+            window.addEventListener('scroll', hideCue, { passive: true });
+        })();
+    </script>
+</body>
+</html>
