@@ -15,19 +15,37 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css">
-    <!-- Concept-only refinements (kept out of styles.css on purpose) -->
+    <!-- Concept: editorial "issue" treatment. All concept-only styles live
+         here, not in styles.css, so the client-approved page is untouched. -->
     <style>
-        /* Hero scroll cue - fades out after the first page turn */
-        .scroll-cue {
+        /* ---- Cover: strapline + scroll cue ---- */
+        .cover-line {
             position: absolute;
             left: 50%;
-            bottom: 2.2rem;
+            bottom: 4.6rem;
             transform: translateX(-50%);
             z-index: 3;
             font-family: var(--font-serif);
             font-style: italic;
             font-weight: 300;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            letter-spacing: 0.18em;
+            color: #fff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .scroll-cue {
+            position: absolute;
+            left: 50%;
+            bottom: 2.1rem;
+            transform: translateX(-50%);
+            z-index: 3;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-weight: 300;
+            font-size: 0.8rem;
             letter-spacing: 0.14em;
             color: #fff;
             text-shadow: 0 1px 4px rgba(0,0,0,0.35);
@@ -46,53 +64,127 @@
             50% { opacity: 0.3; }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            .scroll-cue { animation: none; opacity: 0.7; }
+        /* ---- Chapter dividers: full paper pages of type ---- */
+        .spread-divider { background: #f8f7f4; }
+
+        .divider-inner {
+            text-align: center;
+            padding: 0 1.5rem;
         }
 
-        /* Chapter folios - magazine-style location captions on the
-           first spread of each project chapter */
-        .chapter-folio {
-            position: absolute;
-            z-index: 4;
+        .divider-no {
+            display: block;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-weight: 400;
+            font-size: 0.95rem;
+            letter-spacing: 0.22em;
+            color: var(--color-text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .divider-title {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: clamp(2.6rem, 8vw, 6.2rem);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            line-height: 0.95;
+            color: var(--color-text);
+            margin: 0 0 1.7rem;
+        }
+
+        .divider-rule {
+            display: block;
+            width: 56px;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.28);
+            margin: 0 auto 1.6rem;
+        }
+
+        .divider-loc {
+            display: block;
             font-family: var(--font-serif);
             font-style: italic;
             font-weight: 300;
-            font-size: 0.85rem;
-            letter-spacing: 0.08em;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
             color: var(--color-text-muted);
-            white-space: nowrap;
-        }
-
-        .sp-pool-pair .chapter-folio { left: 16%; bottom: 2.6%; }
-        .sp-facade-dog .chapter-folio { left: 9.85%; bottom: 2.6%; }
-
-        /* On full-bleed imagery the folio sits on the photo in white */
-        .chapter-folio.folio-on-image {
-            left: clamp(1.5rem, 4vw, 3.5rem);
-            bottom: 2rem;
-            color: #fff;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
         }
 
         @media (max-width: 767px) {
-            .chapter-folio,
-            .chapter-folio.folio-on-image {
-                position: static;
-                order: -1;
-                color: var(--color-text-muted);
-                text-shadow: none;
+            .spread-divider.magazine-spread {
+                min-height: 58svh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 4.5rem 1.25rem 1rem;
             }
         }
 
-        /* Materials spread: side-by-side swatches with paper between,
-           instead of two textures butted into one dark stack */
+        /* ---- The dark page: skylight printed on near-black paper ---- */
+        .sp-skylight,
+        .sp-skylight .mag-frame { background: #131110; }
+
+        /* ---- Printed page numbers on contained spreads ---- */
+        .magazine-spread { position: relative; }
+
+        .page-no {
+            position: absolute;
+            left: 50%;
+            bottom: 0.85rem;
+            transform: translateX(-50%);
+            z-index: 3;
+            font-family: var(--font-display);
+            font-weight: 500;
+            font-size: 0.7rem;
+            letter-spacing: 0.22em;
+            color: var(--color-text-muted);
+            opacity: 0.6;
+        }
+
+        @media (max-width: 767px) {
+            .page-no { display: none; }
+        }
+
+        /* ---- Geometry reworks ---- */
+        /* Materials as side-by-side swatches with paper between */
         .sp-materials .fr-materials-0 { left: 16%; top: 33%; width: 31%; height: 34%; }
         .sp-materials .fr-materials-1 { left: 53%; top: 33%; width: 31%; height: 34%; }
 
-        /* Wood-ceiling shadow runs full-bleed to break the run of
-           identical contained frames (section class changed inline) */
+        /* Wood-ceiling shadow runs full-bleed (section class changed inline) */
         .sp-wood-shadow .fr-wood-shadow-0 { left: 0; top: 0; width: 100%; height: 100%; }
+
+        /* Bloom floats at the golden section of the concrete field */
+        .sp-imag .fr-imag-1 { left: 55.5%; top: 17%; width: 26%; height: 66%; }
+
+        /* Footprints shrink to a small object floating left - answers the
+           bloom's right float on the previous page */
+        .sp-bath-foot .fr-bath-foot-0 { left: 18%; top: 31%; width: 31%; height: 38%; }
+
+        /* ---- Pages settle: frames fade + rise as a spread arrives ---- */
+        html.concept-reveal .magazine-spread:not(.spread-tall) .mag-frame,
+        html.concept-reveal .divider-inner > * {
+            opacity: 0;
+            transform: translateY(26px);
+            transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        html.concept-reveal .magazine-spread:not(.spread-tall) .mag-frame:nth-child(2) { transition-delay: 0.12s; }
+        html.concept-reveal .magazine-spread:not(.spread-tall) .mag-frame:nth-child(3) { transition-delay: 0.24s; }
+        html.concept-reveal .divider-inner > *:nth-child(2) { transition-delay: 0.1s; }
+        html.concept-reveal .divider-inner > *:nth-child(3) { transition-delay: 0.2s; }
+        html.concept-reveal .divider-inner > *:nth-child(4) { transition-delay: 0.3s; }
+
+        html.concept-reveal .magazine-spread.is-revealed .mag-frame,
+        html.concept-reveal .magazine-spread.is-revealed .divider-inner > * {
+            opacity: 1;
+            transform: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .scroll-cue { animation: none; opacity: 0.7; }
+        }
     </style>
 </head>
 <body class="fade-out home-page">
@@ -121,14 +213,23 @@
                 <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596060/pool_nick_tyeuiq.mp4" type="video/mp4">
             </video>
             <div class="hero-overlay"></div>
+            <div class="cover-line" aria-hidden="true">Selected Works &mdash; Santa Barbara &amp; Los Angeles</div>
             <div class="scroll-cue" aria-hidden="true">Scroll</div>
         </section>
 
         <!-- Scroll-snapped magazine spreads inspired by the new layout references -->
         <section class="image-scroll" aria-label="Selected Nick Mason Construction work">
+            <section class="magazine-spread spread-divider sp-divider-marina" aria-label="Chapter I: La Marina">
+                <div class="divider-inner">
+                    <span class="divider-no">N&ordm; I</span>
+                    <h2 class="divider-title">La Marina</h2>
+                    <span class="divider-rule" aria-hidden="true"></span>
+                    <span class="divider-loc">Santa Barbara, California</span>
+                </div>
+            </section>
+
             <section class="magazine-spread spread-contained sp-pool-pair" aria-label="La Marina pool pair">
                 <div class="spread-canvas">
-                    <span class="chapter-folio">La Marina &mdash; Santa Barbara</span>
                     <figure class="mag-frame fr-pool-pair-0">
                         <img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04942.jpg" alt="Lap pool with yellow paddleboard">
                     </figure>
@@ -183,7 +284,7 @@
                 </div>
             </section>
 
-            <section class="magazine-spread spread-contained sp-skylight" aria-label="Skylight">
+            <section class="magazine-spread spread-contained sp-skylight" data-nav-theme="light" aria-label="Skylight">
                 <div class="spread-canvas">
                     <figure class="mag-frame fr-skylight-0">
                         <img loading="lazy" decoding="async" src="images/selects/web/DSC05304.jpg" alt="Dark room with glowing skylight">
@@ -264,9 +365,17 @@
                 </div>
             </section>
 
+            <section class="magazine-spread spread-divider sp-divider-elmonte" aria-label="Chapter II: El Monte">
+                <div class="divider-inner">
+                    <span class="divider-no">N&ordm; II</span>
+                    <h2 class="divider-title">El Monte</h2>
+                    <span class="divider-rule" aria-hidden="true"></span>
+                    <span class="divider-loc">Santa Barbara, California</span>
+                </div>
+            </section>
+
             <section class="magazine-spread spread-contained sp-facade-dog" aria-label="El Monte facade and dog">
                 <div class="spread-canvas">
-                    <span class="chapter-folio">El Monte &mdash; Santa Barbara</span>
                     <figure class="mag-frame fr-facade-dog-0">
                         <img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04397.jpg" alt="El Monte facade and gate">
                     </figure>
@@ -398,9 +507,17 @@
                 </div>
             </section>
 
+            <section class="magazine-spread spread-divider sp-divider-pomar" aria-label="Chapter III: Pomar Lane">
+                <div class="divider-inner">
+                    <span class="divider-no">N&ordm; III</span>
+                    <h2 class="divider-title">Pomar Lane</h2>
+                    <span class="divider-rule" aria-hidden="true"></span>
+                    <span class="divider-loc">Santa Barbara, California</span>
+                </div>
+            </section>
+
             <section class="magazine-spread spread-fullbleed sp-pomar-hero" aria-label="Pomar Lane garden entry">
                 <div class="spread-canvas">
-                    <span class="chapter-folio folio-on-image">Pomar Lane &mdash; Santa Barbara</span>
                     <figure class="mag-frame fr-pomar-hero-0">
                         <img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09026_1.jpg" alt="Pomar Lane garden entry">
                     </figure>
@@ -904,8 +1021,9 @@
             window.addEventListener('resize', recalc);
         })();
     </script>
-    <!-- Concept: hide the hero scroll cue after the first page turn -->
+    <!-- Concept: cue fade, page numbers, settle-in reveals -->
     <script>
+        // Hide the hero scroll cue after the first page turn
         (() => {
             const cue = document.querySelector('.scroll-cue');
             if (!cue) return;
@@ -916,6 +1034,39 @@
                 }
             };
             window.addEventListener('scroll', hideCue, { passive: true });
+        })();
+
+        // Printed page numbers: count every page in the issue, print the
+        // folio only on contained spreads (full-bleeds run borderless).
+        (() => {
+            const spreads = Array.from(document.querySelectorAll('.image-scroll .magazine-spread'));
+            let n = 0;
+            spreads.forEach(spread => {
+                n += 1;
+                if (!spread.classList.contains('spread-contained')) return;
+                if (spread.classList.contains('sp-skylight')) return; // dark page
+                const folio = document.createElement('span');
+                folio.className = 'page-no';
+                folio.textContent = String(n).padStart(2, '0');
+                spread.appendChild(folio);
+            });
+        })();
+
+        // Settle-in reveal: frames fade + rise once per spread. Gated on a
+        // root class so content is never hidden if JS fails, and skipped
+        // entirely for reduced-motion users.
+        (() => {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            document.documentElement.classList.add('concept-reveal');
+            const io = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed');
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.22 });
+            document.querySelectorAll('.magazine-spread').forEach(s => io.observe(s));
         })();
     </script>
 </body>
