@@ -89,6 +89,20 @@
             .page-no { display: none; }
         }
 
+        /* White ink on full-bleed, tall, and dark plates */
+        .page-no-light {
+            color: #fff;
+            opacity: 0.75;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        /* The concrete backdrop is pale - keep its folio in ink */
+        .sp-imag .page-no {
+            color: var(--color-text-muted);
+            opacity: 0.6;
+            text-shadow: none;
+        }
+
         /* ---- New spreads: La Marina closes at nightfall ---- */
         /* Dusk on film: landscape low-left, portrait tall right */
         .fr-dusk-film-0 { left: 9%; top: 26%; width: 44%; height: 52%; z-index: 1; }
@@ -108,9 +122,10 @@
         /* Bloom floats at the golden section of the concrete field */
         .sp-imag .fr-imag-1 { left: 55.5%; top: 17%; width: 26%; height: 66%; }
 
-        /* Footprints shrink to a small object floating left - answers the
-           bloom's right float on the previous page */
-        .sp-bath-foot .fr-bath-foot-0 { left: 18%; top: 31%; width: 31%; height: 38%; }
+        /* Quiet pair: the trace and the someone - footprints low-left,
+           reading on the sofa tall right */
+        .sp-bath-foot .fr-bath-foot-0 { left: 13%; top: 36%; width: 32%; height: 38%; z-index: 1; }
+        .sp-bath-foot .fr-bath-foot-1 { left: 57%; top: 10%; width: 30%; height: 80%; z-index: 2; }
 
         /* ---- Crew strip: images dissolve at the edges like a print bleed ---- */
         .crew-strip-viewport {
@@ -451,10 +466,13 @@
                 </div>
             </section>
 
-            <section class="magazine-spread spread-contained sp-bath-foot" aria-label="Bath floor footprints">
+            <section class="magazine-spread spread-contained sp-bath-foot" aria-label="Footprints and reading on the sofa">
                 <div class="spread-canvas">
                     <figure class="mag-frame fr-bath-foot-0">
                         <img loading="lazy" decoding="async" src="images/selects/web/DSC05016.jpg" alt="Footprints across the bath floor">
+                    </figure>
+                    <figure class="mag-frame fr-bath-foot-1">
+                        <img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010104.jpg" alt="Reading on the sofa with the dog in the afternoon sun">
                     </figure>
                 </div>
             </section>
@@ -979,18 +997,17 @@
             window.addEventListener('scroll', hideCue, { passive: true });
         })();
 
-        // Printed page numbers: count every page in the issue, print the
-        // folio only on contained light-paper spreads (full-bleeds run
-        // borderless, dark pages stay clean).
+        // Printed page numbers on every page: ink on paper spreads,
+        // white on full-bleed, tall, and dark plates.
         (() => {
             const spreads = Array.from(document.querySelectorAll('.image-scroll .magazine-spread'));
             let n = 0;
             spreads.forEach(spread => {
                 n += 1;
-                if (!spread.classList.contains('spread-contained')) return;
-                if (spread.classList.contains('spread-dark')) return;
+                const isLightFolio = !spread.classList.contains('spread-contained') ||
+                    spread.classList.contains('spread-dark');
                 const folio = document.createElement('span');
-                folio.className = 'page-no';
+                folio.className = isLightFolio ? 'page-no page-no-light' : 'page-no';
                 folio.textContent = String(n).padStart(2, '0');
                 spread.appendChild(folio);
             });
