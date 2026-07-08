@@ -242,6 +242,12 @@ nav.nav-dark .logo-svg {
     background-color: #f8f7f4;
 }
 
+/* Behind the body during crossfade jumps (About / back to top) so the
+   fade dips to paper, not browser white. */
+html.home-document {
+    background-color: #f8f7f4;
+}
+
 html.home-document {
     scroll-snap-type: y mandatory;
     scroll-padding-top: 0;

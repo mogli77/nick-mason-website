@@ -85,13 +85,16 @@
     const freeScrollBoundaryThreshold = 16;
     const touchThreshold = 58;
     const freeScrollEdge = 6;
-    const minDuration = 860;
-    const maxDuration = 1160;
+    const minDuration = 950;
+    const maxDuration = 1250;
+    const wheelQuietMs = 400;
     let snapPoints = [];
     let activeIndex = 0;
     let isAnimating = false;
     let wheelDelta = 0;
     let wheelResetTimer = null;
+    let lastWheelAt = 0;
+    let wheelQuietUntil = 0;
     let touchStartY = 0;
     let touchCurrentY = 0;
     let touchLastY = 0;
@@ -101,11 +104,10 @@
     root.classList.add('page-turn-enabled');
 
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-    const easeInOutCubic = (t) => (
-        t < 0.5
-            ? 4 * t * t * t
-            : 1 - Math.pow(-2 * t + 2, 3) / 2
-    );
+    // Ease-out quint: responds instantly to the gesture, then settles long.
+    // Matches the site's CSS brand curve cubic-bezier(0.22, 1, 0.36, 1);
+    // the old symmetric ease-in-out read as lag at the start of each turn.
+    const easeOutQuint = (t) => 1 - Math.pow(1 - t, 5);
 
     const getPageMax = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
 
@@ -272,7 +274,7 @@
 
         function step(now) {
             const progress = clamp((now - startedAt) / duration, 0, 1);
-            const y = startY + (endY - startY) * easeInOutCubic(progress);
+            const y = startY + (endY - startY) * easeOutQuint(progress);
             window.scrollTo(0, y);
 
             if (progress < 1) {
@@ -281,6 +283,9 @@
                 window.scrollTo(0, endY);
                 window.setTimeout(() => {
                     isAnimating = false;
+                    // Swallow the trackpad momentum tail so it can't fire
+                    // a second, unintended page turn right after this one.
+                    wheelQuietUntil = performance.now() + wheelQuietMs;
                 }, 90);
             }
         }
@@ -327,7 +332,18 @@
         }
 
         event.preventDefault();
+
+        // Events under ~90ms apart are one continuous gesture (or its
+        // momentum tail); a longer gap means the user flicked again.
+        const now = performance.now();
+        const isTailEvent = now - lastWheelAt < 90;
+        lastWheelAt = now;
+
         if (isAnimating) return;
+
+        // Ignore leftover momentum right after a turn - but let a fresh,
+        // deliberate flick through immediately.
+        if (now < wheelQuietUntil && isTailEvent) return;
 
         wheelDelta += event.deltaY;
         resetWheelDeltaSoon();
@@ -482,7 +498,33 @@
             return currentDistance < winnerDistance ? index : winner;
         }, 0);
 
-        animateTo(targetIndex);
+        const currentY = window.scrollY || window.pageYOffset || 0;
+        const jumpDistance = Math.abs(clamp(targetY, 0, getPageMax()) - currentY);
+
+        if (jumpDistance > window.innerHeight * 2.5) {
+            // Far jumps (About, back to top) crossfade instead of racing
+            // the whole page past the viewport: fade out on the current
+            // page, land instantly, fade back in.
+            if (isAnimating) return;
+            isAnimating = true;
+            body.classList.add('fade-out');
+
+            window.setTimeout(() => {
+                window.scrollTo(0, snapDestination(targetIndex, 0));
+                activeIndex = targetIndex;
+
+                window.requestAnimationFrame(() => {
+                    body.classList.remove('fade-out');
+                    window.setTimeout(() => {
+                        isAnimating = false;
+                        wheelQuietUntil = performance.now() + wheelQuietMs;
+                    }, 650);
+                });
+            }, 620);
+        } else {
+            animateTo(targetIndex);
+        }
+
         history.pushState(null, '', hash);
     }
 
