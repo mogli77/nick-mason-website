@@ -81,12 +81,12 @@
     // scroll natively (see freeZone gates in the input handlers).
     const sectionSelector = '.home-hero, .magazine-spread, .about-section-home';
     const freeScrollSelector = '.spread-tall';
-    const wheelThreshold = 72;
+    const wheelThreshold = 26;
     const freeScrollBoundaryThreshold = 16;
     const touchThreshold = 58;
     const freeScrollEdge = 6;
-    const minDuration = 950;
-    const maxDuration = 1250;
+    const minDuration = 1250;
+    const maxDuration = 1550;
     const wheelQuietMs = 400;
     let snapPoints = [];
     let activeIndex = 0;
@@ -104,10 +104,11 @@
     root.classList.add('page-turn-enabled');
 
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-    // Ease-out quint: responds instantly to the gesture, then settles long.
-    // Matches the site's CSS brand curve cubic-bezier(0.22, 1, 0.36, 1);
-    // the old symmetric ease-in-out read as lag at the start of each turn.
-    const easeOutQuint = (t) => 1 - Math.pow(1 - t, 5);
+    // Ease-in-out sine: the gentlest s-curve. Peak speed is only ~1.57x
+    // the average, so the page drifts rather than lunges. Responsiveness
+    // comes from the low wheel threshold (the turn COMMITS immediately);
+    // the motion itself stays slow and even.
+    const easeInOutSine = (t) => 0.5 - 0.5 * Math.cos(Math.PI * t);
 
     const getPageMax = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
 
@@ -267,14 +268,14 @@
             return;
         }
 
-        const duration = clamp(distance * 0.78, minDuration, maxDuration);
+        const duration = clamp(distance * 1.3, minDuration, maxDuration);
         const startedAt = performance.now();
         isAnimating = true;
         activeIndex = nextIndex;
 
         function step(now) {
             const progress = clamp((now - startedAt) / duration, 0, 1);
-            const y = startY + (endY - startY) * easeOutQuint(progress);
+            const y = startY + (endY - startY) * easeInOutSine(progress);
             window.scrollTo(0, y);
 
             if (progress < 1) {
