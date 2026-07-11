@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nick Mason Construction Co. is a full-service construction firm specializing in custom residential and commercial building in Santa Barbara and Los Angeles.">
+    <title>Nick Mason Construction Co. — Portfolio</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="data:,">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Portfolio collage styles (page-specific, styles.css untouched) -->
+    <style>
+        .portfolio-page { background-color: #f8f7f4; }
+
+        .pf-flow {
+            margin: 0 auto;
+            padding: clamp(1.25rem, 2.5vw, 3.5rem) clamp(1.25rem, 2.5vw, 3.5rem) 0;
+        }
+
+        .pf-block {
+            position: relative;
+            /* Walker-Warner rhythm: a real pause between moments */
+            margin: 0 auto clamp(5rem, 20vh, 15rem);
+        }
+
+        /* Bridged pairs stay close so their corner overlays connect */
+        .pf-b2, .pf-b6, .pf-b15, .pf-b16b, .pf-b17b {
+            margin-bottom: clamp(1.5rem, 3.5vh, 3rem);
+        }
+
+        /* Full-bleed moments: same experience as the free-scroll home */
+        .pf-bleed {
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            height: 100vh;
+            height: 100svh;
+        }
+
+        .pf-bleed .pf-frame {
+            position: absolute;
+            inset: 0;
+        }
+
+        /* Full-width tall plate: portrait image at natural ratio, taller than
+           the screen, revealing as you scroll (mirrors .spread-tall on home) */
+        .pf-tall {
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+        }
+
+        .pf-tall .pf-frame {
+            position: relative;
+            width: 100%;
+        }
+
+        .pf-tall .pf-frame img {
+            height: auto;
+        }
+
+        .pf-canvas { position: relative; width: 100%; }
+
+        .pf-frame {
+            position: absolute;
+            margin: 0;
+            overflow: hidden;
+            background: #ebeae5;
+            z-index: 1;
+        }
+
+        .pf-frame img,
+        .pf-frame video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ---- b1: entry collage ---- */
+        .pf-b1 .f1 { left: 0; top: 0; width: 31%; height: 44%; }
+        .pf-b1 .f2 { left: 23.5%; top: 37%; width: 10.5%; height: 24%; z-index: 3; }
+        .pf-b1 .f3 { left: 0; top: 50%; width: 31%; height: 50%; }
+        .pf-b1 .f3 img { object-position: 65% 50%; }
+        .pf-b1 .f4 { left: 32.5%; top: 0; width: 26%; height: 100%; z-index: 2; }
+        .pf-b1 .f5 { left: 60%; top: 62%; width: 15.5%; height: 38%; }
+        .pf-b1 .f6 { left: 60%; top: 0; width: 40%; height: 56%; }
+        .pf-b1 .f7 { left: 77%; top: 62%; width: 23%; height: 38%; }
+
+        /* ---- b2: palm video + girl at the orange tree + surfboard pool;
+           the paddleboard runs past the block edge onto the bench tall below ---- */
+        .pf-b2 { z-index: 2; }
+        .pf-b2 .f1 { left: 0; top: 0; width: 40%; height: 100%; }
+        .pf-b2 .f2 { left: 42.5%; top: 0; width: 27.5%; height: 91%; }
+        .pf-b2 .f3 { left: 69%; top: 9%; width: 31%; height: 103%; z-index: 2; }
+
+        /* ---- b6: pendant ceiling + dog; ceiling corner bridges onto the tall below ---- */
+        .pf-b6 { z-index: 2; }
+        .pf-b6 .f1 { left: 0; top: 0; width: 92.3%; height: 100%; }
+        .pf-b6 .f2 { left: 67.9%; top: 10%; width: 32.1%; height: 42%; z-index: 2; }
+        .pf-b6 .f3 { left: 5%; top: 84%; width: 30.5%; height: 30%; z-index: 3; }
+
+        /* ---- b7a: El Monte facade + interior pair ---- */
+        .pf-b7a .f1 { left: 0; top: 15%; width: 50%; height: 70%; }
+        .pf-b7a .f2 { left: 51.5%; top: 0; width: 23.5%; height: 75%; }
+        .pf-b7a .f3 { left: 76.5%; top: 25%; width: 23.5%; height: 75%; }
+
+        /* ---- b7b: guest house on film + dog video ---- */
+        .pf-b7b .f1 { left: 0; top: 0; width: 32%; height: 100%; }
+        .pf-b7b .f2 { left: 34.5%; top: 0; width: 65.5%; height: 100%; }
+
+        /* ---- b7c: living room pair + film inset ---- */
+        .pf-b7c .f1 { left: 0; top: 0; width: 48%; height: 100%; }
+        .pf-b7c .f2 { left: 50%; top: 0; width: 50%; height: 100%; }
+        .pf-b7c .f3 { left: 40%; top: 26%; width: 18.5%; height: 48%; z-index: 3; }
+
+        /* ---- b9: wood texture, one big film photo, one lemons overlay ---- */
+        .pf-b9 .bg { left: 0; top: 0; width: 100%; height: 100%; }
+        .pf-b9 .f3 { left: 30%; top: 8%; width: 36%; height: 84%; z-index: 2; }
+        .pf-b9 .f5 { left: 58%; top: 14%; width: 24%; height: 24%; z-index: 3; }
+
+        /* ---- b10: hallway trio + pond ---- */
+        .pf-b10 .f1 { left: 0; top: 0; width: 32.4%; height: 55.8%; }
+        .pf-b10 .f2 { left: 33.8%; top: 0; width: 32.4%; height: 55.8%; }
+        .pf-b10 .f3 { left: 67.6%; top: 0; width: 32.4%; height: 55.8%; }
+        .pf-b10 .f4 { left: 0; top: 57.3%; width: 63.5%; height: 42.7%; }
+        .pf-b10 .f5 { left: 66%; top: 57.3%; width: 34%; height: 42.7%; }
+
+        /* ---- b11: bedroom strip ---- */
+        .pf-b11 .f1 { left: 0; top: 0; width: 30%; height: 100%; }
+        .pf-b11 .f2 { left: 31.5%; top: 0; width: 30%; height: 100%; }
+        .pf-b11 .f3 { left: 63%; top: 0; width: 37%; height: 100%; }
+
+        /* ---- b11b: material study — rock video near-native, hook specimen ---- */
+        .pf-b11b .f1 { left: 0; top: 6%; width: 62%; height: 88%; }
+        .pf-b11b .f2 { left: 70%; top: 29%; width: 24%; height: 42%; }
+
+        /* ---- b12: sauna + floor shadows + fan ---- */
+        .pf-b12 .f1 { left: 0; top: 0; width: 74.1%; height: 78%; }
+        .pf-b12 .f2 { left: 60%; top: 58%; width: 40%; height: 40%; z-index: 2; }
+        .pf-b12 .f3 { left: 78.8%; top: 74%; width: 14.1%; height: 20%; z-index: 3; }
+
+        /* ---- b13: wood video collage (avocados left, sauna right) ---- */
+        .pf-b13 .bg { left: 0; top: 0; width: 100%; height: 100%; }
+        .pf-b13 .f1 { left: 43.5%; top: 19%; width: 39%; height: 55%; z-index: 2; }
+        .pf-b13 .f2 { left: 18%; top: 13%; width: 21%; height: 69%; z-index: 3; }
+
+        /* ---- b14: stairs / ocean window / palms trio ---- */
+        .pf-b14 .f1 { left: 0; top: 0; width: 32.5%; height: 100%; }
+        .pf-b14 .f2 { left: 33.8%; top: 0; width: 32.5%; height: 100%; }
+        .pf-b14 .f3 { left: 67.6%; top: 0; width: 32.4%; height: 100%; }
+
+        /* ---- b15: drone street hero, left-set with air on the right ---- */
+        .pf-b15 .f1 { left: 0; top: 0; width: 72%; height: 100%; }
+
+        /* ---- b15b: dusk pair; the film exterior bridges up over the drone street ---- */
+        .pf-b15b { z-index: 2; }
+        .pf-b15b .f1 { left: 52%; top: -16%; width: 19.5%; height: 116%; z-index: 3; }
+        .pf-b15b .f2 { left: 0; top: 0; width: 50%; height: 100%; }
+        .pf-b15b .f3 { left: 73.5%; top: 0; width: 26.5%; height: 100%; }
+        .pf-b15b .f3 img { object-position: 70% 50%; }
+
+        /* ---- b16a: fire video trio, full-width row ---- */
+        .pf-b16a .f1 { left: 0; top: 0; width: 32%; height: 100%; }
+        .pf-b16a .f2 { left: 34%; top: 0; width: 32%; height: 100%; }
+        .pf-b16a .f3 { left: 68%; top: 0; width: 32%; height: 100%; }
+
+        /* ---- b16b: film dog + dining nook; rose band runs past the block
+           edge and overlays the dog gable below ---- */
+        .pf-b16b { z-index: 2; }
+        .pf-b16b .f1 { left: 0; top: 0; width: 52%; height: 100%; }
+        .pf-b16b .f2 { left: 54.5%; top: 0; width: 30%; height: 61%; }
+        .pf-b16b .f3 { left: 54.5%; top: 66%; width: 45.5%; height: 52%; }
+
+        /* ---- b17: dog gable, full-width plate ---- */
+        .pf-b17 .f1 { left: 0; top: 0; width: 100%; height: 100%; }
+
+        /* ---- b17b: kitchen hero; footprints on its corner, bridging to the ocean ---- */
+        .pf-b17b { z-index: 2; }
+        .pf-b17b .f1 { left: 0; top: 0; width: 62%; height: 100%; }
+        .pf-b17b .f3 { left: 44%; top: 60%; width: 34%; height: 52%; z-index: 3; }
+
+        /* ---- mobile: stack the collages ---- */
+        @media (max-width: 767px) {
+            .pf-flow { padding-top: 1.5rem; }
+
+            .pf-block { margin-bottom: 0.65rem; }
+
+            .pf-canvas {
+                display: grid;
+                gap: 0.65rem;
+                aspect-ratio: auto !important;
+            }
+
+            /* Must outrank the per-block .pf-bN .fM geometry rules */
+            .pf-canvas .pf-frame {
+                position: static;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 4 / 3;
+            }
+
+            /* backgrounds read as texture breaks on mobile */
+            .pf-b9 .bg, .pf-b13 .bg { aspect-ratio: 16 / 10; }
+        }
+
+        /* ---- settle-in reveals (JS-gated; skipped for reduced motion) ---- */
+        html.pf-reveal .pf-block .pf-frame {
+            opacity: 0;
+            transform: translateY(26px);
+            transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        html.pf-reveal .pf-block .pf-frame:nth-child(2) { transition-delay: 0.1s; }
+        html.pf-reveal .pf-block .pf-frame:nth-child(3) { transition-delay: 0.2s; }
+        html.pf-reveal .pf-block .pf-frame:nth-child(4) { transition-delay: 0.28s; }
+        html.pf-reveal .pf-block .pf-frame:nth-child(n+5) { transition-delay: 0.36s; }
+
+        html.pf-reveal .pf-block.is-revealed .pf-frame {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Full-bleed and tall frames fade in place; no slide */
+        html.pf-reveal .pf-bleed .pf-frame,
+        html.pf-reveal .pf-tall .pf-frame {
+            transform: none;
+        }
+    </style>
+</head>
+<body class="fade-out portfolio-page">
+    <!-- Navigation -->
+    <nav>
+        <a href="#top" class="logo" aria-label="Nick Mason Construction Co. home">
+            <img src="assets/logo/nick-mason-logo.svg" alt="Nick Mason Construction Co." class="logo-svg">
+        </a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+        </ul>
+    </nav>
+
+    <main id="top">
+        <!-- Hero - first image/video in the new continuous scroll -->
+        <section class="hero home-hero" data-nav-theme="light" aria-label="La Marina residence pool video">
+            <video
+                class="hero-media autoplay-on-view"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                aria-label="La Marina pool and bench video"
+            >
+                <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596060/pool_nick_tyeuiq.mp4" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+        </section>
+
+        <!-- Free-scroll portfolio collage (from the client layout reference) -->
+        <div class="pf-flow">
+            <section class="pf-block pf-b1" aria-label="Portfolio collage">
+                <div class="pf-canvas" style="aspect-ratio: 2.1;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010071.jpg" alt="La Marina entry"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05077.jpg" alt="Fruit tree shadow on the wall"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/58-A001C0013_250313_Y0PG01.jpg" alt="Aerial view of the property"></figure>
+                    <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010232.jpg" alt="Interior opening to the garden"></figure>
+                    <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/selects/web/DSC09363.jpg" alt="Patio with cafe table"></figure>
+                    <figure class="pf-frame f6"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Garden hedge video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1600,c_limit,vc_h264,f_mp4/v1776379229/green_03_dlhhaw.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f7"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09028.jpg" alt="Pergola and stone table"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b2" aria-label="Portfolio collage">
+                <div class="pf-canvas" style="aspect-ratio: 2.2;">
+                    <figure class="pf-frame f1"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Palm tree video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596062/palmtree_nick_xnkxc9.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010242.jpg" alt="Side pool and cedar fence"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04942.jpg" alt="Lap pool with yellow paddleboard"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-tall pf-b3" data-nav-theme="light" aria-label="Carved stone bench">
+                <figure class="pf-frame"><img loading="lazy" decoding="async" src="images/selects/web/R0010023.jpg" alt="Carved stone bench on the lawn"></figure>
+            </section>
+
+            <section class="pf-block pf-b6" aria-label="Portfolio collage">
+                <div class="pf-canvas" style="aspect-ratio: 1.48;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04472.jpg" alt="Vaulted ceiling and pendant light"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05049.jpg" alt="Dog resting in the sun"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/DSC05227.jpg" alt="Vaulted ceiling corner in soft light"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-tall pf-b4" data-nav-theme="light" aria-label="Living room with lime tree">
+                <figure class="pf-frame"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05214.jpg" alt="Pool reflection and lime tree"></figure>
+            </section>
+
+            <section class="pf-block pf-b7a" aria-label="El Monte facade and interiors">
+                <div class="pf-canvas" style="aspect-ratio: 2.1;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04397.jpg" alt="El Monte facade and gate"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009646.jpg" alt="Living room corner"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009639.jpg" alt="Kitchen shelves"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-bleed pf-b5" data-nav-theme="light" aria-label="Dark room with glowing skylight">
+                <figure class="pf-frame"><img loading="lazy" decoding="async" src="images/selects/web/DSC05304.jpg" alt="Dark room with glowing skylight"></figure>
+            </section>
+
+            <section class="pf-block pf-b7b" aria-label="Guest house and dog in the garden">
+                <div class="pf-canvas" style="aspect-ratio: 2.0;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170031.jpg" alt="Guest house on film"></figure>
+                    <figure class="pf-frame f2"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Dog in the garden video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775616599/dog_nick_01_lcn0pv.mp4" type="video/mp4"></video></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b7c" aria-label="Living room pair">
+                <div class="pf-canvas" style="aspect-ratio: 2.6;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0009612.jpg" alt="Open living room"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04425.jpg" alt="El Monte living room"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170025.jpg" alt="Interior on film"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-tall pf-b8" data-nav-theme="light" aria-label="Sunlit living room with fig tree">
+                <figure class="pf-frame"><img loading="lazy" decoding="async" src="images/selects/web/R0009619.jpg" alt="Sunlit living room with fig tree"></figure>
+            </section>
+
+            <section class="pf-block pf-b9" aria-label="Portfolio collage">
+                <div class="pf-canvas" style="aspect-ratio: 1.5;">
+                    <figure class="pf-frame bg"><img loading="lazy" decoding="async" src="images/selects/web/DSC05332.jpg" alt="Weathered wood planks"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/000062160011.jpg" alt="Palm over the house on film"></figure>
+                    <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09374.jpg" alt="Bowl of lemons on the garden table"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b10" aria-label="Portfolio collage">
+                <div class="pf-canvas" style="aspect-ratio: 1.04;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009676.jpg" alt="Hallway sightline"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009654.jpg" alt="Shower and bath"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009661.jpg" alt="Bathroom detail"></figure>
+                    <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09052.jpg" alt="Pond and water plants"></figure>
+                    <figure class="pf-frame f5"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pond water video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776377096/water_bubbles_01_d3ppl4.mp4" type="video/mp4"></video></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b11" aria-label="Portfolio collage">
+                <div class="pf-canvas" style="aspect-ratio: 2.23;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010077.jpg" alt="Bedroom lamplight"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010078.jpg" alt="Glass shower and bath"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04932.jpg" alt="Interior at dusk"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b11b" aria-label="Sourced stone and cedar hook detail">
+                <div class="pf-canvas" style="aspect-ratio: 2.6;">
+                    <figure class="pf-frame f1"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Sourced stone video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776365013/rock_03_g6ucb6.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/selects/web/DSC04895.jpg" alt="Blue hook on the cedar fence"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b12" aria-label="Portfolio collage">
+                <div class="pf-canvas" style="aspect-ratio: 1.15;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04912.jpg" alt="Cedar sauna exterior"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04435.jpg" alt="Afternoon shadows on the floor"></figure>
+                    <figure class="pf-frame f3"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Fan detail video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776357798/fan_01_dz6n2g.mp4" type="video/mp4"></video></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b13" aria-label="Portfolio collage">
+                <div class="pf-canvas" style="aspect-ratio: 1.6;">
+                    <figure class="pf-frame bg"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pine ceiling video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776364859/wood_01_dewmhw.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0010194.jpg" alt="Cedar sauna doors at golden hour"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/selects/web/R0010032.jpg" alt="Hand holding avocados on the tree"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b14" aria-label="Portfolio collage">
+                <div class="pf-canvas" style="aspect-ratio: 1.9;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05118.jpg" alt="Person on the stair with a dog"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05172.jpg" alt="Ocean view through the window wall"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05062.jpg" alt="Palm canopy from below"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b15" aria-label="Palm-lined street meeting the ocean">
+                <div class="pf-canvas" style="aspect-ratio: 2.08;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/54-A001C0057_250313_Y0PG01.jpg" alt="Palm-lined street meeting the ocean"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b15b" aria-label="La Marina at dusk">
+                <div class="pf-canvas" style="aspect-ratio: 3.45;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/000062160010.jpg" alt="La Marina exterior on film"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05316.jpg" alt="Front entry at dusk"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05219.jpg" alt="La Marina street through the window"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b16a" aria-label="Fire pit and garden details">
+                <div class="pf-canvas" style="aspect-ratio: 2.0;">
+                    <figure class="pf-frame f1"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Fire pit video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1280,c_limit,vc_h264,f_mp4/v1775596909/fire_nick_02_q5n2n0.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170033.jpg" alt="Bloom on film"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04463.jpg" alt="Shadow across the tiles"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b16b" aria-label="Evening at El Monte">
+                <div class="pf-canvas" style="aspect-ratio: 1.35;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062150007.jpg" alt="Dog at the doorway on film"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009617.jpg" alt="Dining nook in evening light"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/000062170032.jpg" alt="Potted plant on film"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b17" aria-label="Dog framed in the walkway">
+                <div class="pf-canvas" style="aspect-ratio: 1.6;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04489.jpg" alt="Dog framed in the walkway"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-b17b" aria-label="Kitchen and evening details">
+                <div class="pf-canvas" style="aspect-ratio: 2.2;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04434.jpg" alt="Kitchen window and counter reflection"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/DSC05016.jpg" alt="Footprints across the bath floor"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-bleed pf-b18" data-nav-theme="light" aria-label="Ocean at dusk">
+                <figure class="pf-frame"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Ocean at dusk video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:best,w_1920,c_limit,vc_h264,f_mp4/v1775604634/ocean_nick_02_gafg2s.mp4" type="video/mp4"></video></figure>
+            </section>
+        </div>
+
+        <!-- About & Contact -->
+        <section class="about-section about-section-home" id="about">
+            <div class="about-image">
+                <img loading="lazy" decoding="async" src="images/more website photo selects 2/planter.png" alt="Planter detail at a Nick Mason Construction Co. project">
+            </div>
+            <div class="about-content">
+                <span class="section-label">About</span>
+                <h2 class="about-headline">Full-Service Building</h2>
+                <p class="about-text">
+                    Nick Mason Construction Co. is a full-service construction firm
+                    specializing in custom residential and commercial building.
+                    Founded in 2016 by Nick Mason and a close group of friends and
+                    subcontractors, the company works hands-on from early planning
+                    through final detail.
+                </p>
+                <p class="about-text">
+                    Based between Santa Barbara and Los Angeles, the firm builds with
+                    a steady focus on craft, site, material, and the people who make
+                    the work possible.
+                </p>
+
+                <!-- Contact Info -->
+                <div class="about-contact">
+                    <div class="about-contact-item">
+                        <h4>Contact</h4>
+                        <p>
+                            <a href="mailto:info@nickmason.com">info@nickmason.com</a><br>
+                            <a href="tel:+1XXXXXXXXXX">XXX.XXX.XXXX</a>
+                        </p>
+                    </div>
+                    <div class="about-contact-item">
+                        <h4>Location</h4>
+                        <p>
+                            Santa Barbara, CA<br>
+                            Los Angeles, CA
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crew marquee strip (extension of About section) -->
+        <section class="crew-strip crew-strip-about" aria-label="Crew and construction photos">
+            <h2 class="crew-strip-title">Work in Progress</h2>
+            <div class="crew-strip-stage">
+                <button type="button" class="crew-strip-nav crew-strip-prev" aria-label="Scroll left">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <div class="crew-strip-viewport">
+                    <div class="crew-strip-track" data-crew-set>
+                        <!-- Set 1: crew + construction, interleaved at the top, construction tail -->
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009759.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009711.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04811-2.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04857.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04620.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009860.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009744.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04724.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04824.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009915.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04876.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009900.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04877.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04557.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04584.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04670.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04613.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/DSC04674.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009819.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/crew/web/R0009933.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04657.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04662.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04729.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04743.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04758.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04776.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04856.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/DSC04861.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/IMG_5177.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/IMG_6157.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009690.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009700.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009716.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009793.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009822.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009831.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009845.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009846.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009854.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009861.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009867.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009884.jpg" alt="">
+                        <img loading="lazy" decoding="async" src="images/construction/web/R0009952.jpg" alt="">
+                        <!-- Set 2 (appended by JS at runtime for seamless loop) -->
+                    </div>
+                </div>
+                <button type="button" class="crew-strip-nav crew-strip-next" aria-label="Scroll right">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 6l6 6-6 6"/>
+                    </svg>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-copyright">&copy; Nick Mason Construction Co.</p>
+    </footer>
+
+    <script src="js/main.js?v=page-turn-6"></script>
+    <script>
+        // Homepage nav: color follows the active spread; visibility follows scroll intent.
+        const nav = document.querySelector('nav');
+        const navThemeSections = Array.from(document.querySelectorAll(
+            '.home-hero, .pf-block, .about-section-home, .crew-strip-about, footer'
+        ));
+        const isLayoutEditMode = new URLSearchParams(window.location.search).get('layout') === 'edit';
+        const canHoverNav = window.matchMedia('(hover: hover) and (pointer: fine)');
+        const canAnyHoverNav = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
+        const navHideAfter = 120;
+        const navScrollDelta = 6;
+        const navMouseIdleDelay = 1800;
+        let activeNavSection = null;
+        let lastScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+        let navTicking = false;
+        let navMouseIdleTimer = null;
+
+        function updateNavColor() {
+            if (!nav) return;
+
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+            activeNavSection = navThemeSections.reduce((winner, section) => {
+                const rect = section.getBoundingClientRect();
+                const visibleHeight = Math.max(
+                    0,
+                    Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0)
+                );
+
+                if (!winner || visibleHeight > winner.visibleHeight) {
+                    return { section, visibleHeight };
+                }
+                return winner;
+            }, null)?.section;
+            const theme = activeNavSection?.dataset.navTheme || 'dark';
+
+            if (theme === 'light') {
+                nav.classList.remove('nav-dark');
+                nav.classList.add('nav-light');
+            } else {
+                nav.classList.remove('nav-light');
+                nav.classList.add('nav-dark');
+            }
+        }
+
+        function showNav() {
+            nav?.classList.remove('nav-hidden');
+        }
+
+        function hideNav() {
+            if (!isLayoutEditMode) {
+                nav?.classList.remove('nav-pointer-reveal');
+                nav?.classList.add('nav-hidden');
+            }
+        }
+
+        function isNavPinned() {
+            return Boolean(
+                isLayoutEditMode ||
+                activeNavSection?.classList.contains('about-section-home') ||
+                Math.max(window.scrollY || window.pageYOffset || 0, 0) <= navHideAfter ||
+                nav?.matches(':hover') ||
+                nav?.contains(document.activeElement)
+            );
+        }
+
+        function scheduleMouseIdleHide() {
+            window.clearTimeout(navMouseIdleTimer);
+
+            navMouseIdleTimer = window.setTimeout(() => {
+                if (!isNavPinned()) {
+                    hideNav();
+                }
+            }, navMouseIdleDelay);
+        }
+
+        function updateNavVisibility() {
+            if (!nav) return;
+
+            if (isLayoutEditMode || activeNavSection?.classList.contains('about-section-home')) {
+                showNav();
+                return;
+            }
+
+            const currentScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+            const scrollDelta = currentScrollY - lastScrollY;
+
+            if (currentScrollY <= navHideAfter) {
+                showNav();
+            } else if (scrollDelta > navScrollDelta) {
+                hideNav();
+            } else if (scrollDelta < -navScrollDelta) {
+                showNav();
+            }
+
+            lastScrollY = currentScrollY;
+        }
+
+        function updateNav() {
+            navTicking = false;
+            updateNavColor();
+            updateNavVisibility();
+        }
+
+        function requestNavUpdate() {
+            if (navTicking) return;
+            navTicking = true;
+            window.requestAnimationFrame(updateNav);
+        }
+
+        function revealNavOnPointerMove(event) {
+            const isMouseLikePointer = !event.pointerType || event.pointerType === 'mouse' || event.pointerType === 'pen';
+
+            if (isMouseLikePointer && (canHoverNav.matches || canAnyHoverNav.matches)) {
+                nav?.classList.add('nav-pointer-reveal');
+                showNav();
+                scheduleMouseIdleHide();
+            }
+        }
+
+        nav?.classList.add('nav-light');
+
+        window.addEventListener('scroll', requestNavUpdate, { passive: true });
+        window.addEventListener('resize', () => {
+            lastScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+            updateNavColor();
+            updateNavVisibility();
+        });
+        window.addEventListener('pageshow', () => {
+            lastScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
+            updateNavColor();
+            updateNavVisibility();
+        });
+        window.addEventListener('hashchange', () => {
+            showNav();
+            updateNavColor();
+        });
+        window.addEventListener('mousemove', revealNavOnPointerMove, { passive: true });
+        window.addEventListener('pointermove', revealNavOnPointerMove, { passive: true });
+        nav?.addEventListener('focusin', showNav);
+        nav?.addEventListener('focusout', scheduleMouseIdleHide);
+        nav?.addEventListener('mouseenter', showNav);
+        nav?.addEventListener('mouseleave', scheduleMouseIdleHide);
+
+        updateNavColor();
+        updateNavVisibility();
+    </script>
+
+    <!-- Page Transition Script -->
+    <script>
+        // Fade in on page load (pageshow fires on back/forward navigation too)
+        window.addEventListener('pageshow', () => {
+            document.body.classList.remove('fade-out');
+        });
+
+        // Fade out before navigating
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+
+                // Skip hash links and external links
+                if (href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('tel')) {
+                    return;
+                }
+
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 600);
+            });
+        });
+    </script>
+
+    <!-- Crew Strip: auto-scroll + arrows, pauses only during active touch/drag/wheel -->
+    <script>
+        (() => {
+            const stage = document.querySelector('.crew-strip-stage');
+            if (!stage) return;
+            const viewport = stage.querySelector('.crew-strip-viewport');
+            const track = stage.querySelector('.crew-strip-track');
+            const prevBtn = stage.querySelector('.crew-strip-prev');
+            const nextBtn = stage.querySelector('.crew-strip-next');
+
+            const AUTO_PX_PER_TICK = 0.35; // ~21px/sec baseline drift
+            const VELOCITY_EASING = 0.04; // per-frame approach to target (fluid ramp in/out)
+            const INTERACTION_COOLDOWN_MS = 600;
+            const ARROW_SCROLL_PX = 400;
+
+            // Duplicate the authored images so the track holds 2x set for seamless wrap
+            const originals = Array.from(track.children);
+            originals.forEach(node => {
+                const clone = node.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                track.appendChild(clone);
+            });
+
+            let halfWidth = 0;
+            let isTouching = false;
+            let interactionUntil = 0;
+            let autoVelocity = 0; // eases toward activeTickPx or 0
+            let rafId = null;
+
+            // Feature-detect fractional scrollLeft support. Safari (mobile +
+            // desktop) and recent Firefox accept sub-pixel values. Mobile
+            // Chromium rounds to integers on assign. We detect once (after
+            // halfWidth is non-zero) and branch: fractional browsers keep the
+            // original silky 0.35px/tick with easing; integer browsers snap
+            // to 1px/tick without easing so motion is exactly 1px/frame
+            // (smooth at 60fps, no sub-pixel stall that reads as stepping).
+            let supportsFractional = null;
+            let activeTickPx = AUTO_PX_PER_TICK;
+
+            const recalc = () => {
+                halfWidth = track.scrollWidth / 2;
+            };
+
+            const detectFractional = () => {
+                if (supportsFractional !== null || halfWidth <= 0) return;
+                const saved = viewport.scrollLeft;
+                viewport.scrollLeft = 0.5;
+                supportsFractional = viewport.scrollLeft > 0.1 && viewport.scrollLeft < 0.9;
+                viewport.scrollLeft = saved;
+                activeTickPx = supportsFractional ? AUTO_PX_PER_TICK : 1;
+            };
+
+            const shouldPause = () =>
+                isTouching || Date.now() < interactionUntil;
+
+            const tick = () => {
+                const target = shouldPause() ? 0 : activeTickPx;
+                if (supportsFractional !== false) {
+                    // Fractional path (Safari, desktop): eased sub-pixel motion.
+                    autoVelocity += (target - autoVelocity) * VELOCITY_EASING;
+                } else {
+                    // Integer path (mobile Chromium): snap to target, 1px/frame.
+                    autoVelocity = target;
+                }
+                if (halfWidth > 0 && Math.abs(autoVelocity) > 0.001) {
+                    let next = viewport.scrollLeft + autoVelocity;
+                    if (next >= halfWidth) next -= halfWidth; // seamless wrap
+                    if (next < 0) next += halfWidth;
+                    viewport.scrollLeft = next;
+                }
+                rafId = requestAnimationFrame(tick);
+            };
+
+            const bumpCooldown = () => {
+                interactionUntil = Date.now() + INTERACTION_COOLDOWN_MS;
+            };
+
+            stage.addEventListener('touchstart', () => { isTouching = true; }, { passive: true });
+            stage.addEventListener('touchend', () => { isTouching = false; bumpCooldown(); }, { passive: true });
+            stage.addEventListener('touchcancel', () => { isTouching = false; }, { passive: true });
+
+            // Wheel / trackpad: don't pause - let native scroll momentum blend with
+            // the baseline drift so interaction feels fluid instead of stop/start.
+
+            viewport.addEventListener('scroll', () => {
+                if (halfWidth > 0 && viewport.scrollLeft >= halfWidth) {
+                    viewport.scrollLeft -= halfWidth;
+                }
+            }, { passive: true });
+
+            prevBtn.addEventListener('click', () => {
+                bumpCooldown();
+                viewport.scrollBy({ left: -ARROW_SCROLL_PX, behavior: 'smooth' });
+            });
+            nextBtn.addEventListener('click', () => {
+                bumpCooldown();
+                viewport.scrollBy({ left: ARROW_SCROLL_PX, behavior: 'smooth' });
+            });
+
+            // Start auto-scroll as soon as the first image has dimensions, then
+            // keep halfWidth in sync as remaining images trickle in.
+            const images = Array.from(track.querySelectorAll('img'));
+            const boot = () => {
+                recalc();
+                detectFractional();
+                if (!rafId) rafId = requestAnimationFrame(tick);
+            };
+            const onImgSettled = () => {
+                recalc();
+                detectFractional();
+            };
+
+            // Kick off immediately; recalc whenever any image finishes loading.
+            if (images.some(img => img.complete && img.naturalWidth > 0)) {
+                boot();
+            } else if (images.length) {
+                images[0].addEventListener('load', boot, { once: true });
+                images[0].addEventListener('error', boot, { once: true });
+            } else {
+                boot();
+            }
+            images.forEach(img => {
+                if (!img.complete) {
+                    img.addEventListener('load', onImgSettled, { once: true });
+                    img.addEventListener('error', onImgSettled, { once: true });
+                }
+            });
+            window.addEventListener('resize', recalc);
+        })();
+    </script>
+    <!-- Portfolio: settle-in reveals -->
+    <script>
+        (() => {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            document.documentElement.classList.add('pf-reveal');
+            const io = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed');
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+            document.querySelectorAll('.pf-block').forEach(b => io.observe(b));
+        })();
+    </script>
+</body>
+</html>
