@@ -132,7 +132,7 @@ async function handlePost(req, branch) {
     } catch {
         return Response.json({ error: 'body', message: 'Invalid JSON body.' }, { status: 400 });
     }
-    const { editor, gallery, baseGalleryHash, dryRun = false, force = false } = body || {};
+    const { editor, gallery, baseGalleryHash, dryRun = false, force = false, note = '' } = body || {};
 
     // Structural validation of the incoming region.
     if (typeof gallery !== 'string' || !gallery.trim()) {
@@ -141,8 +141,8 @@ async function handlePost(req, branch) {
     if (gallery.length > 200_000) {
         return Response.json({ error: 'body', message: 'Gallery region implausibly large.' }, { status: 400 });
     }
-    if (!gallery.includes('gallery-item')) {
-        return Response.json({ error: 'body', message: 'Gallery region contains no gallery items.' }, { status: 400 });
+    if (!gallery.includes('gallery-item') && !gallery.includes('ff-canvas')) {
+        return Response.json({ error: 'body', message: 'Gallery region contains no recognizable content.' }, { status: 400 });
     }
     if (/<section\b|<\/section>/i.test(gallery)) {
         return Response.json({ error: 'body', message: 'Gallery region must not contain <section> tags.' }, { status: 400 });
@@ -191,11 +191,11 @@ async function handlePost(req, branch) {
                 dryRun: true,
                 spliced: newFile,
                 newGalleryHash: sha256hex(gallery),
-                wouldCommit: `Studio: layout update by ${editor}`,
+                wouldCommit: `Studio: layout update by ${editor}${String(note || '').trim() ? `\n\n${String(note).trim().slice(0, 500)}` : ''}`,
             });
         }
 
-        const res = await commitFile(branch, newFile, file.sha, `Studio: layout update by ${editor}`);
+        const res = await commitFile(branch, newFile, file.sha, `Studio: layout update by ${editor}${String(note || '').trim() ? `\n\n${String(note).trim().slice(0, 500)}` : ''}`);
         if (res.status === 409 && attempt === 0) continue; // lost a race — re-fetch and retry once
         if (!res.ok) {
             const detail = await res.text().catch(() => '');

@@ -232,7 +232,7 @@ label {
 /* Canvas */
 #canvas-holder {
     grid-area: canvas;
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     justify-content: center;
     background: #e9e7e1;
@@ -241,9 +241,12 @@ label {
 #canvas {
     border: 0;
     width: 100%;
+    /* Never fall under the site's 767px mobile breakpoint while editing */
+    min-width: 1000px;
     height: 100%;
     background: #fff;
 }
+#canvas-holder.mobile #canvas { min-width: 0; }
 #canvas-holder.mobile { padding: 20px 0; }
 #canvas-holder.mobile #canvas {
     width: 390px;
@@ -343,6 +346,64 @@ label {
 .palette-item svg { width: 64px; height: 40px; flex: none; }
 #palette .hint { margin-bottom: 12px; }
 
+/* Page map */
+#pagemap svg {
+    width: 100%;
+    display: block;
+    cursor: pointer;
+}
+#pagemap .pm-img { fill: #d8d5cc; stroke: #bdb9ae; stroke-width: 0.3; }
+#pagemap .pm-video { fill: #8f8a7d; stroke: #6f6b60; stroke-width: 0.3; }
+
+/* Tray video cells */
+.tray-cell { position: relative; }
+.tray-video { background: #222; color: #fff; display: flex; align-items: center; justify-content: center; }
+.tray-badge {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    font-size: 9px;
+    border-radius: 3px;
+    padding: 1px 5px;
+    pointer-events: none;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 19, 16, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+.modal-card {
+    width: 440px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 28px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+}
+.modal-card h3 {
+    font-family: var(--label);
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+}
+.modal-card textarea {
+    width: 100%;
+    font-family: var(--body);
+    font-size: 13px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    resize: vertical;
+}
+.modal-card .row { display: flex; gap: 8px; }
+
 /* Inspector */
 .chip {
     display: inline-block;
@@ -356,6 +417,6 @@ label {
     padding: 4px 10px;
     color: #555;
 }
-#inspector .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
-#inspector input { margin-bottom: 4px; }
-#inspector select { margin-bottom: 4px; }
+#selected .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+#selected input { margin-bottom: 4px; }
+#selected select { margin-bottom: 4px; }

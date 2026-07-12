@@ -15,7 +15,7 @@
     <div id="login">
         <form id="login-form">
             <h1>Nick Mason <span>Studio</span></h1>
-            <p class="hint">The portfolio page, editable. Drag images in, rearrange sections, publish.</p>
+            <p class="hint">The portfolio page, freely editable. Drag anything anywhere, then publish.</p>
             <label for="login-pass">Passphrase</label>
             <input id="login-pass" type="password" autocomplete="current-password" autofocus>
             <label>Who's editing?</label>
@@ -51,29 +51,40 @@
         </header>
 
         <aside id="left">
-            <h2>Sections</h2>
-            <div id="minimap"></div>
+            <h2>Page</h2>
+            <div id="pagemap" title="Click to jump"></div>
         </aside>
 
         <main id="canvas-holder">
-            <iframe id="canvas" title="Portfolio page preview"></iframe>
+            <iframe id="canvas" title="Portfolio page canvas"></iframe>
         </main>
 
         <aside id="right">
             <nav class="tabs">
                 <button class="tab active" data-tab="images">Images</button>
-                <button class="tab" data-tab="patterns">Layouts</button>
-                <button class="tab" data-tab="inspector">Section</button>
+                <button class="tab" data-tab="selected">Selected</button>
             </nav>
             <div class="tab-panel" id="images">
-                <input id="tray-search" type="search" placeholder="Search filenames…">
+                <input id="tray-search" type="search" placeholder="Search…">
+                <p class="hint" style="margin-bottom:10px">Drag a photo onto the page to add it.</p>
                 <div id="tray"></div>
             </div>
-            <div class="tab-panel" id="patterns" style="display:none">
-                <div id="palette"></div>
-            </div>
-            <div class="tab-panel" id="inspector" style="display:none"></div>
+            <div class="tab-panel" id="selected" style="display:none"></div>
         </aside>
+    </div>
+
+    <!-- Publish modal -->
+    <div id="publish-modal" class="modal" style="display:none">
+        <div class="modal-card">
+            <h3>Publish to the site</h3>
+            <p id="publish-msg" class="hint"></p>
+            <label for="publish-note">Note (optional — lands in the change history, Claude reads these)</label>
+            <textarea id="publish-note" rows="3" placeholder="e.g. rearranged the middle, not sure about the dusk photos — polish welcome"></textarea>
+            <div class="row" style="justify-content:flex-end; margin-top:16px">
+                <button id="publish-cancel">Cancel</button>
+                <button id="publish-go" class="primary">Publish</button>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="/studio/js/studio.js"></script>

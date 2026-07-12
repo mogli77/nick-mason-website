@@ -1,10 +1,10 @@
-// Studio app: state, panels, drag interactions, drafts, publish.
+// Studio app (freeform): state, tray, page map, drafts, publish.
 
 import * as model from './model.js';
 import * as api from './api.js';
 import * as overlay from './overlay.js';
 
-const DRAFT_KEY = 'nickMason.studio.draft.v1';
+const DRAFT_KEY = 'nickMason.studio.draft.v2';
 const $ = (sel) => document.querySelector(sel);
 
 const VIDEO_LIBRARY = [
@@ -21,15 +21,15 @@ const VIDEO_LIBRARY = [
 ];
 
 const state = {
-    fileText: null,       // full portfolio.html as loaded
-    baseGalleryHash: null, // hash of the region this session is based on
-    blocks: [],
-    selectedId: null,
+    fileText: null,
+    baseGalleryHash: null,
+    model: { version: 2, frames: [] },
     history: [],
     future: [],
-    altMap: {},           // src → alt harvested from all pages
+    altMap: {},
     imageFolders: {},
     dirtySinceLoad: false,
+    migrated: false,       // legacy page converted this session (not yet published)
     lastCommit: null,
 };
 
@@ -62,28 +62,108 @@ async function boot() {
     state.baseGalleryHash = res.data.galleryHash;
     state.lastCommit = res.data.lastCommit;
     renderLastPublished();
+    await harvestAltMap();
 
     let region;
     try {
         region = model.splitFile(state.fileText).region;
-        state.blocks = model.parseRegion(region);
     } catch (e) {
-        setStatus(`Cannot edit this page version: ${e.message}`, 'error');
+        setStatus(`Cannot edit this page: ${e.message}`, 'error');
         return;
     }
 
-    // Round-trip invariant, visible in the UI.
-    const rt = model.serializeRegion(state.blocks) === region;
-    $('#roundtrip').textContent = rt ? 'fidelity ✓' : 'fidelity ✗';
-    $('#roundtrip').className = rt ? 'ok' : 'error';
+    const parsed = model.parseRegion(region);
+    const draft = readDraft();
 
-    await harvestAltMap();
-    maybeOfferDraft(region);
-    renderIframe();
-    renderMinimap();
+    overlay.init($('#canvas'), {
+        getModel: () => state.model,
+        snapshot,
+        discardSnapshot,
+        onChange: afterMutation,
+        onSelect: renderSelectedPanel,
+        onKeydown: handleKeydown,
+        altForImage: (src) => altForImage(src).alt,
+    });
+
+    if (parsed) {
+        state.model = draftOrParsed(draft, parsed, region);
+    } else {
+        // Legacy page: render it as-is AT DESKTOP WIDTH (the mobile breakpoint
+        // would corrupt the measurement), measure it, then swap in the
+        // freeform canvas at identical geometry.
+        setStatus('First open: converting the current layout to freeform…');
+        const iframe = $('#canvas');
+        iframe.style.width = '1600px';
+        bootIframe('\n' + region + '\n', async () => {
+            state.model = await overlay.measureLegacy((src) => altForImage(src).alt);
+            iframe.style.width = '';
+            state.migrated = true;
+            state.dirtySinceLoad = true;
+            bootIframe(model.serializeRegion(state.model, { withIds: true }), () => {
+                finishBoot();
+                setStatus('Converted. Everything is now freely movable — publish when happy.');
+            });
+        });
+        loadImages();
+        return;
+    }
+    bootIframe(model.serializeRegion(state.model, { withIds: true }), finishBoot);
     loadImages();
-    renderPalette();
-    setStatus('Ready.');
+}
+
+function draftOrParsed(draft, parsed, region) {
+    if (draft && draft.gallery && draft.gallery !== region) {
+        const stale = draft.baseGalleryHash !== state.baseGalleryHash;
+        const msg = stale
+            ? 'You have a draft based on an OLDER version of the page. Resume it anyway?'
+            : `Resume your unpublished draft from ${new Date(draft.savedAt).toLocaleString()}?`;
+        if (confirm(msg)) {
+            try {
+                const m = model.parseRegion(draft.gallery);
+                if (m) { state.dirtySinceLoad = true; return m; }
+            } catch { /* fall through */ }
+        }
+        localStorage.removeItem(DRAFT_KEY);
+    }
+    return parsed;
+}
+
+function readDraft() {
+    try {
+        return JSON.parse(localStorage.getItem(DRAFT_KEY));
+    } catch {
+        return null;
+    }
+}
+
+let iframeLoadCb = null;
+function bootIframe(regionHtml, onReady) {
+    const iframe = $('#canvas');
+    iframeLoadCb = onReady || null;
+    iframe.srcdoc = overlay.buildSrcdoc(state.fileText, regionHtml);
+    iframe.onload = () => {
+        overlay.onIframeReady();
+        if (iframeLoadCb) iframeLoadCb();
+    };
+}
+
+function finishBoot() {
+    loadImages();
+    renderPageMap();
+    updatePublishButton();
+    renderSelectedPanel([]);
+    // Idempotence check: serialize → parse → serialize must be stable.
+    try {
+        const a = model.serializeRegion(state.model);
+        const b = model.serializeRegion(model.parseRegion(a));
+        const ok = a === b;
+        $('#roundtrip').textContent = ok ? 'fidelity ✓' : 'fidelity ✗';
+        $('#roundtrip').className = ok ? 'ok' : 'error';
+    } catch (e) {
+        $('#roundtrip').textContent = 'fidelity ✗';
+        $('#roundtrip').className = 'error';
+    }
+    if (!state.migrated) setStatus('Ready.');
 }
 
 function showLogin() {
@@ -108,34 +188,6 @@ $('#login-form').addEventListener('submit', async (e) => {
 });
 
 // ---------------------------------------------------------------------------
-// Iframe rendering
-// ---------------------------------------------------------------------------
-
-function renderIframe() {
-    const iframe = $('#canvas');
-    overlay.init(iframe, {
-        onSelect: selectBlock,
-        onKeydown: handleKeydown,
-    });
-    iframe.srcdoc = overlay.buildSrcdoc(state.fileText, state.blocks);
-    iframe.addEventListener('load', () => {
-        overlay.onIframeReady();
-        overlay.setSelected(state.selectedId);
-        overlay.attachCropPan(state.blocks, {
-            getBlock: (id) => state.blocks.find((b) => b.id === id),
-            onCommit: (id, slotIndex, objectPosition) => {
-                snapshot();
-                const b = state.blocks.find((x) => x.id === id);
-                if (!b) return;
-                b.slots[slotIndex].objectPosition = objectPosition === '50% 50%' ? null : objectPosition;
-                b.dirty = true;
-                afterMutation({ patch: b });
-            },
-        });
-    }, { once: true });
-}
-
-// ---------------------------------------------------------------------------
 // Alt map
 // ---------------------------------------------------------------------------
 
@@ -146,7 +198,7 @@ async function harvestAltMap() {
         try {
             const r = await fetch(p);
             if (r.ok) texts.push(await r.text());
-        } catch { /* offline page — skip */ }
+        } catch { /* skip */ }
     }));
     const re = /src="(images\/[^"]+)"[^>]*\balt="([^"]*)"/g;
     for (const text of texts) {
@@ -159,8 +211,7 @@ async function harvestAltMap() {
 function altForImage(src) {
     if (state.altMap[src]) return { alt: state.altMap[src], known: true };
     const folder = (src.match(/images\/projects\/([^/]+)\//) || [])[1];
-    const label = folder ? folder.replace(/-/g, ' ') : 'project';
-    return { alt: `Photograph from ${label}`, known: false };
+    return { alt: `Photograph from ${folder ? folder.replace(/-/g, ' ') : 'the project'}`, known: false };
 }
 
 // ---------------------------------------------------------------------------
@@ -168,56 +219,38 @@ function altForImage(src) {
 // ---------------------------------------------------------------------------
 
 function snapshot() {
-    state.history.push(structuredClone(state.blocks));
+    state.history.push(structuredClone(state.model));
     if (state.history.length > 100) state.history.shift();
     state.future = [];
 }
 
-function afterMutation({ patch = null, reorder = false, structural = false } = {}) {
+function discardSnapshot() {
+    state.history.pop();
+}
+
+function afterMutation() {
     state.dirtySinceLoad = true;
-    if (patch) overlay.patchBlock(patch);
-    if (reorder) overlay.reorderDom(state.blocks);
-    if (structural) { /* insert/remove handled at call site */ }
-    renderMinimap();
-    renderInspector();
+    renderPageMap();
     saveDraftSoon();
     updatePublishButton();
 }
 
 function undo() {
     if (!state.history.length) return;
-    state.future.push(structuredClone(state.blocks));
-    state.blocks = state.history.pop();
-    rerenderAllBlocks();
+    state.future.push(structuredClone(state.model));
+    state.model = state.history.pop();
+    overlay.renderCanvas();
+    overlay.select([]);
+    afterMutation();
 }
 
 function redo() {
     if (!state.future.length) return;
-    state.history.push(structuredClone(state.blocks));
-    state.blocks = state.future.pop();
-    rerenderAllBlocks();
-}
-
-function rerenderAllBlocks() {
-    // Blunt but correct: rebuild the gallery region DOM from the model.
-    const gallery = overlay.galleryEl();
-    if (!gallery) return;
-    gallery.querySelectorAll('[data-studio-id]').forEach((el) => el.remove());
-    let index = 0;
-    for (const b of state.blocks) {
-        overlay.insertBlockAt(b, index - 1 >= 0 ? index - 1 : -1, state.blocks);
-        index++;
-    }
-    // Simpler + reliable ordering pass:
-    overlay.reorderDom(state.blocks);
-    if (state.selectedId && !state.blocks.find((b) => b.id === state.selectedId)) {
-        state.selectedId = null;
-    }
-    overlay.setSelected(state.selectedId);
-    renderMinimap();
-    renderInspector();
-    saveDraftSoon();
-    updatePublishButton();
+    state.history.push(structuredClone(state.model));
+    state.model = state.future.pop();
+    overlay.renderCanvas();
+    overlay.select([]);
+    afterMutation();
 }
 
 let draftTimer = null;
@@ -227,7 +260,7 @@ function saveDraftSoon() {
         const auth = api.getAuth();
         localStorage.setItem(DRAFT_KEY, JSON.stringify({
             baseGalleryHash: state.baseGalleryHash,
-            gallery: model.serializeRegion(state.blocks),
+            gallery: model.serializeRegion(state.model),
             editor: auth && auth.editor,
             savedAt: new Date().toISOString(),
         }));
@@ -235,270 +268,105 @@ function saveDraftSoon() {
     }, 500);
 }
 
-function maybeOfferDraft(currentRegion) {
-    let draft = null;
-    try {
-        draft = JSON.parse(localStorage.getItem(DRAFT_KEY));
-    } catch { /* corrupt draft — ignore */ }
-    if (!draft || !draft.gallery || draft.gallery === currentRegion) return;
-    const stale = draft.baseGalleryHash !== state.baseGalleryHash;
-    const msg = stale
-        ? 'You have a draft based on an OLDER version of the page. Resume it anyway? (Publishing it will overwrite the newer changes.)'
-        : `Resume your unpublished draft from ${new Date(draft.savedAt).toLocaleString()}?`;
-    if (confirm(msg)) {
-        try {
-            state.blocks = model.parseRegion(draft.gallery);
-            state.dirtySinceLoad = true;
-        } catch (e) {
-            alert(`Draft could not be restored: ${e.message}`);
-            localStorage.removeItem(DRAFT_KEY);
-        }
-    } else {
-        localStorage.removeItem(DRAFT_KEY);
-    }
-}
-
 // ---------------------------------------------------------------------------
-// Selection + inspector
+// Selected panel (alt text, video pick, crop reset)
 // ---------------------------------------------------------------------------
 
-function selectBlock(id) {
-    state.selectedId = id;
-    overlay.setSelected(id);
-    renderMinimap();
-    renderInspector();
-    if (id) setTab('inspector');
-}
-
-function renderInspector() {
-    const host = $('#inspector');
-    const block = state.blocks.find((b) => b.id === state.selectedId);
-    if (!block) {
-        host.innerHTML = '<p class="hint">Click a section in the page (or the minimap) to inspect it.</p>';
+function renderSelectedPanel(ids) {
+    const host = $('#selected');
+    const fs = ids.map((id) => state.model.frames.find((f) => f.id === id)).filter(Boolean);
+    if (!fs.length) {
+        host.innerHTML = `<p class="hint">Click any image on the page to select it.
+            Drag to move · corners to resize · double-click to adjust the crop ·
+            drag on empty space to select several at once.</p>`;
         return;
     }
-    if (block.kind === 'collage') {
-        host.innerHTML = `
-            <div class="chip">collage — fixed composition</div>
-            <p class="hint">This hand-built collage keeps its exact design. You can move it up or down or delete it.</p>
-            <div class="row">
-                <button data-act="up">Move up</button>
-                <button data-act="down">Move down</button>
-                <button data-act="delete" class="danger">Delete</button>
-            </div>`;
-    } else {
-        const def = model.PATTERNS[block.pattern];
-        const variants = ['', ...def.variants];
-        const variantHtml = def.variants.length ? `
-            <label>Layout variant</label>
-            <div class="row">${variants.map((v) => `
-                <button data-variant="${v}" class="${(block.variant || '') === v ? 'active' : ''}">${v || 'base'}</button>`).join('')}
-            </div>` : '';
-        const slotsHtml = block.slots.map((s, i) => {
-            if (s.kind === 'video') {
-                const opts = VIDEO_LIBRARY.map((v) =>
-                    `<option value="${v.url}" ${v.url === s.url ? 'selected' : ''}>${v.ariaLabel}</option>`).join('');
-                return `<label>${def.slots[i].label} (video)</label>
-                    <select data-video-slot="${i}">${opts}</select>`;
-            }
-            const flag = s.placeholder ? ' <span class="warn">empty</span>'
-                : (!s.alt ? ' <span class="warn">needs alt</span>' : '');
-            return `<label>${def.slots[i].label} — alt text${flag}</label>
-                <input type="text" data-alt-slot="${i}" value="${s.alt.replace(/"/g, '&quot;')}" placeholder="Describe the photo">`;
-        }).join('');
-        // Swap buttons between adjacent image slots (and reset-crop when panned)
-        const imageIdx = block.slots.map((s, i) => (s.kind === 'image' ? i : -1)).filter((i) => i !== -1);
-        const swapsHtml = imageIdx.length > 1 ? `
-            <label>Rearrange within this section</label>
-            <div class="row">${imageIdx.slice(0, -1).map((idx, k) => {
-                const next = imageIdx[k + 1];
-                return `<button data-swap="${idx}:${next}">${def.slots[idx].label} ⇄ ${def.slots[next].label}</button>`;
-            }).join('')}</div>` : '';
-        const cropIdx = block.slots.map((s, i) => (s.kind === 'image' && s.objectPosition ? i : -1)).filter((i) => i !== -1);
-        const cropResetHtml = cropIdx.length ? `
-            <div class="row">${cropIdx.map((i) =>
-                `<button data-crop-reset="${i}">Reset crop: ${def.slots[i].label}</button>`).join('')}</div>` : '';
-        host.innerHTML = `
-            <div class="chip">${def.label}</div>
-            ${variantHtml}
-            ${slotsHtml}
-            ${swapsHtml}
-            ${cropResetHtml}
-            <div class="row">
-                <button data-act="up">Move up</button>
-                <button data-act="down">Move down</button>
-                <button data-act="delete" class="danger">Delete</button>
-            </div>`;
+    if (fs.length > 1) {
+        host.innerHTML = `<div class="chip">${fs.length} selected</div>
+            <p class="hint">Drag to move them together, or press ⌫ to delete.</p>`;
+        return;
     }
-
-    host.querySelectorAll('[data-variant]').forEach((btn) => btn.addEventListener('click', () => {
-        snapshot();
-        block.variant = btn.getAttribute('data-variant');
-        block.dirty = true;
-        afterMutation({ patch: block });
-    }));
-    host.querySelectorAll('[data-alt-slot]').forEach((input) => input.addEventListener('change', () => {
-        snapshot();
-        const i = Number(input.getAttribute('data-alt-slot'));
-        block.slots[i].alt = input.value;
-        block.dirty = true;
-        afterMutation({ patch: block });
-    }));
-    host.querySelectorAll('[data-swap]').forEach((btn) => btn.addEventListener('click', () => {
-        snapshot();
-        const [a, b] = btn.getAttribute('data-swap').split(':').map(Number);
-        [block.slots[a], block.slots[b]] = [block.slots[b], block.slots[a]];
-        block.dirty = true;
-        afterMutation({ patch: block });
-    }));
-    host.querySelectorAll('[data-crop-reset]').forEach((btn) => btn.addEventListener('click', () => {
-        snapshot();
-        const i = Number(btn.getAttribute('data-crop-reset'));
-        block.slots[i].objectPosition = null;
-        block.dirty = true;
-        afterMutation({ patch: block });
-    }));
-    host.querySelectorAll('[data-video-slot]').forEach((sel) => sel.addEventListener('change', () => {
-        snapshot();
-        const i = Number(sel.getAttribute('data-video-slot'));
-        const v = VIDEO_LIBRARY.find((x) => x.url === sel.value);
-        block.slots[i] = { kind: 'video', url: v.url, ariaLabel: v.ariaLabel };
-        block.dirty = true;
-        afterMutation({ patch: block });
-    }));
-    const act = (name, fn) => {
-        const btn = host.querySelector(`[data-act="${name}"]`);
-        if (btn) btn.addEventListener('click', fn);
-    };
-    act('up', () => moveBlock(block.id, -1));
-    act('down', () => moveBlock(block.id, +1));
-    act('delete', () => deleteBlock(block.id));
-}
-
-function moveBlock(id, delta) {
-    const i = state.blocks.findIndex((b) => b.id === id);
-    const j = i + delta;
-    if (i === -1 || j < 0 || j >= state.blocks.length) return;
-    snapshot();
-    const [b] = state.blocks.splice(i, 1);
-    state.blocks.splice(j, 0, b);
-    afterMutation({ reorder: true });
-    overlay.scrollToBlock(id);
-}
-
-function deleteBlock(id) {
-    const i = state.blocks.findIndex((b) => b.id === id);
-    if (i === -1) return;
-    snapshot();
-    overlay.removeBlock(id);
-    state.blocks.splice(i, 1);
-    if (state.selectedId === id) state.selectedId = null;
-    overlay.setSelected(null);
-    afterMutation({});
-}
-
-// ---------------------------------------------------------------------------
-// Minimap
-// ---------------------------------------------------------------------------
-
-function blockThumb(block) {
-    const first = block.kind === 'pattern'
-        ? block.slots.find((s) => s.kind === 'image' && !s.placeholder)
-        : null;
-    if (first) return thumbUrl(first.src, 96);
-    const m = block.sourceHtml.match(/src="(images\/[^"]+)"/);
-    return m ? thumbUrl(m[1], 96) : null;
-}
-
-function blockTitle(block) {
-    if (block.comment) return block.comment.trim();
-    if (block.kind === 'pattern') return model.PATTERNS[block.pattern].label;
-    return 'Collage';
-}
-
-function renderMinimap() {
-    const host = $('#minimap');
-    host.innerHTML = '';
-    state.blocks.forEach((b, i) => {
-        const row = document.createElement('div');
-        row.className = 'mini-row' + (b.id === state.selectedId ? ' selected' : '') + (b.kind === 'collage' ? ' collage' : '');
-        row.setAttribute('data-id', b.id);
-        const thumb = blockThumb(b);
-        const needsAlt = b.kind === 'pattern' && b.slots.some((s) => s.kind === 'image' && (!s.alt || s.placeholder));
-        row.innerHTML = `
-            <span class="mini-grip" title="Drag to reorder">⋮⋮</span>
-            ${thumb ? `<img src="${thumb}" alt="" loading="lazy">` : '<span class="mini-video">▶</span>'}
-            <span class="mini-title">${blockTitle(b)}${b.kind === 'collage' ? ' <em>(collage)</em>' : ''}${needsAlt ? ' <b class="warn">!</b>' : ''}</span>`;
-        row.addEventListener('click', (e) => {
-            if (e.target.closest('.mini-grip')) return;
-            selectBlock(b.id);
-            overlay.scrollToBlock(b.id);
-        });
-        attachMinimapDrag(row, b, i);
-        host.appendChild(row);
-    });
-}
-
-function attachMinimapDrag(row, block) {
-    const grip = row.querySelector('.mini-grip');
-    grip.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        try { grip.setPointerCapture(e.pointerId); } catch { /* synthetic pointer */ }
-        const host = $('#minimap');
-        const rows = () => Array.from(host.children);
-        let targetIndex = null;
-        const indicator = document.createElement('div');
-        indicator.className = 'mini-indicator';
-        row.classList.add('dragging');
-
-        const onMove = (ev) => {
-            const y = ev.clientY;
-            let idx = rows().filter((r) => r !== indicator).length;
-            const rs = rows().filter((r) => r !== indicator);
-            for (let k = 0; k < rs.length; k++) {
-                const r = rs[k].getBoundingClientRect();
-                if (y < r.top + r.height / 2) { idx = k; break; }
-            }
-            targetIndex = idx;
-            const ref = rs[idx] || null;
-            host.insertBefore(indicator, ref);
-        };
-        const onUp = () => {
-            grip.removeEventListener('pointermove', onMove);
-            grip.removeEventListener('pointerup', onUp);
-            row.classList.remove('dragging');
-            indicator.remove();
-            if (targetIndex === null) return;
-            const from = state.blocks.findIndex((b) => b.id === block.id);
-            let to = targetIndex;
-            if (to > from) to--;
-            if (to === from) { renderMinimap(); return; }
+    const f = fs[0];
+    if (f.kind === 'video') {
+        const opts = VIDEO_LIBRARY.map((v) =>
+            `<option value="${v.url}" ${v.url === f.url ? 'selected' : ''}>${v.ariaLabel}</option>`).join('');
+        host.innerHTML = `<div class="chip">Video</div>
+            <label>Which video</label><select data-video>${opts}</select>`;
+        host.querySelector('[data-video]').addEventListener('change', (e) => {
             snapshot();
-            const [moved] = state.blocks.splice(from, 1);
-            state.blocks.splice(to, 0, moved);
-            afterMutation({ reorder: true });
-            overlay.scrollToBlock(block.id);
-        };
-        grip.addEventListener('pointermove', onMove);
-        grip.addEventListener('pointerup', onUp);
+            const v = VIDEO_LIBRARY.find((x) => x.url === e.target.value);
+            f.url = v.url; f.ariaLabel = v.ariaLabel;
+            overlay.renderCanvas();
+            afterMutation();
+        });
+        return;
+    }
+    const needsAlt = !state.altMap[f.src] && /Photograph from/.test(f.alt || '');
+    host.innerHTML = `<div class="chip">Image</div>
+        <p class="hint">${f.src.split('/').pop()}</p>
+        <label>Alt text ${needsAlt ? '<span class="warn">check this</span>' : ''}</label>
+        <input type="text" data-alt value="${(f.alt || '').replace(/"/g, '&quot;')}" placeholder="Describe the photo">
+        ${f.objectPosition ? '<div class="row" style="margin-top:10px"><button data-reset-crop>Reset crop</button></div>' : ''}`;
+    host.querySelector('[data-alt]').addEventListener('change', (e) => {
+        snapshot();
+        f.alt = e.target.value;
+        afterMutation();
+    });
+    const rc = host.querySelector('[data-reset-crop]');
+    if (rc) rc.addEventListener('click', () => {
+        snapshot();
+        f.objectPosition = null;
+        overlay.renderCanvas();
+        overlay.select([f.id]);
+        afterMutation();
     });
 }
 
 // ---------------------------------------------------------------------------
-// Image tray
+// Page map (left rail): mini rendering of the whole canvas
+// ---------------------------------------------------------------------------
+
+function renderPageMap() {
+    const host = $('#pagemap');
+    const frames = state.model.frames;
+    if (!frames.length) { host.innerHTML = ''; return; }
+    const H = model.canvasHeightWu(frames);
+    const rects = [...frames].sort((a, b) => (a.z || 0) - (b.z || 0)).map((f) =>
+        `<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="1"
+            class="${f.kind === 'video' ? 'pm-video' : 'pm-img'}"></rect>`).join('');
+    host.innerHTML = `<svg viewBox="0 0 100 ${H}" preserveAspectRatio="xMidYMin meet">${rects}</svg>`;
+    host.querySelector('svg').addEventListener('click', (e) => {
+        const svg = e.currentTarget;
+        const r = svg.getBoundingClientRect();
+        const yWu = ((e.clientY - r.top) / r.height) * H;
+        const iframe = $('#canvas');
+        const c = iframe.contentDocument.querySelector('.ff-canvas');
+        const px = (yWu / 100) * c.getBoundingClientRect().width;
+        iframe.contentWindow.scrollTo({ top: c.offsetTop + px - iframe.clientHeight / 3, behavior: 'smooth' });
+    });
+}
+
+// ---------------------------------------------------------------------------
+// Tray (images + videos)
 // ---------------------------------------------------------------------------
 
 function thumbUrl(src, w = 240) {
     return `/.netlify/images?url=/${encodeURIComponent(src).replace(/%2F/g, '/')}&w=${w}&q=60&fm=webp`;
 }
 
+function videoPoster(url) {
+    return url.replace(/\/video\/upload\/[^/]+\//, '/video/upload/so_0,w_240,c_limit,f_jpg/').replace(/\.mp4$/, '.jpg');
+}
+
 async function loadImages() {
+    if ($('#tray').dataset.loaded) return;
     const res = await api.fetchImages();
     if (!res.ok) {
         $('#tray').innerHTML = `<p class="hint">${res.data.message || 'Could not load images.'}</p>`;
         return;
     }
     state.imageFolders = res.data.folders || {};
+    $('#tray').dataset.loaded = '1';
     renderTray();
 }
 
@@ -506,6 +374,35 @@ function renderTray(filter = '') {
     const host = $('#tray');
     host.innerHTML = '';
     const q = filter.trim().toLowerCase();
+
+    // Videos first: they're few and Kelly should find them instantly.
+    const vids = q ? VIDEO_LIBRARY.filter((v) => v.ariaLabel.toLowerCase().includes(q)) : VIDEO_LIBRARY;
+    if (vids.length) {
+        const details = document.createElement('details');
+        details.open = Boolean(q);
+        details.innerHTML = `<summary>videos <span class="count">${vids.length}</span></summary>`;
+        const grid = document.createElement('div');
+        grid.className = 'tray-grid';
+        for (const v of vids) {
+            const cell = document.createElement('div');
+            cell.className = 'tray-cell tray-video';
+            cell.title = v.ariaLabel;
+            const img = document.createElement('img');
+            img.loading = 'lazy';
+            img.src = videoPoster(v.url);
+            img.onerror = () => { img.remove(); cell.textContent = '▶'; };
+            cell.appendChild(img);
+            const badge = document.createElement('span');
+            badge.className = 'tray-badge';
+            badge.textContent = '▶';
+            cell.appendChild(badge);
+            attachTrayDrag(cell, { kind: 'video', url: v.url, ariaLabel: v.ariaLabel }, 16 / 9);
+            grid.appendChild(cell);
+        }
+        details.appendChild(grid);
+        host.appendChild(details);
+    }
+
     for (const [folder, paths] of Object.entries(state.imageFolders)) {
         const matches = q ? paths.filter((p) => p.toLowerCase().includes(q)) : paths;
         if (!matches.length) continue;
@@ -517,7 +414,6 @@ function renderTray(filter = '') {
         for (const path of matches) {
             const cell = document.createElement('div');
             cell.className = 'tray-cell';
-            cell.setAttribute('data-src', path);
             cell.title = path.split('/').pop();
             const img = document.createElement('img');
             img.loading = 'lazy';
@@ -525,7 +421,7 @@ function renderTray(filter = '') {
             img.src = thumbUrl(path);
             img.onerror = () => { img.onerror = null; img.src = '/' + path; };
             cell.appendChild(img);
-            attachTrayDrag(cell, path);
+            attachTrayDrag(cell, { kind: 'image', src: path }, null);
             grid.appendChild(cell);
         }
         details.appendChild(grid);
@@ -536,12 +432,11 @@ function renderTray(filter = '') {
 
 $('#tray-search').addEventListener('input', (e) => renderTray(e.target.value));
 
-function attachTrayDrag(cell, src) {
+function attachTrayDrag(cell, media, fixedAspect) {
     cell.addEventListener('pointerdown', (e) => {
         e.preventDefault();
-        try { cell.setPointerCapture(e.pointerId); } catch { /* synthetic pointer */ }
+        try { cell.setPointerCapture(e.pointerId); } catch { /* synthetic */ }
         let ghost = null;
-        let target = null;
         let started = false;
         const startX = e.clientX, startY = e.clientY;
 
@@ -551,32 +446,29 @@ function attachTrayDrag(cell, src) {
                 started = true;
                 ghost = document.createElement('img');
                 ghost.className = 'drag-ghost';
-                ghost.src = cell.querySelector('img').src;
+                const thumb = cell.querySelector('img');
+                if (thumb) ghost.src = thumb.src;
                 document.body.appendChild(ghost);
             }
             ghost.style.left = `${ev.clientX + 12}px`;
             ghost.style.top = `${ev.clientY + 12}px`;
-            target = overlay.slotAtPoint(ev.clientX, ev.clientY, state.blocks);
-            const ok = Boolean(target && target.el && target.el.tagName === 'IMG');
-            overlay.highlightSlot(target, ok);
-            if (!ok) target = null;
+            overlay.setDropPreview(Boolean(overlay.canvasPointFromParent(ev.clientX, ev.clientY)));
         };
-        const onUp = () => {
+        const onUp = (ev) => {
             cell.removeEventListener('pointermove', onMove);
             cell.removeEventListener('pointerup', onUp);
+            overlay.setDropPreview(false);
             if (ghost) ghost.remove();
-            overlay.clearHighlights();
-            if (!target) return;
-            const block = state.blocks.find((b) => b.id === target.blockId);
-            if (!block || block.kind !== 'pattern') return;
-            const slot = block.slots[target.slotIndex];
-            if (!slot || slot.kind !== 'image') return;
-            snapshot();
-            const { alt, known } = altForImage(src);
-            block.slots[target.slotIndex] = { kind: 'image', src, alt, objectPosition: null, needsAlt: !known };
-            block.dirty = true;
-            afterMutation({ patch: block });
-            selectBlock(block.id);
+            if (!started) return;
+            const pt = overlay.canvasPointFromParent(ev.clientX, ev.clientY);
+            if (!pt) return;
+            let aspect = fixedAspect;
+            const thumb = cell.querySelector('img');
+            if (!aspect && thumb && thumb.naturalWidth) aspect = thumb.naturalWidth / thumb.naturalHeight;
+            const payload = media.kind === 'image'
+                ? { ...media, alt: altForImage(media.src).alt }
+                : media;
+            overlay.addFrameAt(pt, payload, aspect || 1.5);
         };
         cell.addEventListener('pointermove', onMove);
         cell.addEventListener('pointerup', onUp);
@@ -584,75 +476,43 @@ function attachTrayDrag(cell, src) {
 }
 
 // ---------------------------------------------------------------------------
-// Pattern palette
-// ---------------------------------------------------------------------------
-
-const SCHEMATICS = {
-    'full': '<rect x="2" y="6" width="60" height="28" />',
-    'full-video': '<rect x="2" y="6" width="60" height="28"/><polygon points="28,14 38,20 28,26" fill="#fff"/>',
-    'live-inset': '<rect x="2" y="6" width="60" height="28"/><rect x="40" y="22" width="18" height="10" fill="#fff" stroke="#999"/>',
-    'overlap': '<rect x="2" y="4" width="34" height="26"/><rect x="26" y="12" width="34" height="26" fill="#ccc"/>',
-    'feature-wide': '<rect x="2" y="4" width="16" height="16"/><rect x="14" y="10" width="46" height="28" fill="#ccc"/>',
-    'trio': '<rect x="2" y="8" width="18" height="24"/><rect x="23" y="8" width="18" height="24"/><rect x="44" y="8" width="18" height="24"/>',
-    'pair': '<rect x="2" y="8" width="28" height="24"/><rect x="34" y="8" width="28" height="24"/>',
-};
-
-function renderPalette() {
-    const host = $('#palette');
-    host.innerHTML = '<p class="hint">Click a layout to add it at the end, then drop images into it.</p>';
-    for (const [key, def] of Object.entries(model.PATTERNS)) {
-        const item = document.createElement('button');
-        item.className = 'palette-item';
-        item.innerHTML = `<svg viewBox="0 0 64 40" fill="#aaa" stroke="#888">${SCHEMATICS[def.schematic] || SCHEMATICS.full}</svg>
-            <span>${def.label}</span>`;
-        item.addEventListener('click', () => {
-            snapshot();
-            const block = model.createBlock(key, VIDEO_LIBRARY);
-            state.blocks.push(block);
-            overlay.insertBlockAt(block, state.blocks.length - 1, state.blocks);
-            afterMutation({});
-            selectBlock(block.id);
-            overlay.scrollToBlock(block.id);
-        });
-        host.appendChild(item);
-    }
-}
-
-// ---------------------------------------------------------------------------
 // Publish
 // ---------------------------------------------------------------------------
 
-function changeSummary() {
-    const dirty = state.blocks.filter((b) => b.dirty).length;
-    return `${dirty} section${dirty === 1 ? '' : 's'} changed · ${state.blocks.length} total`;
-}
-
 function updatePublishButton() {
     $('#publish').disabled = !state.dirtySinceLoad;
-    $('#summary').textContent = state.dirtySinceLoad ? changeSummary() : '';
+    $('#summary').textContent = state.dirtySinceLoad
+        ? `${state.model.frames.length} items on the page` : '';
 }
 
-$('#publish').addEventListener('click', () => publishFlow(false));
+$('#publish').addEventListener('click', () => openPublishModal());
 
-async function publishFlow(force) {
-    const placeholderBlocks = state.blocks.filter((b) =>
-        b.kind === 'pattern' && b.slots.some((s) => s.placeholder));
-    if (placeholderBlocks.length) {
-        alert('Some new sections still have empty image slots. Fill or delete them before publishing.');
-        selectBlock(placeholderBlocks[0].id);
-        overlay.scrollToBlock(placeholderBlocks[0].id);
-        return;
-    }
+function openPublishModal() {
+    $('#publish-modal').style.display = 'flex';
+    $('#publish-note').value = '';
+    $('#publish-msg').textContent = state.migrated
+        ? 'First publish converts the page to the freeform format (looks identical, becomes fully editable).'
+        : '';
+}
+
+$('#publish-cancel').addEventListener('click', () => {
+    $('#publish-modal').style.display = 'none';
+});
+
+$('#publish-go').addEventListener('click', () => doPublish(false));
+
+async function doPublish(force) {
     const auth = api.getAuth();
-    if (!confirm(`Publish to the live site as ${auth.editor}?\n\n${changeSummary()}`)) return;
-
+    $('#publish-modal').style.display = 'none';
     setStatus('Publishing…');
     $('#publish').disabled = true;
+    const note = $('#publish-note').value.trim();
     const res = await api.publish({
         editor: auth.editor,
-        gallery: model.serializeRegion(state.blocks),
+        gallery: model.serializeRegion(state.model),
         baseGalleryHash: state.baseGalleryHash,
         force,
+        note,
     });
 
     if (res.status === 409) {
@@ -660,9 +520,9 @@ async function publishFlow(force) {
         const who = last ? `\nLast change: "${last.message}" (${new Date(last.date).toLocaleString()})` : '';
         const overwrite = confirm(
             `The page changed since you loaded it.${who}\n\n` +
-            'OK = overwrite their version with yours.\nCancel = keep theirs (reload the page to see it).'
+            'OK = overwrite their version with yours.\nCancel = keep theirs (reload to see it).'
         );
-        if (overwrite) return publishFlow(true);
+        if (overwrite) return doPublish(true);
         setStatus('Publish cancelled — reload to pick up the newer version.', 'error');
         updatePublishButton();
         return;
@@ -672,15 +532,9 @@ async function publishFlow(force) {
         updatePublishButton();
         return;
     }
-
     state.baseGalleryHash = res.data.newGalleryHash;
     state.dirtySinceLoad = false;
-    state.blocks.forEach((b) => {
-        if (b.dirty) {
-            b.sourceHtml = model.renderBlock(b);
-            b.dirty = false;
-        }
-    });
+    state.migrated = false;
     localStorage.removeItem(DRAFT_KEY);
     updatePublishButton();
     startDeployCountdown(res.data.commitSha);
@@ -688,7 +542,8 @@ async function publishFlow(force) {
 
 function startDeployCountdown(sha) {
     let s = 75;
-    setStatus(`Published (${(sha || '').slice(0, 7)}). Site rebuilding — live in ~${s}s.`);
+    const tickMsg = () => `Published (${(sha || '').slice(0, 7)}). Site rebuilding — live in ~${s}s.`;
+    setStatus(tickMsg());
     const t = setInterval(() => {
         s -= 5;
         if (s <= 0) {
@@ -700,13 +555,13 @@ function startDeployCountdown(sha) {
             a.textContent = 'Open it ↗';
             $('#status').appendChild(a);
         } else {
-            setStatus(`Published (${(sha || '').slice(0, 7)}). Site rebuilding — live in ~${s}s.`);
+            setStatus(tickMsg());
         }
     }, 5000);
 }
 
 // ---------------------------------------------------------------------------
-// Chrome: tabs, viewport, undo buttons, status
+// Chrome
 // ---------------------------------------------------------------------------
 
 function setTab(name) {
@@ -734,12 +589,6 @@ function handleKeydown(e) {
         e.preventDefault();
         if (e.shiftKey) redo(); else undo();
     }
-    if ((e.key === 'Backspace' || e.key === 'Delete') && state.selectedId &&
-        !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
-        e.preventDefault();
-        deleteBlock(state.selectedId);
-    }
-    if (e.key === 'Escape') selectBlock(null);
 }
 document.addEventListener('keydown', handleKeydown);
 
@@ -753,33 +602,32 @@ function renderLastPublished() {
     const el = $('#last-published');
     if (state.lastCommit) {
         const d = new Date(state.lastCommit.date);
-        el.textContent = `Last published: ${state.lastCommit.message.replace('Studio: layout update by ', '')} · ${d.toLocaleString()}`;
+        el.textContent = `Last published: ${state.lastCommit.message.replace('Studio: layout update by ', '').split('\n')[0]} · ${d.toLocaleString()}`;
     } else {
         el.textContent = '';
     }
 }
 
 // ---------------------------------------------------------------------------
-// Debug hooks for E2E
+// Debug hooks
 // ---------------------------------------------------------------------------
 
 window.studioDebug = {
     state,
+    model,
+    overlay,
+    serialize: () => model.serializeRegion(state.model),
     roundTrip() {
-        const { region } = model.splitFile(state.fileText);
-        const blocks = model.parseRegion(region);
-        const out = model.serializeRegion(blocks);
-        const ok = out === region;
+        const a = model.serializeRegion(state.model);
+        const b = model.serializeRegion(model.parseRegion(a));
         let diffIndex = -1;
-        if (!ok) {
-            for (let i = 0; i < Math.max(out.length, region.length); i++) {
-                if (out[i] !== region[i]) { diffIndex = i; break; }
+        if (a !== b) {
+            for (let i = 0; i < Math.max(a.length, b.length); i++) {
+                if (a[i] !== b[i]) { diffIndex = i; break; }
             }
         }
-        return { ok, diffIndex, blocks: blocks.length };
+        return { ok: a === b, diffIndex, frames: state.model.frames.length };
     },
-    serialize: () => model.serializeRegion(state.blocks),
-    model,
 };
 
 boot();

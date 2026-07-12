@@ -54,10 +54,10 @@ export function fetchImages() {
     return call('/.netlify/functions/studio-images');
 }
 
-export function publish({ editor, gallery, baseGalleryHash, dryRun = false, force = false }) {
+export function publish({ editor, gallery, baseGalleryHash, dryRun = false, force = false, note = '' }) {
     return call('/.netlify/functions/studio-content', {
         method: 'POST',
-        body: JSON.stringify({ editor, gallery, baseGalleryHash, dryRun, force }),
+        body: JSON.stringify({ editor, gallery, baseGalleryHash, dryRun, force, note }),
     });
 }
 

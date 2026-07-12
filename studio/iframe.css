@@ -1,47 +1,110 @@
-/* Injected into the Studio canvas iframe: selection, drop targets, caret.
-   Also neutralizes leftover motion since page scripts are stripped. */
+/* Injected into the Studio canvas iframe (freeform editor). */
 
 html { scroll-behavior: auto !important; }
 
-.parallax-img { transform: none !important; }
+.ff-canvas { cursor: default; }
 
-[data-studio-id] { position: relative; }
+.ff-canvas.ff-drop-target {
+    outline: 3px dashed rgba(47, 111, 237, 0.5);
+    outline-offset: -3px;
+}
 
-[data-studio-id]:hover {
+figure.ff-frame { cursor: grab; }
+figure.ff-frame:active { cursor: grabbing; }
+
+figure.ff-frame:hover {
     outline: 1px dashed rgba(47, 111, 237, 0.55);
-    outline-offset: 4px;
+    outline-offset: 2px;
 }
 
-[data-studio-id].studio-selected {
+figure.ff-frame.ff-selected {
     outline: 2px solid #2f6fed;
-    outline-offset: 4px;
+    outline-offset: 0;
 }
 
-.studio-drop-ok {
-    outline: 3px solid #2f6fed !important;
-    outline-offset: -3px;
-    filter: brightness(1.06);
-}
-
-.studio-drop-no {
-    outline: 3px solid #c0392b !important;
-    outline-offset: -3px;
-}
-
-.studio-caret {
-    position: absolute;
-    left: 4%;
-    right: 4%;
-    height: 3px;
-    background: #2f6fed;
-    border-radius: 3px;
-    box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.25);
-    display: none;
-    z-index: 999;
-}
-
-/* Images in cover contexts show a move cursor to invite crop-panning. */
-.gallery-trio .gallery-item img,
-.gallery-pair .gallery-item img {
+figure.ff-frame.ff-cropping {
+    outline: 2px solid #e08a00;
     cursor: move;
+}
+figure.ff-frame.ff-cropping::after {
+    content: 'crop: drag the photo · click elsewhere when done';
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    background: #e08a00;
+    color: #fff;
+    font: 500 11px/1.6 -apple-system, sans-serif;
+    padding: 1px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Selection chrome: handles + toolbar live in one absolutely-positioned box */
+.ff-chrome {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+}
+.ff-handle {
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    background: #fff;
+    border: 2px solid #2f6fed;
+    border-radius: 50%;
+    pointer-events: auto;
+    z-index: 2;
+}
+.ff-h-nw { left: -6px; top: -6px; cursor: nwse-resize; }
+.ff-h-n  { left: calc(50% - 6px); top: -6px; cursor: ns-resize; }
+.ff-h-ne { right: -6px; top: -6px; cursor: nesw-resize; }
+.ff-h-e  { right: -6px; top: calc(50% - 6px); cursor: ew-resize; }
+.ff-h-se { right: -6px; bottom: -6px; cursor: nwse-resize; }
+.ff-h-s  { left: calc(50% - 6px); bottom: -6px; cursor: ns-resize; }
+.ff-h-sw { left: -6px; bottom: -6px; cursor: nesw-resize; }
+.ff-h-w  { left: -6px; top: calc(50% - 6px); cursor: ew-resize; }
+
+.ff-toolbar {
+    position: absolute;
+    top: -44px;
+    left: 0;
+    display: flex;
+    gap: 4px;
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 5px;
+    pointer-events: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+.ff-toolbar button {
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font: 500 12px/1 -apple-system, sans-serif;
+    padding: 6px 9px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.ff-toolbar button:hover { background: #3a3a3a; }
+
+/* Snap guides */
+.ff-guide {
+    position: absolute;
+    background: #ff2d78;
+    z-index: 8000;
+    pointer-events: none;
+}
+.ff-guide-v { top: 0; bottom: 0; width: 1px; }
+.ff-guide-h { left: 0; right: 0; height: 1px; }
+
+/* Marquee */
+.ff-marquee {
+    position: absolute;
+    display: none;
+    border: 1px solid #2f6fed;
+    background: rgba(47, 111, 237, 0.08);
+    z-index: 8500;
+    pointer-events: none;
 }
