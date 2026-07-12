@@ -166,7 +166,7 @@ A hosted, Miro-style editor for the portfolio page at `/studio/` (noindexed). Ow
 - **Legacy migration**: if the gallery is still in the old hand-written grammar, first open measures the rendered layout at forced desktop width and converts it pixel-faithfully to frames; first publish rewrites the region in ff format. When hand-editing portfolio.html after that, keep the ff-canvas structure (or let Studio own it).
 - **Publish safety**: server re-fetches the file, strict full-line anchors, region-hash 409 on two-editor conflict, splice-only-the-region, sanity checks, `dryRun` support. Any bad publish is one `git revert` away.
 - **Env vars (Netlify)**: `GITHUB_TOKEN` (fine-grained PAT, Contents R/W on this repo only, expires 2026-08-11), `STUDIO_PASSWORD`, `STUDIO_TARGET_BRANCH` (context-scoped: production→`main`, branch-deploy→`studio` so the `studio` branch deploy is a safe staging environment).
-- **Local dev**: `netlify dev --port 8890` (reads `.env`, gitignored; no token needed — functions fall back to the working tree, publish is dryRun-only locally).
+- **Local Pro mode** (auto-activates under `netlify dev --port 8890`; `.env` gitignored, no token needed): Save writes portfolio.html straight to the working tree; **Commit & push** button deploys via local git (studio-git.mjs, local-only); drop image files from Finder onto the tray to add them to the repo (`images/uploads/web/`, studio-upload.mjs, local-only); add Cloudinary videos by URL; numeric x/y/w/h inputs, Duplicate (Cmd+D), align/distribute for multi-selections. **Preview** button (both modes) opens the current draft as the real page in a new tab without publishing.
 
 ---
 
