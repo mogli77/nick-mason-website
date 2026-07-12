@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio — Nick Mason Construction Co.</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="data:,">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/studio/studio.css">
+</head>
+<body>
+
+    <!-- Login -->
+    <div id="login">
+        <form id="login-form">
+            <h1>Nick Mason <span>Studio</span></h1>
+            <p class="hint">The portfolio page, editable. Drag images in, rearrange sections, publish.</p>
+            <label for="login-pass">Passphrase</label>
+            <input id="login-pass" type="password" autocomplete="current-password" autofocus>
+            <label>Who's editing?</label>
+            <div class="editor-pick">
+                <label><input type="radio" name="editor" value="Nick" checked> Nick</label>
+                <label><input type="radio" name="editor" value="Kelly"> Kelly</label>
+            </div>
+            <button type="submit">Enter Studio</button>
+            <p id="login-error" class="error"></p>
+        </form>
+    </div>
+
+    <!-- App -->
+    <div id="app" style="display:none">
+        <header id="topbar">
+            <div class="brand">NICK MASON <b>STUDIO</b></div>
+            <div class="top-actions">
+                <button id="undo" title="Undo (Cmd+Z)">↩</button>
+                <button id="redo" title="Redo (Shift+Cmd+Z)">↪</button>
+                <button id="viewport-toggle">Mobile view</button>
+            </div>
+            <div id="status-wrap">
+                <span id="roundtrip"></span>
+                <span id="status"></span>
+                <span id="last-published"></span>
+            </div>
+            <div class="top-right">
+                <span id="summary"></span>
+                <button id="publish" class="primary" disabled>Publish</button>
+                <span id="who" class="who"></span>
+                <button id="logout" title="Sign out">×</button>
+            </div>
+        </header>
+
+        <aside id="left">
+            <h2>Sections</h2>
+            <div id="minimap"></div>
+        </aside>
+
+        <main id="canvas-holder">
+            <iframe id="canvas" title="Portfolio page preview"></iframe>
+        </main>
+
+        <aside id="right">
+            <nav class="tabs">
+                <button class="tab active" data-tab="images">Images</button>
+                <button class="tab" data-tab="patterns">Layouts</button>
+                <button class="tab" data-tab="inspector">Section</button>
+            </nav>
+            <div class="tab-panel" id="images">
+                <input id="tray-search" type="search" placeholder="Search filenames…">
+                <div id="tray"></div>
+            </div>
+            <div class="tab-panel" id="patterns" style="display:none">
+                <div id="palette"></div>
+            </div>
+            <div class="tab-panel" id="inspector" style="display:none"></div>
+        </aside>
+    </div>
+
+    <script type="module" src="/studio/js/studio.js"></script>
+</body>
+</html>

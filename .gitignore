@@ -49,3 +49,6 @@ images/construction/*.ARW
 
 # Reference materials (design PDFs, etc.)
 REFERENCES/
+
+# Studio local dev secrets
+.env

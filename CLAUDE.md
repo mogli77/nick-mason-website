@@ -157,6 +157,18 @@ To add a project to the grid, copy the `<article class="project-item">` structur
 
 ---
 
+## Studio (visual layout editor)
+
+A hosted, Miro-feel editor for the portfolio page at `/studio/` (noindexed). Owner + Kelly log in with a shared passphrase, drag images from the repo onto page slots, reorder sections, switch layout variants, crop-pan cover-fit images, and publish — which commits `portfolio.html` to GitHub via a Netlify Function and auto-deploys.
+
+- **Architecture**: static SPA (`studio/`) + two zero-dependency Netlify Functions (`netlify/functions/studio-*.mjs`, single-file `.mjs`, no package.json). Canvas is a same-origin iframe built from `srcdoc` (GitHub source with all scripts stripped), so page scripts never fight the editor.
+- **Core invariant**: the serializer is *source-preserving* — untouched blocks re-emit byte-for-byte; only edited blocks re-render from templates. `studioDebug.roundTrip().ok` must be true against the live file. Blocks Studio doesn't recognize (e.g. `editorial-composition` collages) are opaque: reorder/delete only, never re-rendered.
+- **Publish safety**: server re-fetches the file, locates the gallery region by strict full-line anchors, 409s if the region hash moved since load (two-editor conflict), splices only the region, sanity-checks, then commits as "Studio: layout update by {editor}". `dryRun: true` returns the spliced file without committing. Any bad publish is one `git revert` away.
+- **Env vars (Netlify)**: `GITHUB_TOKEN` (fine-grained PAT, Contents R/W on this repo only), `STUDIO_PASSWORD`, `STUDIO_TARGET_BRANCH` (context-scoped: production→`main`, branch-deploy→`studio` so the `studio` branch deploy is a safe staging environment).
+- **Local dev**: `netlify dev --port 8890` (reads `.env`, gitignored; no token needed — functions fall back to reading/serving the working tree, publish is dryRun-only locally).
+
+---
+
 ## Positioning Mode
 
 A development tool for visually positioning and scaling elements. Instead of back-and-forth CSS adjustments, drag elements to the exact position you want, scale them, then lock the values.

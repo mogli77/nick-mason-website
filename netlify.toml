@@ -1,0 +1,14 @@
+# Netlify configuration — added for Studio (visual layout editor).
+# The site itself remains a plain static deploy of the repo root.
+
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+# Studio is an internal tool: keep it out of search indexes.
+[[headers]]
+  for = "/studio/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"

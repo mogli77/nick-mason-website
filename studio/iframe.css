@@ -1,0 +1,47 @@
+/* Injected into the Studio canvas iframe: selection, drop targets, caret.
+   Also neutralizes leftover motion since page scripts are stripped. */
+
+html { scroll-behavior: auto !important; }
+
+.parallax-img { transform: none !important; }
+
+[data-studio-id] { position: relative; }
+
+[data-studio-id]:hover {
+    outline: 1px dashed rgba(47, 111, 237, 0.55);
+    outline-offset: 4px;
+}
+
+[data-studio-id].studio-selected {
+    outline: 2px solid #2f6fed;
+    outline-offset: 4px;
+}
+
+.studio-drop-ok {
+    outline: 3px solid #2f6fed !important;
+    outline-offset: -3px;
+    filter: brightness(1.06);
+}
+
+.studio-drop-no {
+    outline: 3px solid #c0392b !important;
+    outline-offset: -3px;
+}
+
+.studio-caret {
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    height: 3px;
+    background: #2f6fed;
+    border-radius: 3px;
+    box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.25);
+    display: none;
+    z-index: 999;
+}
+
+/* Images in cover contexts show a move cursor to invite crop-panning. */
+.gallery-trio .gallery-item img,
+.gallery-pair .gallery-item img {
+    cursor: move;
+}
