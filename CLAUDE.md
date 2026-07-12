@@ -157,15 +157,16 @@ To add a project to the grid, copy the `<article class="project-item">` structur
 
 ---
 
-## Studio (visual layout editor)
+## Studio (freeform visual editor)
 
-A hosted, Miro-feel editor for the portfolio page at `/studio/` (noindexed). Owner + Kelly log in with a shared passphrase, drag images from the repo onto page slots, reorder sections, switch layout variants, crop-pan cover-fit images, and publish — which commits `portfolio.html` to GitHub via a Netlify Function and auto-deploys.
+A hosted, Miro-style editor for the portfolio page at `/studio/` (noindexed). Owner + Kelly log in with a shared passphrase and edit the page as one freeform canvas: click to select, drag to move (with snap guides), corner handles for proportional resize, side handles to stretch, double-click to adjust crop, marquee to multi-select and group-move, toolbar for z-order/delete, drag photos or videos in from the tray. Publish commits `portfolio.html` to GitHub via a Netlify Function and auto-deploys; the publish dialog has a Notes field that lands in the commit message (Claude reads these when asked to polish a layout).
 
-- **Architecture**: static SPA (`studio/`) + two zero-dependency Netlify Functions (`netlify/functions/studio-*.mjs`, single-file `.mjs`, no package.json). Canvas is a same-origin iframe built from `srcdoc` (GitHub source with all scripts stripped), so page scripts never fight the editor.
-- **Core invariant**: the serializer is *source-preserving* — untouched blocks re-emit byte-for-byte; only edited blocks re-render from templates. `studioDebug.roundTrip().ok` must be true against the live file. Blocks Studio doesn't recognize (e.g. `editorial-composition` collages) are opaque: reorder/delete only, never re-rendered.
-- **Publish safety**: server re-fetches the file, locates the gallery region by strict full-line anchors, 409s if the region hash moved since load (two-editor conflict), splices only the region, sanity-checks, then commits as "Studio: layout update by {editor}". `dryRun: true` returns the spliced file without committing. Any bad publish is one `git revert` away.
-- **Env vars (Netlify)**: `GITHUB_TOKEN` (fine-grained PAT, Contents R/W on this repo only), `STUDIO_PASSWORD`, `STUDIO_TARGET_BRANCH` (context-scoped: production→`main`, branch-deploy→`studio` so the `studio` branch deploy is a safe staging environment).
-- **Local dev**: `netlify dev --port 8890` (reads `.env`, gitignored; no token needed — functions fall back to reading/serving the working tree, publish is dryRun-only locally).
+- **Architecture**: static SPA (`studio/`) + two zero-dependency Netlify Functions (`netlify/functions/studio-*.mjs`). Canvas is a same-origin iframe built from `srcdoc` (GitHub source, scripts stripped).
+- **Freeform format**: the gallery region is one `.ff-canvas` (aspect-ratio container) of absolutely-positioned `.ff-frame` figures with percentage geometry. Exact width-unit geometry rides in `data-ff` attributes so serialization is idempotent (`studioDebug.roundTrip().ok`). The region is self-contained (own `<style>`, including ≤767px stacking in reading order) — styles.css untouched.
+- **Legacy migration**: if the gallery is still in the old hand-written grammar, first open measures the rendered layout at forced desktop width and converts it pixel-faithfully to frames; first publish rewrites the region in ff format. When hand-editing portfolio.html after that, keep the ff-canvas structure (or let Studio own it).
+- **Publish safety**: server re-fetches the file, strict full-line anchors, region-hash 409 on two-editor conflict, splice-only-the-region, sanity checks, `dryRun` support. Any bad publish is one `git revert` away.
+- **Env vars (Netlify)**: `GITHUB_TOKEN` (fine-grained PAT, Contents R/W on this repo only, expires 2026-08-11), `STUDIO_PASSWORD`, `STUDIO_TARGET_BRANCH` (context-scoped: production→`main`, branch-deploy→`studio` so the `studio` branch deploy is a safe staging environment).
+- **Local dev**: `netlify dev --port 8890` (reads `.env`, gitignored; no token needed — functions fall back to the working tree, publish is dryRun-only locally).
 
 ---
 
