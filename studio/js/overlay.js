@@ -169,6 +169,9 @@ function positionChrome() {
     }
     const el = frameEl(selection[0]);
     if (!el) { box.style.display = 'none'; return; }
+    const f = frameById(selection[0]);
+    // Crop only applies to images
+    box.querySelector('[data-ff-act="crop"]').style.display = f && f.kind === 'image' ? '' : 'none';
     box.style.display = 'block';
     box.style.left = el.style.left;
     box.style.top = el.style.top;
@@ -218,6 +221,19 @@ function enterCrop(id) {
     cropId = id;
     const el = frameEl(id);
     if (el) el.classList.add('ff-cropping');
+    const img = el && el.querySelector('img');
+    if (img && img.naturalWidth) {
+        const fr = img.getBoundingClientRect();
+        const s = Math.max(fr.width / img.naturalWidth, fr.height / img.naturalHeight);
+        const ovX = img.naturalWidth * s - fr.width;
+        const ovY = img.naturalHeight * s - fr.height;
+        if (ovX <= 2 && ovY <= 2) {
+            cb.onStatus && cb.onStatus('This frame already shows the whole photo. Pull a side handle to change its shape first — then crop chooses what stays visible.');
+        } else {
+            cb.onStatus && cb.onStatus('Crop: drag the photo to choose what shows. The faded area is what gets hidden.');
+        }
+        updateCropGhost(el, img);
+    }
     positionChrome();
 }
 
@@ -225,8 +241,37 @@ export function exitCrop() {
     if (!cropId) return;
     const el = frameEl(cropId);
     if (el) el.classList.remove('ff-cropping');
+    const ghost = canvasEl() && canvasEl().querySelector('.ff-crop-ghost');
+    if (ghost) ghost.remove();
     cropId = null;
     positionChrome();
+}
+
+// Full-image ghost behind the frame while cropping: shows what's hidden.
+function updateCropGhost(el, img, livePos) {
+    const c = canvasEl();
+    if (!c) return;
+    let ghost = c.querySelector('.ff-crop-ghost');
+    if (!ghost) {
+        ghost = doc().createElement('img');
+        ghost.className = 'ff-crop-ghost';
+        c.appendChild(ghost);
+    }
+    if (ghost.getAttribute('src') !== img.getAttribute('src')) {
+        ghost.src = img.getAttribute('src');
+    }
+    const fw = el.offsetWidth, fh = el.offsetHeight;
+    const nw = img.naturalWidth, nh = img.naturalHeight;
+    if (!nw) return;
+    const s = Math.max(fw / nw, fh / nh);
+    const gw = nw * s, gh = nh * s;
+    const pos = livePos || (win().getComputedStyle(img).objectPosition || '50% 50%').split(' ').map(parseFloat);
+    const px = Number.isFinite(pos[0]) ? pos[0] : 50;
+    const py = Number.isFinite(pos[1]) ? pos[1] : 50;
+    ghost.style.left = `${el.offsetLeft - (gw - fw) * (px / 100)}px`;
+    ghost.style.top = `${el.offsetTop - (gh - fh) * (py / 100)}px`;
+    ghost.style.width = `${gw}px`;
+    ghost.style.height = `${gh}px`;
 }
 
 function cropDrag(e, f, img) {
@@ -288,6 +333,10 @@ function attachPointerHandlers() {
             if (!selection.includes(id)) select([id], { additive: e.shiftKey });
             else if (e.shiftKey) { select(selection.filter((s) => s !== id)); return; }
             cb.snapshot();
+            if (e.altKey) {
+                gesture = buildSlideGesture(e);
+                return;
+            }
             gesture = {
                 type: 'move', startX: e.clientX, startY: e.clientY, moved: false,
                 items: selection.map((sid) => {
@@ -318,6 +367,7 @@ function attachPointerHandlers() {
         if (gesture.type === 'resize') return doResize(e);
         if (gesture.type === 'marquee') return doMarquee(e);
         if (gesture.type === 'crop') return doCrop(e);
+        if (gesture.type === 'slide') return doSlide(e);
     }, true);
 
     d.addEventListener('pointerup', () => {
@@ -325,10 +375,15 @@ function attachPointerHandlers() {
         const g = gesture;
         gesture = null;
         clearGuides();
+        hideSlideLine();
         marqueeEl().style.display = 'none';
         if (g.type === 'move' || g.type === 'resize') {
             if (!g.moved) cb.discardSnapshot && cb.discardSnapshot();
             else { syncAllGeometry(); cb.onChange(); }
+        }
+        if (g.type === 'slide') {
+            if (!g.moved) { cb.discardSnapshot && cb.discardSnapshot(); syncAllGeometry(); }
+            else { commitSlide(g); syncAllGeometry(); cb.onChange(); }
         }
         if (g.type === 'crop') {
             const f = frameById(g.id);
@@ -413,6 +468,114 @@ function doCrop(e) {
     const ny = g.ovY > 1 ? clamp(g.posY - (dy / g.ovY) * 100, 0, 100) : g.posY;
     g.live = `${Math.round(nx)}% ${Math.round(ny)}%`;
     g.img.style.objectPosition = `${nx.toFixed(1)}% ${ny.toFixed(1)}%`;
+    const el = g.img.closest('figure.ff-frame');
+    if (el) updateCropGhost(el, g.img, [nx, ny]);
+}
+
+// ---------------------------------------------------------------------------
+// Slide & push (Option-drag): the selection moves vertically as a solid band;
+// on drop, the rest of the page reflows around it — nothing overlaps that
+// didn't overlap before.
+// ---------------------------------------------------------------------------
+
+function buildSlideGesture(e) {
+    const band = selection.map((id) => frameById(id)).filter(Boolean);
+    const bandTop = Math.min(...band.map((f) => f.y));
+    const bandBottom = Math.max(...band.map((f) => f.y + f.h));
+    const others = frames().filter((f) => !selection.includes(f.id));
+
+    // Cluster non-selected frames into vertical "sections" (y-ranges that
+    // touch or nearly touch merge).
+    const sorted = [...others].sort((a, b) => a.y - b.y);
+    const clusters = [];
+    const GAP_MERGE = 2; // wu
+    for (const f of sorted) {
+        const last = clusters[clusters.length - 1];
+        if (last && f.y <= last.bottom + GAP_MERGE) {
+            last.frames.push(f);
+            last.bottom = Math.max(last.bottom, f.y + f.h);
+        } else {
+            clusters.push({ frames: [f], top: f.y, bottom: f.y + f.h });
+        }
+    }
+
+    // Original vertical sequence (clusters + band) to preserve the gaps.
+    const bandItem = { isBand: true, frames: band, top: bandTop, bottom: bandBottom };
+    const sequence = [...clusters, bandItem].sort((a, b) => a.top - b.top);
+    for (let i = 0; i < sequence.length; i++) {
+        sequence[i].gapAfter = i < sequence.length - 1
+            ? Math.max(0, sequence[i + 1].top - sequence[i].bottom)
+            : 0;
+    }
+    const anchor = sequence[0].top;
+
+    return {
+        type: 'slide', moved: false,
+        startY: e.clientY,
+        band, bandItem, clusters, anchor,
+        origTops: new Map(band.map((f) => [f.id, f.y])),
+        insertIndex: null,
+    };
+}
+
+function doSlide(e) {
+    const g = gesture;
+    const ppw = pxPerWu();
+    const dy = (e.clientY - g.startY) / ppw;
+    if (Math.abs(dy) > 0.3) g.moved = true;
+    for (const f of g.band) {
+        f.y = Math.max(0, g.origTops.get(f.id) + dy);
+        syncFrame(f.id);
+    }
+    positionChrome();
+
+    // Which gap is the band's center nearest?
+    const centers = g.clusters.map((c) => (c.top + c.bottom) / 2);
+    const bandCenter = (Math.min(...g.band.map((f) => f.y)) + Math.max(...g.band.map((f) => f.y + f.h))) / 2;
+    let idx = 0;
+    while (idx < centers.length && centers[idx] < bandCenter) idx++;
+    g.insertIndex = idx;
+    const lineY = idx === 0
+        ? Math.max(0, g.clusters.length ? g.clusters[0].top - 1 : 0)
+        : g.clusters[idx - 1].bottom + 1;
+    showSlideLine(lineY);
+}
+
+function commitSlide(g) {
+    const order = [...g.clusters];
+    order.splice(g.insertIndex, 0, g.bandItem);
+
+    let y = g.anchor;
+    for (const item of order) {
+        const height = item.bottom - item.top;
+        for (const f of item.frames) {
+            // Offsets are relative to the item's ORIGINAL top (band frames
+            // were dragged live, so use their recorded originals).
+            const offset = item.isBand ? g.origTops.get(f.id) - item.top : f.y - item.top;
+            f.y = Math.max(0, y + offset);
+        }
+        y += height + (item.gapAfter || 3);
+    }
+}
+
+function showSlideLine(yWu) {
+    const c = canvasEl();
+    let line = c.querySelector('.ff-slide-line');
+    if (!line) {
+        line = doc().createElement('div');
+        line.className = 'ff-slide-line';
+        c.appendChild(line);
+    }
+    const heightWu = canvasHeightWu(frames());
+    line.style.top = `${(yWu / heightWu) * 100}%`;
+    line.style.display = 'block';
+}
+
+function hideSlideLine() {
+    const c = canvasEl();
+    if (!c) return;
+    const line = c.querySelector('.ff-slide-line');
+    if (line) line.style.display = 'none';
 }
 
 function doMarquee(e) {

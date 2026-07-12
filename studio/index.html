@@ -36,6 +36,11 @@
                 <button id="undo" title="Undo (Cmd+Z)">↩</button>
                 <button id="redo" title="Redo (Shift+Cmd+Z)">↪</button>
                 <button id="viewport-toggle">Mobile view</button>
+                <span class="zoom-seg">
+                    <button data-zoom="0.25" title="Zoom out — see the whole page">25%</button>
+                    <button data-zoom="0.5">50%</button>
+                    <button data-zoom="1" class="active">100%</button>
+                </span>
             </div>
             <div id="status-wrap">
                 <span id="roundtrip"></span>
@@ -59,7 +64,9 @@
         </aside>
 
         <main id="canvas-holder">
-            <iframe id="canvas" title="Portfolio page canvas"></iframe>
+            <div id="zoom-box">
+                <iframe id="canvas" title="Portfolio page canvas"></iframe>
+            </div>
         </main>
 
         <aside id="right">

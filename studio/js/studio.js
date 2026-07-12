@@ -102,6 +102,7 @@ async function boot() {
         onChange: afterMutation,
         onSelect: renderSelectedPanel,
         onKeydown: handleKeydown,
+        onStatus: (msg) => setStatus(msg),
         altForImage: (src) => altForImage(src).alt,
     });
 
@@ -298,7 +299,10 @@ function renderSelectedPanel(ids) {
     if (!fs.length) {
         host.innerHTML = `<p class="hint">Click any image on the page to select it.
             Drag to move · corners to resize · double-click to adjust the crop ·
-            drag on empty space to select several at once.</p>`;
+            drag on empty space to select several at once.</p>
+            <p class="hint"><b>Hold ⌥ Option while dragging</b> to slide a selection
+            up or down and push everything else out of the way (great for
+            reordering whole sections — marquee-select the group first).</p>`;
         return;
     }
     if (fs.length > 1) {
@@ -313,7 +317,9 @@ function renderSelectedPanel(ids) {
             <label>Distribute</label>
             <div class="row"><button data-align="vspread">Even vertical spacing</button></div>` : '';
         host.innerHTML = `<div class="chip">${fs.length} selected</div>
-            <p class="hint">Drag to move them together, or press ⌫ to delete.</p>${proTools}`;
+            <p class="hint">Drag to move them together, or press ⌫ to delete.
+            <b>Hold ⌥ Option while dragging</b> to slide the group up/down and
+            push the rest of the page out of the way.</p>${proTools}`;
         host.querySelectorAll('[data-align]').forEach((btn) => btn.addEventListener('click', () => {
             snapshot();
             const mode = btn.getAttribute('data-align');
@@ -781,7 +787,48 @@ $('#viewport-toggle').addEventListener('click', () => {
     const holder = $('#canvas-holder');
     const mobile = holder.classList.toggle('mobile');
     $('#viewport-toggle').textContent = mobile ? 'Desktop view' : 'Mobile view';
+    if (mobile) setZoom(1, { skipMobileCheck: true });
+    else setZoom(currentZoom);
 });
+
+// ---------------------------------------------------------------------------
+// Zoom (Miro-style zoomed-out editing; all gestures keep working)
+// ---------------------------------------------------------------------------
+
+let currentZoom = 1;
+
+function setZoom(z, { skipMobileCheck = false } = {}) {
+    const holder = $('#canvas-holder');
+    const box = $('#zoom-box');
+    const iframe = $('#canvas');
+    if (!skipMobileCheck && holder.classList.contains('mobile')) {
+        holder.classList.remove('mobile');
+        $('#viewport-toggle').textContent = 'Mobile view';
+    }
+    currentZoom = z;
+    document.querySelectorAll('[data-zoom]').forEach((b) =>
+        b.classList.toggle('active', parseFloat(b.getAttribute('data-zoom')) === z));
+    if (z === 1) {
+        iframe.style.width = '';
+        iframe.style.height = '';
+        iframe.style.transform = '';
+        box.style.width = '';
+        box.style.height = '';
+        return;
+    }
+    const hw = holder.clientWidth, hh = holder.clientHeight;
+    const w = Math.max(1000, Math.round(hw / z));
+    const h = Math.round(hh / z);
+    iframe.style.width = `${w}px`;
+    iframe.style.height = `${h}px`;
+    iframe.style.transform = `scale(${z})`;
+    box.style.width = `${Math.round(w * z)}px`;
+    box.style.height = `${Math.round(h * z)}px`;
+}
+
+document.querySelectorAll('[data-zoom]').forEach((btn) =>
+    btn.addEventListener('click', () => setZoom(parseFloat(btn.getAttribute('data-zoom')))));
+window.addEventListener('resize', () => { if (currentZoom !== 1) setZoom(currentZoom); });
 
 $('#undo').addEventListener('click', undo);
 $('#redo').addEventListener('click', redo);

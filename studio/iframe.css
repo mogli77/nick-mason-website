@@ -99,6 +99,29 @@ figure.ff-frame.ff-cropping::after {
 .ff-guide-v { top: 0; bottom: 0; width: 1px; }
 .ff-guide-h { left: 0; right: 0; height: 1px; }
 
+/* Crop ghost: the full photo, faded, behind the frame while cropping */
+.ff-crop-ghost {
+    position: absolute;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 8990;
+    outline: 1px dashed #e08a00;
+}
+
+/* Slide & push insertion line */
+.ff-slide-line {
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    height: 4px;
+    border-radius: 4px;
+    background: #2f6fed;
+    box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.22);
+    display: none;
+    z-index: 9100;
+    pointer-events: none;
+}
+
 /* Marquee */
 .ff-marquee {
     position: absolute;
