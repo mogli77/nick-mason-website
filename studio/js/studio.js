@@ -306,10 +306,24 @@ function renderInspector() {
             return `<label>${def.slots[i].label} — alt text${flag}</label>
                 <input type="text" data-alt-slot="${i}" value="${s.alt.replace(/"/g, '&quot;')}" placeholder="Describe the photo">`;
         }).join('');
+        // Swap buttons between adjacent image slots (and reset-crop when panned)
+        const imageIdx = block.slots.map((s, i) => (s.kind === 'image' ? i : -1)).filter((i) => i !== -1);
+        const swapsHtml = imageIdx.length > 1 ? `
+            <label>Rearrange within this section</label>
+            <div class="row">${imageIdx.slice(0, -1).map((idx, k) => {
+                const next = imageIdx[k + 1];
+                return `<button data-swap="${idx}:${next}">${def.slots[idx].label} ⇄ ${def.slots[next].label}</button>`;
+            }).join('')}</div>` : '';
+        const cropIdx = block.slots.map((s, i) => (s.kind === 'image' && s.objectPosition ? i : -1)).filter((i) => i !== -1);
+        const cropResetHtml = cropIdx.length ? `
+            <div class="row">${cropIdx.map((i) =>
+                `<button data-crop-reset="${i}">Reset crop: ${def.slots[i].label}</button>`).join('')}</div>` : '';
         host.innerHTML = `
             <div class="chip">${def.label}</div>
             ${variantHtml}
             ${slotsHtml}
+            ${swapsHtml}
+            ${cropResetHtml}
             <div class="row">
                 <button data-act="up">Move up</button>
                 <button data-act="down">Move down</button>
@@ -327,6 +341,20 @@ function renderInspector() {
         snapshot();
         const i = Number(input.getAttribute('data-alt-slot'));
         block.slots[i].alt = input.value;
+        block.dirty = true;
+        afterMutation({ patch: block });
+    }));
+    host.querySelectorAll('[data-swap]').forEach((btn) => btn.addEventListener('click', () => {
+        snapshot();
+        const [a, b] = btn.getAttribute('data-swap').split(':').map(Number);
+        [block.slots[a], block.slots[b]] = [block.slots[b], block.slots[a]];
+        block.dirty = true;
+        afterMutation({ patch: block });
+    }));
+    host.querySelectorAll('[data-crop-reset]').forEach((btn) => btn.addEventListener('click', () => {
+        snapshot();
+        const i = Number(btn.getAttribute('data-crop-reset'));
+        block.slots[i].objectPosition = null;
         block.dirty = true;
         afterMutation({ patch: block });
     }));
