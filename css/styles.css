@@ -1595,6 +1595,200 @@ nav.nav-hidden {
     height: auto;
 }
 
+/* Give the tile-shadow study enough weight to balance the ceiling plate. */
+.gallery-overlap.feature-wide.light-study .feature-small {
+    width: 36%;
+    margin-right: -7%;
+}
+
+.gallery-overlap.feature-wide.light-study .feature-large {
+    width: 71%;
+}
+
+/* Editorial canvases restored from the earlier portfolio composition. */
+.editorial-composition {
+    width: calc(100% - clamp(2.5rem, 5vw, 7rem));
+    margin: clamp(5rem, 14vh, 11rem) auto;
+}
+
+.editorial-canvas {
+    position: relative;
+    width: 100%;
+}
+
+.editorial-frame {
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+    background: #ebeae5;
+}
+
+.editorial-frame img,
+.editorial-frame video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Aerial anchor: broad site context with a close film inset. */
+.composition-aerial .editorial-canvas {
+    aspect-ratio: 1.55 / 1;
+}
+
+.composition-aerial .aerial-wide {
+    left: 0;
+    top: 0;
+    width: 82%;
+    height: 100%;
+}
+
+.composition-aerial .aerial-inset {
+    right: 0;
+    top: 10%;
+    width: 28%;
+    height: 80%;
+    z-index: 2;
+}
+
+/* Material study: a compact sample board with one clear photographic anchor. */
+.composition-materials .editorial-canvas {
+    aspect-ratio: 1.6 / 1;
+}
+
+.composition-materials .material-hook {
+    left: 0;
+    top: 0;
+    width: 62%;
+    height: 65%;
+    z-index: 2;
+}
+
+.composition-materials .material-live {
+    right: 0;
+    top: 0;
+    width: 36%;
+    height: 100%;
+    z-index: 1;
+}
+
+.composition-materials .material-gravel {
+    left: 0;
+    top: 67%;
+    width: 30%;
+    height: 33%;
+    z-index: 2;
+}
+
+.composition-materials .material-stone {
+    left: 32%;
+    top: 67%;
+    width: 30%;
+    height: 33%;
+    z-index: 2;
+}
+
+/* Film diptych: a wide dusk view tempers the tall palm crop. */
+.composition-film .editorial-canvas {
+    aspect-ratio: 2 / 1;
+}
+
+.composition-film .film-wide {
+    left: 0;
+    top: 18%;
+    width: 62%;
+    height: 64%;
+}
+
+.composition-film .film-tall {
+    right: 0;
+    top: 0;
+    width: 42%;
+    height: 100%;
+    z-index: 2;
+}
+
+.composition-pond .editorial-canvas {
+    aspect-ratio: 2.4 / 1;
+}
+
+.composition-pond .pond-still {
+    inset: 0 auto 0 0;
+    width: 64%;
+}
+
+.composition-pond .pond-live {
+    inset: 0 0 0 auto;
+    width: 34%;
+}
+
+.composition-cedar {
+    width: 100%;
+}
+
+.composition-cedar .editorial-canvas {
+    aspect-ratio: 1.6 / 1;
+}
+
+.composition-cedar .cedar-live {
+    inset: 0;
+}
+
+.composition-cedar .cedar-live::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.18);
+    pointer-events: none;
+}
+
+.composition-cedar .cedar-avocados {
+    left: 18%;
+    top: 13%;
+    width: 21%;
+    height: 69%;
+    z-index: 2;
+}
+
+.composition-cedar .cedar-sauna {
+    left: 43.5%;
+    top: 19%;
+    width: 39%;
+    height: 55%;
+    z-index: 2;
+}
+
+.editorial-sequence {
+    margin: clamp(5rem, 14vh, 11rem) 0;
+}
+
+.editorial-sequence .editorial-composition {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.composition-evening .editorial-canvas {
+    aspect-ratio: 1.08 / 1;
+}
+
+.composition-evening .evening-fire { left: 0; top: 0; width: 21.9%; height: 36%; }
+.composition-evening .evening-bloom { left: 22.75%; top: 0; width: 18.75%; height: 36%; }
+.composition-evening .evening-shadow { left: 42.4%; top: 0; width: 18.75%; height: 36%; }
+.composition-evening .evening-dining { left: 63.75%; top: 2%; width: 36.25%; height: 72%; }
+.composition-evening .evening-doorway { left: 0; top: 40%; width: 61%; height: 60%; }
+.composition-evening .evening-garden { left: 63.75%; top: 76%; width: 36.25%; height: 24%; z-index: 3; }
+
+.composition-quiet {
+    margin-top: clamp(3rem, 6vh, 5rem) !important;
+}
+
+.composition-quiet .editorial-canvas {
+    aspect-ratio: 1.55 / 1;
+}
+
+.composition-quiet .quiet-footprints { left: 0; top: 18%; width: 62%; height: 64%; z-index: 1; }
+.composition-quiet .quiet-reading { right: 0; top: 0; width: 45%; height: 100%; z-index: 2; }
+
 /* Feature-wide variant: large on left, small on right offset down-and-out */
 .gallery-overlap.feature-wide.large-left {
     align-items: flex-end;
@@ -1611,6 +1805,11 @@ nav.nav-hidden {
     margin-right: 0;
     margin-left: -12%;
     margin-top: 0;
+}
+
+.gallery-overlap.feature-wide.large-left.living-pair .feature-small {
+    width: 32%;
+    margin-left: -7%;
 }
 
 /* Feature-wide variant: two portrait images — smaller proportions to keep section height sane */
@@ -1716,6 +1915,60 @@ nav.nav-hidden {
         grid-template-columns: 1fr;
         gap: var(--space-md);
         margin: var(--space-md) 0;
+    }
+
+    .editorial-composition,
+    .composition-cedar {
+        width: auto;
+        margin: var(--space-md);
+    }
+
+    .editorial-sequence {
+        margin: var(--space-md) 0;
+    }
+
+    .editorial-sequence .editorial-composition,
+    .composition-quiet {
+        margin: var(--space-md) !important;
+    }
+
+    .editorial-canvas {
+        display: grid;
+        gap: var(--space-md);
+        aspect-ratio: auto !important;
+    }
+
+    .editorial-canvas .editorial-frame {
+        position: static;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 3;
+    }
+
+    .composition-cedar .cedar-live {
+        aspect-ratio: 16 / 10;
+    }
+
+    .composition-aerial .aerial-inset,
+    .composition-quiet .quiet-reading {
+        aspect-ratio: 2 / 3;
+    }
+
+    .composition-materials .material-live {
+        aspect-ratio: 16 / 10;
+    }
+
+    .composition-film .film-wide,
+    .composition-film .film-tall,
+    .composition-quiet .quiet-footprints {
+        aspect-ratio: 3 / 2;
+    }
+
+    .gallery-overlap.feature-wide.light-study .feature-small,
+    .gallery-overlap.feature-wide.light-study .feature-large,
+    .gallery-overlap.feature-wide.large-left.living-pair .feature-small {
+        width: 100%;
+        margin: 0;
     }
 
     .gallery-collage {
