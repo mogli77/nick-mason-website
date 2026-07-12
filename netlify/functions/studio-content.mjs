@@ -153,9 +153,6 @@ async function handlePost(req, branch) {
 
     for (let attempt = 0; attempt < 2; attempt++) {
         const file = await fetchFile(branch);
-        if (file.local && !dryRun) {
-            return Response.json({ error: 'config', message: 'Publishing requires GITHUB_TOKEN (local dev is read-only).' }, { status: 502 });
-        }
         let parts;
         try {
             parts = splitFile(file.content);
@@ -192,6 +189,18 @@ async function handlePost(req, branch) {
                 spliced: newFile,
                 newGalleryHash: sha256hex(gallery),
                 wouldCommit: `Studio: layout update by ${editor}${String(note || '').trim() ? `\n\n${String(note).trim().slice(0, 500)}` : ''}`,
+            });
+        }
+
+        // Local Pro mode: save straight to the working tree — no commit, no
+        // deploy. The user previews on the dev server and commits when ready.
+        if (file.local) {
+            const { writeFileSync } = await import('node:fs');
+            writeFileSync(FILE_PATH, newFile, 'utf8');
+            return Response.json({
+                local: true,
+                savedToDisk: true,
+                newGalleryHash: sha256hex(gallery),
             });
         }
 

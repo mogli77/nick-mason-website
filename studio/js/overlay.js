@@ -610,6 +610,19 @@ export async function measureLegacy(altLookup) {
     }))));
     await new Promise((r) => setTimeout(r, 400));
 
+    // Videos must know their intrinsic size before we trust their box —
+    // an unloaded <video> defaults to a 2:1 placeholder and measures wrong.
+    const vids = Array.from(section.querySelectorAll('video'));
+    await Promise.all(vids.map((v) => new Promise((res) => {
+        if (v.readyState >= 1 && v.videoWidth) return res();
+        v.setAttribute('preload', 'metadata');
+        v.load();
+        const t = setTimeout(res, 4000);
+        v.addEventListener('loadedmetadata', () => { clearTimeout(t); res(); }, { once: true });
+        v.addEventListener('error', () => { clearTimeout(t); res(); }, { once: true });
+    })));
+    await new Promise((r) => setTimeout(r, 300));
+
     const cs = win().getComputedStyle(section);
     const padTop = parseFloat(cs.paddingTop) || 0;
     const width = section.clientWidth;
@@ -632,6 +645,13 @@ export async function measureLegacy(altLookup) {
             z: (Number.isFinite(zRaw) ? zRaw * 100 : 0) + i,
         };
         if (el.tagName === 'VIDEO') {
+            // Sanity: if the measured box still doesn't match the video's real
+            // aspect (metadata missing or layout quirk), snap height to it.
+            const intrinsic = el.videoWidth && el.videoHeight ? el.videoWidth / el.videoHeight : 16 / 9;
+            const measured = base.w / base.h;
+            if (Math.abs(measured - intrinsic) / intrinsic > 0.25) {
+                base.h = base.w / intrinsic;
+            }
             const source = el.querySelector('source');
             frames.push({ ...base, kind: 'video', url: source ? source.getAttribute('src') : '', ariaLabel: el.getAttribute('aria-label') || 'Video' });
         } else {

@@ -346,6 +346,27 @@ label {
 .palette-item svg { width: 64px; height: 40px; flex: none; }
 #palette .hint { margin-bottom: 12px; }
 
+/* Pro (local) mode */
+body:not(.pro) .pro-only { display: none !important; }
+body.pro .pro-only { display: initial; }
+body.pro #add-video { display: block !important; width: 100%; }
+body.pro #commit-push { display: inline-block !important; }
+#git-status { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+#tray.drop-ready { outline: 3px dashed var(--blue); outline-offset: -3px; border-radius: 6px; }
+.geo-grid {
+    display: grid;
+    grid-template-columns: 16px 1fr 16px 1fr;
+    gap: 6px 8px;
+    align-items: center;
+}
+.geo-grid span {
+    font-family: var(--label);
+    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--muted);
+}
+.geo-grid input { width: 100%; padding: 5px 8px; }
+
 /* Page map */
 #pagemap svg {
     width: 100%;

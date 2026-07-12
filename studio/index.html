@@ -43,8 +43,11 @@
                 <span id="last-published"></span>
             </div>
             <div class="top-right">
+                <span id="git-status" class="pro-only"></span>
                 <span id="summary"></span>
+                <button id="preview" title="Open the current draft in a new tab — nothing gets published">Preview</button>
                 <button id="publish" class="primary" disabled>Publish</button>
+                <button id="commit-push" class="pro-only" style="display:none" title="git commit + push (deploys the site)">Commit &amp; push</button>
                 <span id="who" class="who"></span>
                 <button id="logout" title="Sign out">×</button>
             </div>
@@ -66,7 +69,8 @@
             </nav>
             <div class="tab-panel" id="images">
                 <input id="tray-search" type="search" placeholder="Search…">
-                <p class="hint" style="margin-bottom:10px">Drag a photo onto the page to add it.</p>
+                <p class="hint" style="margin-bottom:10px">Drag a photo onto the page to add it.<span class="pro-only"> Drop image files here from Finder to add new ones. </span></p>
+                <button id="add-video" class="pro-only" style="display:none; margin-bottom:10px">+ Add video by URL</button>
                 <div id="tray"></div>
             </div>
             <div class="tab-panel" id="selected" style="display:none"></div>
@@ -76,7 +80,7 @@
     <!-- Publish modal -->
     <div id="publish-modal" class="modal" style="display:none">
         <div class="modal-card">
-            <h3>Publish to the site</h3>
+            <h3 id="publish-title">Publish to the site</h3>
             <p id="publish-msg" class="hint"></p>
             <label for="publish-note">Note (optional — lands in the change history, Claude reads these)</label>
             <textarea id="publish-note" rows="3" placeholder="e.g. rearranged the middle, not sure about the dusk photos — polish welcome"></textarea>

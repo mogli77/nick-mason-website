@@ -31,7 +31,20 @@ const state = {
     dirtySinceLoad: false,
     migrated: false,       // legacy page converted this session (not yet published)
     lastCommit: null,
+    local: false,          // Pro mode: running on netlify dev, saves go to disk
 };
+
+function customVideos() {
+    try {
+        return JSON.parse(localStorage.getItem('nickMason.studio.customVideos')) || [];
+    } catch {
+        return [];
+    }
+}
+
+function allVideos() {
+    return [...VIDEO_LIBRARY, ...customVideos()];
+}
 
 // ---------------------------------------------------------------------------
 // Boot + auth
@@ -61,6 +74,13 @@ async function boot() {
     state.fileText = res.data.content;
     state.baseGalleryHash = res.data.galleryHash;
     state.lastCommit = res.data.lastCommit;
+    state.local = res.data.local === true;
+    document.body.classList.toggle('pro', state.local);
+    if (state.local) {
+        $('#publish').textContent = 'Save';
+        $('#commit-push').style.display = '';
+        refreshGitStatus();
+    }
     renderLastPublished();
     await harvestAltMap();
 
@@ -282,44 +302,116 @@ function renderSelectedPanel(ids) {
         return;
     }
     if (fs.length > 1) {
+        const proTools = state.local ? `
+            <label>Align</label>
+            <div class="row">
+                <button data-align="left">Lefts</button>
+                <button data-align="centerx">Centers</button>
+                <button data-align="right">Rights</button>
+                <button data-align="top">Tops</button>
+            </div>
+            <label>Distribute</label>
+            <div class="row"><button data-align="vspread">Even vertical spacing</button></div>` : '';
         host.innerHTML = `<div class="chip">${fs.length} selected</div>
-            <p class="hint">Drag to move them together, or press ⌫ to delete.</p>`;
+            <p class="hint">Drag to move them together, or press ⌫ to delete.</p>${proTools}`;
+        host.querySelectorAll('[data-align]').forEach((btn) => btn.addEventListener('click', () => {
+            snapshot();
+            const mode = btn.getAttribute('data-align');
+            if (mode === 'left') {
+                const min = Math.min(...fs.map((f) => f.x));
+                fs.forEach((f) => { f.x = min; });
+            } else if (mode === 'right') {
+                const max = Math.max(...fs.map((f) => f.x + f.w));
+                fs.forEach((f) => { f.x = max - f.w; });
+            } else if (mode === 'centerx') {
+                const c = fs.reduce((s, f) => s + f.x + f.w / 2, 0) / fs.length;
+                fs.forEach((f) => { f.x = c - f.w / 2; });
+            } else if (mode === 'top') {
+                const min = Math.min(...fs.map((f) => f.y));
+                fs.forEach((f) => { f.y = min; });
+            } else if (mode === 'vspread') {
+                const sorted = [...fs].sort((a, b) => a.y - b.y);
+                const top = sorted[0].y;
+                const bottom = Math.max(...sorted.map((f) => f.y + f.h));
+                const totalH = sorted.reduce((s, f) => s + f.h, 0);
+                const gap = sorted.length > 1 ? Math.max(0, (bottom - top - totalH) / (sorted.length - 1)) : 0;
+                let y = top;
+                for (const f of sorted) { f.y = y; y += f.h + gap; }
+            }
+            overlay.renderCanvas();
+            overlay.select(ids);
+            afterMutation();
+        }));
         return;
     }
     const f = fs[0];
+    const geometryHtml = state.local ? `
+        <label>Geometry (% of page width)</label>
+        <div class="geo-grid">
+            ${['x', 'y', 'w', 'h'].map((k) =>
+                `<span>${k}</span><input type="number" step="0.1" data-geo="${k}" value="${Math.round(f[k] * 10) / 10}">`).join('')}
+        </div>
+        <div class="row" style="margin-top:10px"><button data-duplicate>Duplicate (⌘D)</button></div>` : '';
+
     if (f.kind === 'video') {
-        const opts = VIDEO_LIBRARY.map((v) =>
+        const opts = allVideos().map((v) =>
             `<option value="${v.url}" ${v.url === f.url ? 'selected' : ''}>${v.ariaLabel}</option>`).join('');
         host.innerHTML = `<div class="chip">Video</div>
-            <label>Which video</label><select data-video>${opts}</select>`;
+            <label>Which video</label><select data-video>${opts}</select>
+            ${geometryHtml}`;
         host.querySelector('[data-video]').addEventListener('change', (e) => {
             snapshot();
-            const v = VIDEO_LIBRARY.find((x) => x.url === e.target.value);
+            const v = allVideos().find((x) => x.url === e.target.value);
             f.url = v.url; f.ariaLabel = v.ariaLabel;
             overlay.renderCanvas();
             afterMutation();
         });
-        return;
+    } else {
+        const needsAlt = !state.altMap[f.src] && /Photograph from/.test(f.alt || '');
+        host.innerHTML = `<div class="chip">Image</div>
+            <p class="hint">${f.src.split('/').pop()}</p>
+            <label>Alt text ${needsAlt ? '<span class="warn">check this</span>' : ''}</label>
+            <input type="text" data-alt value="${(f.alt || '').replace(/"/g, '&quot;')}" placeholder="Describe the photo">
+            ${f.objectPosition ? '<div class="row" style="margin-top:10px"><button data-reset-crop>Reset crop</button></div>' : ''}
+            ${geometryHtml}`;
+        host.querySelector('[data-alt]').addEventListener('change', (e) => {
+            snapshot();
+            f.alt = e.target.value;
+            afterMutation();
+        });
+        const rc = host.querySelector('[data-reset-crop]');
+        if (rc) rc.addEventListener('click', () => {
+            snapshot();
+            f.objectPosition = null;
+            overlay.renderCanvas();
+            overlay.select([f.id]);
+            afterMutation();
+        });
     }
-    const needsAlt = !state.altMap[f.src] && /Photograph from/.test(f.alt || '');
-    host.innerHTML = `<div class="chip">Image</div>
-        <p class="hint">${f.src.split('/').pop()}</p>
-        <label>Alt text ${needsAlt ? '<span class="warn">check this</span>' : ''}</label>
-        <input type="text" data-alt value="${(f.alt || '').replace(/"/g, '&quot;')}" placeholder="Describe the photo">
-        ${f.objectPosition ? '<div class="row" style="margin-top:10px"><button data-reset-crop>Reset crop</button></div>' : ''}`;
-    host.querySelector('[data-alt]').addEventListener('change', (e) => {
+    host.querySelectorAll('[data-geo]').forEach((input) => input.addEventListener('change', () => {
         snapshot();
-        f.alt = e.target.value;
-        afterMutation();
-    });
-    const rc = host.querySelector('[data-reset-crop]');
-    if (rc) rc.addEventListener('click', () => {
-        snapshot();
-        f.objectPosition = null;
+        const k = input.getAttribute('data-geo');
+        const v = parseFloat(input.value);
+        if (Number.isFinite(v)) f[k] = Math.max(k === 'w' || k === 'h' ? 2 : 0, v);
         overlay.renderCanvas();
         overlay.select([f.id]);
         afterMutation();
-    });
+    }));
+    const dup = host.querySelector('[data-duplicate]');
+    if (dup) dup.addEventListener('click', () => duplicateFrame(f));
+}
+
+function duplicateFrame(f) {
+    snapshot();
+    const copy = structuredClone(f);
+    copy.id = model.nextId();
+    copy.x = Math.min(96, f.x + 3);
+    copy.y = f.y + 3;
+    copy.z = Math.max(...state.model.frames.map((x) => x.z || 0)) + 1;
+    state.model.frames.push(copy);
+    overlay.renderCanvas();
+    overlay.select([copy.id]);
+    afterMutation();
 }
 
 // ---------------------------------------------------------------------------
@@ -376,7 +468,7 @@ function renderTray(filter = '') {
     const q = filter.trim().toLowerCase();
 
     // Videos first: they're few and Kelly should find them instantly.
-    const vids = q ? VIDEO_LIBRARY.filter((v) => v.ariaLabel.toLowerCase().includes(q)) : VIDEO_LIBRARY;
+    const vids = q ? allVideos().filter((v) => v.ariaLabel.toLowerCase().includes(q)) : allVideos();
     if (vids.length) {
         const details = document.createElement('details');
         details.open = Boolean(q);
@@ -487,12 +579,119 @@ function updatePublishButton() {
 
 $('#publish').addEventListener('click', () => openPublishModal());
 
+// ---------------------------------------------------------------------------
+// Preview: open the current draft as the real page (scripts intact) — no publish
+// ---------------------------------------------------------------------------
+
+$('#preview').addEventListener('click', () => {
+    const { prefix, suffix } = model.splitFile(state.fileText);
+    let html = prefix + '\n' + model.serializeRegion(state.model) + '\n' + suffix;
+    html = html.replace(/<head>/i, `<head><base href="${location.origin}/">`);
+    const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    window.open(url, '_blank');
+    setStatus('Preview opened in a new tab — nothing published.');
+});
+
+// ---------------------------------------------------------------------------
+// Pro: git status + commit & push (local only)
+// ---------------------------------------------------------------------------
+
+async function gitCall(method, body) {
+    const auth = api.getAuth();
+    const res = await fetch('/.netlify/functions/studio-git', {
+        method,
+        headers: { 'X-Studio-Key': (auth && auth.key) || '', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+        body: body ? JSON.stringify(body) : undefined,
+    });
+    return { ok: res.ok, data: await res.json().catch(() => ({})) };
+}
+
+async function refreshGitStatus() {
+    const res = await gitCall('GET');
+    if (!res.ok) return;
+    const el = $('#git-status');
+    el.textContent = res.data.dirty
+        ? `${res.data.branch}: unsaved-to-git changes`
+        : `${res.data.branch}: clean`;
+    $('#commit-push').disabled = !res.data.dirty;
+}
+
+$('#commit-push').addEventListener('click', async () => {
+    const auth = api.getAuth();
+    const message = prompt('Commit message (optional note):') ?? '';
+    setStatus('Committing…');
+    const res = await gitCall('POST', { message, push: true, editor: auth.editor });
+    if (!res.ok) {
+        setStatus(res.data.message || 'Commit failed.', 'error');
+        return;
+    }
+    setStatus(`Committed ${res.data.commit} and pushed to ${res.data.branch}.`);
+    refreshGitStatus();
+});
+
+// ---------------------------------------------------------------------------
+// Pro: upload images (drag files from Finder onto the tray) + video by URL
+// ---------------------------------------------------------------------------
+
+const tray = $('#tray');
+['dragover', 'dragenter'].forEach((t) => tray.addEventListener(t, (e) => {
+    if (!state.local) return;
+    e.preventDefault();
+    tray.classList.add('drop-ready');
+}));
+['dragleave', 'drop'].forEach((t) => tray.addEventListener(t, () => tray.classList.remove('drop-ready')));
+tray.addEventListener('drop', async (e) => {
+    if (!state.local) return;
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files || []).filter((f) => /image\/(jpeg|png|webp)/.test(f.type));
+    if (!files.length) return;
+    const auth = api.getAuth();
+    for (const file of files) {
+        setStatus(`Uploading ${file.name}…`);
+        const dataBase64 = await new Promise((res) => {
+            const r = new FileReader();
+            r.onload = () => res(String(r.result).split(',')[1]);
+            r.readAsDataURL(file);
+        });
+        const res = await fetch('/.netlify/functions/studio-upload', {
+            method: 'POST',
+            headers: { 'X-Studio-Key': auth.key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: file.name, folder: 'uploads', dataBase64 }),
+        });
+        const j = await res.json();
+        if (!res.ok) {
+            setStatus(j.message || 'Upload failed.', 'error');
+            return;
+        }
+        (state.imageFolders.uploads ||= []).unshift(j.path);
+    }
+    renderTray($('#tray-search').value);
+    setStatus(`Added ${files.length} image${files.length > 1 ? 's' : ''} — drag from the "uploads" folder onto the page. Commit & push includes them.`);
+});
+
+$('#add-video').addEventListener('click', () => {
+    const url = prompt('Cloudinary video URL (.mp4):');
+    if (!url || !/^https:\/\/res\.cloudinary\.com\/.+\.mp4$/.test(url.trim())) {
+        if (url) setStatus('That does not look like a Cloudinary .mp4 URL.', 'error');
+        return;
+    }
+    const label = prompt('Short label for it (e.g. "Patio dusk video"):') || 'New video';
+    const vids = customVideos();
+    vids.push({ url: url.trim(), ariaLabel: label });
+    localStorage.setItem('nickMason.studio.customVideos', JSON.stringify(vids));
+    renderTray($('#tray-search').value);
+    setStatus('Video added to the tray.');
+});
+
 function openPublishModal() {
     $('#publish-modal').style.display = 'flex';
     $('#publish-note').value = '';
-    $('#publish-msg').textContent = state.migrated
-        ? 'First publish converts the page to the freeform format (looks identical, becomes fully editable).'
-        : '';
+    $('#publish-title').textContent = state.local ? 'Save to your working tree' : 'Publish to the site';
+    $('#publish-go').textContent = state.local ? 'Save' : 'Publish';
+    $('#publish-msg').textContent = [
+        state.migrated ? 'First save converts the page to the freeform format (looks identical, becomes fully editable).' : '',
+        state.local ? 'Writes portfolio.html on disk only — use Commit & push when you want it live.' : '',
+    ].filter(Boolean).join(' ');
 }
 
 $('#publish-cancel').addEventListener('click', () => {
@@ -537,7 +736,12 @@ async function doPublish(force) {
     state.migrated = false;
     localStorage.removeItem(DRAFT_KEY);
     updatePublishButton();
-    startDeployCountdown(res.data.commitSha);
+    if (res.data.savedToDisk) {
+        setStatus('Saved to portfolio.html (working tree). Preview it, then Commit & push when ready.');
+        refreshGitStatus();
+    } else {
+        startDeployCountdown(res.data.commitSha);
+    }
 }
 
 function startDeployCountdown(sha) {
@@ -588,6 +792,14 @@ function handleKeydown(e) {
     if (mod && e.key.toLowerCase() === 'z') {
         e.preventDefault();
         if (e.shiftKey) redo(); else undo();
+    }
+    if (mod && e.key.toLowerCase() === 'd' && state.local) {
+        const ids = overlay.getSelection();
+        if (ids.length === 1) {
+            e.preventDefault();
+            const f = state.model.frames.find((x) => x.id === ids[0]);
+            if (f) duplicateFrame(f);
+        }
     }
 }
 document.addEventListener('keydown', handleKeydown);

@@ -6,7 +6,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 
 const REPO = 'mogli77/nick-mason-website';
-const IMAGE_RE = /^images\/(projects\/[^/]+\/web|selects\/web)\/[^/]+\.(jpe?g|png|webp)$/i;
+const IMAGE_RE = /^images\/(projects\/[^/]+\/web|selects\/web|uploads\/web)\/[^/]+\.(jpe?g|png|webp)$/i;
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 let cache = null;
@@ -24,6 +24,7 @@ function folderLabel(path) {
     const m = path.match(/^images\/projects\/([^/]+)\/web\//);
     if (m) return m[1];
     if (path.startsWith('images/selects/web/')) return 'selects';
+    if (path.startsWith('images/uploads/web/')) return 'uploads';
     return 'other';
 }
 
@@ -48,7 +49,7 @@ export default async (req) => {
         const { readdirSync } = await import('node:fs');
         const folders = {};
         const roots = ['images/projects/el-monte/web', 'images/projects/la-marina/web',
-            'images/projects/pomar-lane/web', 'images/selects/web'];
+            'images/projects/pomar-lane/web', 'images/selects/web', 'images/uploads/web'];
         for (const root of roots) {
             try {
                 for (const name of readdirSync(root)) {
