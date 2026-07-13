@@ -108,7 +108,14 @@ export function onIframeReady() {
 
     d.addEventListener('click', (e) => e.preventDefault(), true);
     d.addEventListener('keydown', (e) => handleKeys(e));
+    d.addEventListener('wheel', (e) => {
+        if ((e.ctrlKey || e.metaKey) && cb.onWheel) cb.onWheel(e);
+    }, { passive: false });
     attachPointerHandlers();
+}
+
+export function canvasPxPerWu() {
+    return pxPerWu();
 }
 
 // ---------------------------------------------------------------------------

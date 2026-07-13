@@ -243,11 +243,11 @@ label {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
+    flex: none;
 }
 #canvas {
     border: 0;
+    display: block;
     width: 100%;
     /* Never fall under the site's 767px mobile breakpoint while editing */
     min-width: 1000px;
@@ -273,6 +273,25 @@ label {
 }
 .zoom-seg button + button { border-left: 1px solid var(--line); }
 .zoom-seg button.active { background: var(--accent); color: #fff; }
+#zoom-label {
+    font-size: 11.5px;
+    color: var(--muted);
+    min-width: 34px;
+    text-align: center;
+}
+#help-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 13px;
+}
+#help-link:hover { border-color: #bbb; }
 #canvas-holder.mobile { padding: 20px 0; }
 #canvas-holder.mobile #canvas {
     width: 390px;

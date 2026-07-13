@@ -103,6 +103,13 @@ async function boot() {
         onSelect: renderSelectedPanel,
         onKeydown: handleKeydown,
         onStatus: (msg) => setStatus(msg),
+        onWheel: (e) => {
+            // Pinch/Cmd-scroll inside the canvas: convert iframe coords to
+            // parent space (the iframe may be scaled) and zoom there.
+            const r = $('#canvas').getBoundingClientRect();
+            const z = currentZoom;
+            handleWheelZoom(e, r.left + e.clientX * z, r.top + e.clientY * z);
+        },
         altForImage: (src) => altForImage(src).alt,
     });
 
@@ -317,9 +324,11 @@ function renderSelectedPanel(ids) {
             <label>Distribute</label>
             <div class="row"><button data-align="vspread">Even vertical spacing</button></div>` : '';
         host.innerHTML = `<div class="chip">${fs.length} selected</div>
-            <p class="hint">Drag to move them together, or press ⌫ to delete.
+            <p class="hint">Drag to move them together.
             <b>Hold ⌥ Option while dragging</b> to slide the group up/down and
-            push the rest of the page out of the way.</p>${proTools}`;
+            push the rest of the page out of the way.</p>
+            <div class="row"><button data-del-sel class="danger">Delete ${fs.length} items</button></div>${proTools}`;
+        host.querySelector('[data-del-sel]').addEventListener('click', () => overlay.deleteSelection());
         host.querySelectorAll('[data-align]').forEach((btn) => btn.addEventListener('click', () => {
             snapshot();
             const mode = btn.getAttribute('data-align');
@@ -429,10 +438,16 @@ function renderPageMap() {
     const frames = state.model.frames;
     if (!frames.length) { host.innerHTML = ''; return; }
     const H = model.canvasHeightWu(frames);
-    const rects = [...frames].sort((a, b) => (a.z || 0) - (b.z || 0)).map((f) =>
-        `<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="1"
-            class="${f.kind === 'video' ? 'pm-video' : 'pm-img'}"></rect>`).join('');
-    host.innerHTML = `<svg viewBox="0 0 100 ${H}" preserveAspectRatio="xMidYMin meet">${rects}</svg>`;
+    const cells = [...frames].sort((a, b) => (a.z || 0) - (b.z || 0)).map((f) => {
+        if (f.kind === 'video') {
+            const cx = f.x + f.w / 2, cy = f.y + f.h / 2, s = Math.min(f.w, f.h) * 0.22;
+            return `<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" class="pm-video"></rect>
+                <polygon points="${cx - s / 2},${cy - s} ${cx + s},${cy} ${cx - s / 2},${cy + s}" fill="#fff" opacity="0.9"></polygon>`;
+        }
+        return `<image href="${thumbUrl(f.src, 120)}" x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}"
+            preserveAspectRatio="xMidYMid slice"></image>`;
+    }).join('');
+    host.innerHTML = `<svg viewBox="0 0 100 ${H}" preserveAspectRatio="xMidYMin meet">${cells}</svg>`;
     host.querySelector('svg').addEventListener('click', (e) => {
         const svg = e.currentTarget;
         const r = svg.getBoundingClientRect();
@@ -792,12 +807,15 @@ $('#viewport-toggle').addEventListener('click', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Zoom (Miro-style zoomed-out editing; all gestures keep working)
+// Zoom (Miro-style: presets, plus pinch / Cmd+scroll for continuous zoom
+// down to 5%; all gestures keep working at any level)
 // ---------------------------------------------------------------------------
 
 let currentZoom = 1;
+const Z_MIN = 0.05, Z_MAX = 1.5;
 
 function setZoom(z, { skipMobileCheck = false } = {}) {
+    z = Math.min(Z_MAX, Math.max(Z_MIN, z));
     const holder = $('#canvas-holder');
     const box = $('#zoom-box');
     const iframe = $('#canvas');
@@ -807,8 +825,10 @@ function setZoom(z, { skipMobileCheck = false } = {}) {
     }
     currentZoom = z;
     document.querySelectorAll('[data-zoom]').forEach((b) =>
-        b.classList.toggle('active', parseFloat(b.getAttribute('data-zoom')) === z));
-    if (z === 1) {
+        b.classList.toggle('active', Math.abs(parseFloat(b.getAttribute('data-zoom')) - z) < 0.01));
+    $('#zoom-label').textContent = `${Math.round(z * 100)}%`;
+    if (Math.abs(z - 1) < 0.005) {
+        currentZoom = 1;
         iframe.style.width = '';
         iframe.style.height = '';
         iframe.style.transform = '';
@@ -817,17 +837,48 @@ function setZoom(z, { skipMobileCheck = false } = {}) {
         return;
     }
     const hw = holder.clientWidth, hh = holder.clientHeight;
-    const w = Math.max(1000, Math.round(hw / z));
+    // Cap the layout width: deep zoom shows the page as a centered column
+    // (like Miro on a tall board) instead of laying out a mile-wide page.
+    const w = Math.round(Math.min(1800, Math.max(1000, hw / z)));
     const h = Math.round(hh / z);
     iframe.style.width = `${w}px`;
     iframe.style.height = `${h}px`;
     iframe.style.transform = `scale(${z})`;
     box.style.width = `${Math.round(w * z)}px`;
-    box.style.height = `${Math.round(h * z)}px`;
+    box.style.height = `${hh}px`;
 }
 
+// Zoom around a parent-space point: the spot under the cursor stays put.
+function zoomAtPoint(z, px, py) {
+    const iframe = $('#canvas');
+    const before = overlay.canvasPointFromParent(px, py);
+    const scrollBefore = iframe.contentWindow ? iframe.contentWindow.scrollY : 0;
+    setZoom(z);
+    if (!before || !iframe.contentWindow) return;
+    requestAnimationFrame(() => {
+        const after = overlay.canvasPointFromParent(px, py);
+        if (!after) return;
+        const ppw = overlay.canvasPxPerWu();
+        iframe.contentWindow.scrollBy(0, (before.y - after.y) * ppw);
+        void scrollBefore;
+    });
+}
+
+function handleWheelZoom(e, px, py) {
+    if (!e.ctrlKey && !e.metaKey) return false; // trackpad pinch arrives as ctrl+wheel
+    e.preventDefault();
+    const factor = Math.exp(-e.deltaY * 0.012);
+    zoomAtPoint(currentZoom * factor, px, py);
+    return true;
+}
+
+$('#canvas-holder').addEventListener('wheel', (e) => handleWheelZoom(e, e.clientX, e.clientY), { passive: false });
+
 document.querySelectorAll('[data-zoom]').forEach((btn) =>
-    btn.addEventListener('click', () => setZoom(parseFloat(btn.getAttribute('data-zoom')))));
+    btn.addEventListener('click', () => {
+        const holder = $('#canvas-holder').getBoundingClientRect();
+        zoomAtPoint(parseFloat(btn.getAttribute('data-zoom')), holder.left + holder.width / 2, holder.top + holder.height / 3);
+    }));
 window.addEventListener('resize', () => { if (currentZoom !== 1) setZoom(currentZoom); });
 
 $('#undo').addEventListener('click', undo);
