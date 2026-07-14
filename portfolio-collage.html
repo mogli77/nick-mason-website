@@ -88,6 +88,15 @@
             }
         }
 
+        /* layers mode (?parallax=layers): only the overlaid pieces move —
+           the frame itself drifts so laps physically float over their base
+           images. The 0.1s transform ease must outrank the 0.9s reveal
+           transition once the block is revealed. */
+        html.pf-layers .pf-block.is-revealed .pf-frame.pf-float {
+            transition: opacity 0.9s ease, transform 0.1s ease-out;
+            will-change: transform;
+        }
+
         /* Geometry begins with the measured REFERENCE_v4 composition, then
            incorporates the client's numbered crop and spacing refinements. */
 
@@ -241,7 +250,8 @@
             /* parallax is desktop-only (script early-returns on touch);
                clear any transform left over from a desktop-width resize */
             .pf-flow .pf-frame img,
-            .pf-flow .pf-frame video {
+            .pf-flow .pf-frame video,
+            .pf-frame.pf-float {
                 transition: none;
                 transform: none !important;
                 will-change: auto;
@@ -914,16 +924,67 @@
         })();
     </script>
 
-    <!-- Parallax: within-frame drift. Media is scaled 6% and eased a few
-         px against the scroll inside its overflow-hidden frame — the
-         .pf-frame geometry never moves, so collage seams stay tight.
+    <!-- Parallax, three modes for review (?parallax= in the URL):
+           off    — no motion at all (the original page)
+           (none) — within-frame drift: media is scaled 6% and eased a few
+                    px against the scroll inside its overflow-hidden frame;
+                    .pf-frame geometry never moves, so seams stay tight
+           layers — only the overlaid pieces move, and more aggressively:
+                    the overlay FRAME drifts over its base image (no media
+                    scale/crop). z-3 laps at full amplitude, z-2 at ~half,
+                    so stacked layers shear against each other.
          Same viewport math and device guards as portfolio.html. -->
     <script>
         (() => {
+            const mode = new URLSearchParams(location.search).get('parallax');
+            if (mode === 'off') return;
+
+            const GUARD = '(max-width: 767px), (hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)';
+
+            if (mode === 'layers') {
+                document.documentElement.classList.add('pf-layers');
+                // the lap pieces (elevated z-index in the geometry above);
+                // k scales amplitude so layers move at different rates
+                const FLOATS = [
+                    ['.pf-s1 .f2', 1], ['.pf-s3 .f2', 1], ['.pf-s5 .f2', 1],
+                    ['.pf-s8 .f8', 1], ['.pf-s10 .f3', 1], ['.pf-s11 .f2', 1],
+                    ['.pf-s11 .f7', 1], ['.pf-s14 .f2', 1], ['.pf-s16 .f2', 1],
+                    ['.pf-s18 .f4', 1], ['.pf-s19 .f6', 1], ['.pf-s21a .f3', 1],
+                    ['.pf-s3 .f3', 0.55], ['.pf-s10 .f2', 0.55], ['.pf-s14 .f1', 0.55]
+                ];
+                const floats = [];
+                FLOATS.forEach(([sel, k]) => {
+                    const el = document.querySelector(sel);
+                    if (el) { el.classList.add('pf-float'); floats.push({ el, k, canvas: el.closest('.pf-canvas'), block: el.closest('.pf-block') }); }
+                });
+
+                function updateLayers() {
+                    if (window.matchMedia(GUARD).matches) return;
+                    const windowHeight = window.innerHeight;
+                    floats.forEach(({ el, k, canvas, block }) => {
+                        // let the reveal entrance finish before taking over the transform
+                        if (!block.classList.contains('is-revealed')) return;
+                        const rect = canvas.getBoundingClientRect();
+                        if (rect.top < windowHeight && rect.bottom > 0) {
+                            const scrollPercent = (windowHeight - rect.top) / (windowHeight + rect.height);
+                            // cap keeps the smallest designed step (s3's 31px top
+                            // reveal) from ever inverting
+                            const maxShift = k * Math.min(26, el.offsetHeight * 0.12);
+                            const translateY = (scrollPercent - 0.5) * 2 * maxShift;
+                            el.style.transform = `translateY(${translateY.toFixed(2)}px)`;
+                        }
+                    });
+                }
+
+                window.addEventListener('scroll', updateLayers, { passive: true });
+                updateLayers();
+                return;
+            }
+
             const media = document.querySelectorAll('.pf-flow .pf-frame img, .pf-flow .pf-frame video');
 
             function updateParallax() {
-                if (window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)').matches) return;
+                if (window.matchMedia(GUARD).matches) return;
                 const windowHeight = window.innerHeight;
                 media.forEach(m => {
                     const rect = m.parentElement.getBoundingClientRect();
