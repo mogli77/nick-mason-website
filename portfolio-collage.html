@@ -97,6 +97,16 @@
             will-change: transform;
         }
 
+        /* floats sit at fractional px offsets while drifting; bleed the
+           media 1px past the frame so subpixel rounding can never expose
+           the frame's light background as a hairline */
+        html.pf-layers .pf-frame.pf-float img,
+        html.pf-layers .pf-frame.pf-float video {
+            width: calc(100% + 2px);
+            height: calc(100% + 2px);
+            margin: -1px;
+        }
+
         /* Geometry begins with the measured REFERENCE_v4 composition, then
            incorporates the client's numbered crop and spacing refinements. */
 
