@@ -97,11 +97,26 @@
             will-change: transform;
         }
 
+        /* in layers mode the media itself never animates — undo the
+           default-mode layer promotion. A promoted img composited at a
+           fractional offset gets its edge pixels resampled semi-
+           transparent, letting the frame's light background bleed
+           through as a flickering hairline. */
+        html.pf-layers .pf-flow .pf-frame img,
+        html.pf-layers .pf-flow .pf-frame video {
+            will-change: auto;
+            transition: none;
+        }
+
         /* floats sit at fractional px offsets while drifting; bleed the
            media 1px past the frame so subpixel rounding can never expose
-           the frame's light background as a hairline */
+           the frame's light background as a hairline. max-width: none is
+           load-bearing — the global `img { max-width: 100% }` reset would
+           clamp the bleed width while the -1px margin still applied,
+           which paints a 1px bg column down the right edge instead. */
         html.pf-layers .pf-frame.pf-float img,
         html.pf-layers .pf-frame.pf-float video {
+            max-width: none;
             width: calc(100% + 2px);
             height: calc(100% + 2px);
             margin: -1px;
