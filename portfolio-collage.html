@@ -71,6 +71,23 @@
             display: block;
         }
 
+        /* within-frame parallax: media is scaled 6% and drifts inside its
+           overflow-hidden frame — frames never move, seams stay tight
+           (see parallax script at the bottom of the page) */
+        .pf-flow .pf-frame img,
+        .pf-flow .pf-frame video {
+            will-change: transform;
+            transition: transform 0.1s ease-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pf-flow .pf-frame img,
+            .pf-flow .pf-frame video {
+                transition: none;
+                will-change: auto;
+            }
+        }
+
         /* Geometry begins with the measured REFERENCE_v4 composition, then
            incorporates the client's numbered crop and spacing refinements. */
 
@@ -220,6 +237,15 @@
 
             /* backgrounds read as texture breaks on mobile */
             .pf-s10 .bg, .pf-s14 .bg { aspect-ratio: 16 / 10; }
+
+            /* parallax is desktop-only (script early-returns on touch);
+               clear any transform left over from a desktop-width resize */
+            .pf-flow .pf-frame img,
+            .pf-flow .pf-frame video {
+                transition: none;
+                transform: none !important;
+                will-change: auto;
+            }
 
             .portfolio-page .about-image img.about-photo-final {
                 width: 100%;
@@ -885,6 +911,35 @@
                 });
             }, { threshold: 0.12 });
             document.querySelectorAll('.pf-block').forEach(b => io.observe(b));
+        })();
+    </script>
+
+    <!-- Parallax: within-frame drift. Media is scaled 6% and eased a few
+         px against the scroll inside its overflow-hidden frame — the
+         .pf-frame geometry never moves, so collage seams stay tight.
+         Same viewport math and device guards as portfolio.html. -->
+    <script>
+        (() => {
+            const media = document.querySelectorAll('.pf-flow .pf-frame img, .pf-flow .pf-frame video');
+
+            function updateParallax() {
+                if (window.matchMedia('(max-width: 767px), (hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)').matches) return;
+                const windowHeight = window.innerHeight;
+                media.forEach(m => {
+                    const rect = m.parentElement.getBoundingClientRect();
+                    if (rect.top < windowHeight && rect.bottom > 0) {
+                        const scrollPercent = (windowHeight - rect.top) / (windowHeight + rect.height);
+                        // scale(1.06) hides 3% of frame height above and below;
+                        // clamp the drift under that so an edge never shows
+                        const maxShift = Math.min(18, rect.height * 0.028);
+                        const translateY = (scrollPercent - 0.5) * 2 * maxShift;
+                        m.style.transform = `translateY(${translateY.toFixed(2)}px) scale(1.06)`;
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', updateParallax, { passive: true });
+            updateParallax();
         })();
     </script>
 </body>
