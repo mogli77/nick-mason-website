@@ -85,13 +85,13 @@
         .pf-s2 .f2 { left: 50.6%; top: 0; width: 49.4%; height: 43.4%; }
         .pf-s2 .f3 { left: 50.6%; top: 45%; width: 49.4%; height: 55%; }
 
-        /* ---- s3: palm video + pool diptych; one shared baseline,
-           the video steps down, the pair holds a clean edge ---- */
-        .pf-s3 .f1 { left: 0; top: 10%; width: 55.2%; height: 90%; }
-        .pf-s3 .f2 { left: 56.4%; top: 0; width: 21.4%; height: 100%; }
-        .pf-s3 .f2 img { object-position: 55% 50%; }
-        .pf-s3 .f3 { left: 78.8%; top: 0; width: 21.2%; height: 100%; }
-        .pf-s3 .f3 img { object-position: 45% 50%; }
+        /* ---- s3: cascading layers (client mockup): girl floats inset,
+           topmost layer — lapping the video's edge on her left and the
+           paddleboard on her right. Girl frame is native 2:3 (full photo,
+           dog + girl both safe); the board slides behind her ---- */
+        .pf-s3 .f1 { left: 0; top: 0; width: 65.9%; height: 100%; }
+        .pf-s3 .f2 { left: 57.5%; top: 5.2%; width: 22.5%; height: 87.1%; z-index: 3; }
+        .pf-s3 .f3 { left: 76.3%; top: 0; width: 23.7%; height: 97.3%; z-index: 2; }
 
         /* ---- s4: pool reflection, full-column portrait plate ---- */
         .pf-s4 .f1 { left: 0; top: 0; width: 100%; height: 100%; }
@@ -293,7 +293,7 @@
             </section>
 
             <section class="pf-block pf-s3" aria-label="Section 3 — palm video and pool pair">
-                <div class="pf-canvas" style="aspect-ratio: 2.786;">
+                <div class="pf-canvas" style="aspect-ratio: 2.578;">
                     <figure class="pf-frame f1"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Palm tree video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596062/palmtree_nick_xnkxc9.mp4" type="video/mp4"></video></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010242.jpg" alt="Side pool and cedar fence"></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04942.jpg" alt="Lap pool with yellow paddleboard"></figure>
