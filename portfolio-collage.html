@@ -958,6 +958,7 @@
                     the overlay FRAME drifts over its base image (no media
                     scale/crop). z-3 laps at full amplitude, z-2 at ~half,
                     so stacked layers shear against each other.
+           layers-bold — same, at the original stronger amplitude.
          Same viewport math and device guards as portfolio.html. -->
     <script>
         (() => {
@@ -966,7 +967,10 @@
 
             const GUARD = '(max-width: 767px), (hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)';
 
-            if (mode === 'layers') {
+            if (mode === 'layers' || mode === 'layers-bold') {
+                // layers-bold = the original, more aggressive amplitude
+                const CAP = mode === 'layers-bold' ? 26 : 16;
+                const FACTOR = mode === 'layers-bold' ? 0.12 : 0.08;
                 document.documentElement.classList.add('pf-layers');
                 // the lap pieces (elevated z-index in the geometry above);
                 // k scales amplitude so layers move at different rates
@@ -994,7 +998,7 @@
                             const scrollPercent = (windowHeight - rect.top) / (windowHeight + rect.height);
                             // cap keeps the smallest designed step (s3's 31px top
                             // reveal) from ever inverting
-                            const maxShift = k * Math.min(16, el.offsetHeight * 0.08);
+                            const maxShift = k * Math.min(CAP, el.offsetHeight * FACTOR);
                             const translateY = (scrollPercent - 0.5) * 2 * maxShift;
                             el.style.transform = `translateY(${translateY.toFixed(2)}px)`;
                         }
