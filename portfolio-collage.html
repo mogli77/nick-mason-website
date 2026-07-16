@@ -980,7 +980,9 @@
          parallax keeps working) -->
     <script>
         (() => {
-            if (new URLSearchParams(location.search).get('reveal') === 'off') {
+            // Client-approved default: images are simply there, no settle-in
+            // reveals. ?reveal=on brings the animation back for review.
+            if (new URLSearchParams(location.search).get('reveal') !== 'on') {
                 document.querySelectorAll('.pf-block').forEach(b => b.classList.add('is-revealed'));
                 return;
             }
@@ -1028,9 +1030,9 @@
         })();
     </script>
 
-    <!-- Parallax, three modes for review (?parallax= in the URL):
-           off    — no motion at all (the original page)
-           (none) — within-frame drift: media is scaled 6% and eased a few
+    <!-- Parallax. Client-approved default: no motion at all. Review
+         modes stay reachable via ?parallax= in the URL:
+           subtle — within-frame drift: media is scaled 6% and eased a few
                     px against the scroll inside its overflow-hidden frame;
                     .pf-frame geometry never moves, so seams stay tight
            layers — only the overlaid pieces move, and more aggressively:
@@ -1042,7 +1044,7 @@
     <script>
         (() => {
             const mode = new URLSearchParams(location.search).get('parallax');
-            if (mode === 'off') return;
+            if (!mode || mode === 'off') return;
 
             const GUARD = '(max-width: 767px), (hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)';
 
