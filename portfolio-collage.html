@@ -455,7 +455,7 @@
                 </div>
             </section>
 
-            <section class="pf-block pf-bleed pf-s14" aria-label="Section 14 — pine ceiling video with insets">
+            <section class="pf-block pf-bleed pf-s14" data-nav-theme="light" aria-label="Section 14 — pine ceiling video with insets">
                 <div class="pf-canvas" style="aspect-ratio: 1.776;">
                     <figure class="pf-frame bg"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776364859/wood_01_dewmhw.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pine ceiling video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776364859/wood_01_dewmhw.mp4" type="video/mp4"></video></figure>
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0010194.jpg" alt="Cedar sauna doors at golden hour" width="2400" height="1600"></figure>
@@ -464,7 +464,7 @@
             </section>
 
             <!-- carved stone bench: client's section 6, moved here between 14 and 15 -->
-            <section class="pf-block pf-bleed pf-s6" aria-label="Section 6 — carved stone bench">
+            <section class="pf-block pf-bleed pf-s6" data-nav-theme="light" aria-label="Section 6 — carved stone bench">
                 <div class="pf-canvas" style="aspect-ratio: 0.667;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0010023.jpg" alt="Carved stone bench on the lawn" width="1600" height="2400"></figure>
                 </div>
@@ -485,7 +485,7 @@
                 </div>
             </section>
 
-            <section class="pf-block pf-s17" aria-label="Section 17 — material study">
+            <section class="pf-block pf-s17" data-nav-theme="light" aria-label="Section 17 — material study">
                 <div class="pf-canvas" style="aspect-ratio: 1.585;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/DSC04895.jpg" alt="Blue hook on the cedar fence" width="2400" height="1603"></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/selects/web/DSC04703.jpg" alt="Gravel texture" width="2400" height="1603"></figure>
@@ -675,19 +675,16 @@
         function updateNavColor() {
             if (!nav) return;
 
-            const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-            activeNavSection = navThemeSections.reduce((winner, section) => {
+            // Theme follows what is actually BEHIND the nav bar, not the
+            // most-visible section: the nav can still sit over a dark plate
+            // while a light section already fills most of the viewport.
+            // No section under the probe (cream gutters) falls through to
+            // the dark default.
+            const probeY = (nav.offsetHeight || 80) * 0.75;
+            activeNavSection = navThemeSections.find(section => {
                 const rect = section.getBoundingClientRect();
-                const visibleHeight = Math.max(
-                    0,
-                    Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0)
-                );
-
-                if (!winner || visibleHeight > winner.visibleHeight) {
-                    return { section, visibleHeight };
-                }
-                return winner;
-            }, null)?.section;
+                return rect.top <= probeY && rect.bottom >= probeY;
+            }) || null;
             const theme = activeNavSection?.dataset.navTheme || 'dark';
 
             if (theme === 'light') {
