@@ -18,8 +18,13 @@
     <!-- Portfolio collage styles (page-specific, styles.css untouched) -->
     <style>
         /* This page is ~20k px tall — smooth-scrolling the About anchor
-           reads as a violent fly-through, so jump instantly instead. */
+           reads as a violent fly-through, so jump instantly instead.
+           The nav anchor script below wraps the jump in a dissolve:
+           fade out quick, teleport while invisible, fade back in on the
+           body's existing 0.6s opacity transition. */
         html { scroll-behavior: auto; }
+
+        body.pf-anchor-fading { opacity: 0; transition-duration: 0.26s; }
 
         /* Land About flush with the viewport top: the site-wide 80px
            scroll-margin leaves a sliver of the ocean video showing. */
@@ -303,6 +308,10 @@
                 width: 100%;
                 height: auto;
             }
+
+            /* clear the fixed nav (~90px on mobile) so the About headline
+               never sits under the logo when the anchor lands */
+            .portfolio-page .about-section { padding-top: 7.5rem; }
         }
 
         /* ---- settle-in reveals (JS-gated; skipped for reduced motion) ---- */
@@ -970,6 +979,32 @@
                 });
             }, { threshold: 0.12 });
             document.querySelectorAll('.pf-block').forEach(b => io.observe(b));
+        })();
+    </script>
+
+    <!-- Nav anchors (About, logo/top): dissolve instead of a hard cut.
+         Fade the body out quick, teleport while invisible, then let the
+         body's base 0.6s opacity transition carry the fade back in.
+         Reduced-motion users get the plain instant jump. -->
+    <script>
+        (() => {
+            document.querySelectorAll('nav a[href^="#"]').forEach(a => {
+                a.addEventListener('click', (e) => {
+                    const target = document.getElementById(a.getAttribute('href').slice(1));
+                    if (!target) return;
+                    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                    e.preventDefault();
+                    document.body.classList.add('pf-anchor-fading');
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'auto', block: 'start' });
+                        history.replaceState(null, '', a.getAttribute('href'));
+                        // let the jump paint while invisible, then dissolve back
+                        requestAnimationFrame(() => requestAnimationFrame(() => {
+                            document.body.classList.remove('pf-anchor-fading');
+                        }));
+                    }, 280);
+                });
+            });
         })();
     </script>
 
