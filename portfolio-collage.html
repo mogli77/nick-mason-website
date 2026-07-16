@@ -149,7 +149,6 @@
 
         /* ---- s5: pendant ceiling + dog inset ---- */
         .pf-s5 .f1 { left: 0; top: 0; width: 100%; height: 100%; }
-        .pf-s5 .f2 { left: 61.3%; top: 23.7%; width: 32.4%; height: 32.2%; z-index: 2; }
 
         /* ---- s6: stone bench, full-column portrait plate ---- */
         .pf-s6 .f1 { left: 0; top: 0; width: 100%; height: 100%; }
@@ -224,7 +223,7 @@
         .pf-s18 { z-index: 3; }
         .pf-s18 .f1 { left: 0; top: 0; width: 23.4%; height: 97.6%; }
         .pf-s18 .f2 { left: 24%; top: 0; width: 23.4%; height: 97.6%; }
-        .pf-s18 .f3 { left: 48%; top: 3.5%; width: 52%; height: 96.5%; }
+        .pf-s18 .f3 { left: 48%; top: 0; width: 52%; height: 97.6%; }
         .pf-s18 .f4 { left: 76.6%; top: 57.6%; width: 17.5%; height: 70.6%; z-index: 3; }
 
         /* ---- s19: fire trio + dog at the door + fig room again;
@@ -261,16 +260,26 @@
                 aspect-ratio: auto !important;
             }
 
-            /* Must outrank the per-block .pf-sN .fM geometry rules */
+            /* Must outrank the per-block .pf-sN .fM geometry rules.
+               Frames follow each photo's natural ratio (client note:
+               no 4:3 cropping on mobile) — the img's own height sets
+               the frame height. */
             .pf-canvas .pf-frame {
                 position: static;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 4 / 3;
+                aspect-ratio: auto;
             }
 
-            /* backgrounds read as texture breaks on mobile */
-            .pf-s10 .bg, .pf-s14 .bg { aspect-ratio: 16 / 10; }
+            .pf-canvas .pf-frame img { height: auto; }
+
+            /* videos have no intrinsic height until they load — hold 16:9 */
+            .pf-canvas .pf-frame:has(video) { aspect-ratio: 16 / 9; }
+
+            /* backgrounds read as texture breaks on mobile, keep the crop
+               (.pf-frame.bg outranks the :has(video) 16:9 rule above) */
+            .pf-s10 .pf-frame.bg, .pf-s14 .pf-frame.bg { aspect-ratio: 16 / 10; }
+            .pf-s10 .pf-frame.bg img, .pf-s14 .pf-frame.bg img { height: 100%; }
 
             /* parallax is desktop-only (script early-returns on touch);
                clear any transform left over from a desktop-width resize */
@@ -327,6 +336,7 @@
                 loop
                 playsinline
                 preload="auto"
+                poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1920,q_auto/v1775596060/pool_nick_tyeuiq.jpg"
                 aria-label="La Marina pool and bench video"
             >
                 <source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596060/pool_nick_tyeuiq.mp4" type="video/mp4">
@@ -348,14 +358,14 @@
             <section class="pf-block pf-s2" aria-label="Section 2 — garden patio and pergola">
                 <div class="pf-canvas" style="aspect-ratio: 1.318;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/DSC09363.jpg" alt="Patio with cafe table"></figure>
-                    <figure class="pf-frame f2"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Garden hedge video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1600,c_limit,vc_h264,f_mp4/v1776379229/green_03_dlhhaw.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f2"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776379229/green_03_dlhhaw.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Garden hedge video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1600,c_limit,vc_h264,f_mp4/v1776379229/green_03_dlhhaw.mp4" type="video/mp4"></video></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09028.jpg" alt="Pergola and stone table"></figure>
                 </div>
             </section>
 
             <section class="pf-block pf-s3" aria-label="Section 3 — palm video and pool pair">
                 <div class="pf-canvas" style="aspect-ratio: 2.578;">
-                    <figure class="pf-frame f1"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Palm tree video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596062/palmtree_nick_xnkxc9.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f1"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1775596062/palmtree_nick_xnkxc9.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Palm tree video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596062/palmtree_nick_xnkxc9.mp4" type="video/mp4"></video></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010242.jpg" alt="Side pool and cedar fence"></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04942.jpg" alt="Lap pool with yellow paddleboard"></figure>
                 </div>
@@ -367,16 +377,9 @@
                 </div>
             </section>
 
-            <section class="pf-block pf-s5" aria-label="Section 5 — pendant ceiling and dog">
+            <section class="pf-block pf-s5" aria-label="Section 5 — pendant ceiling">
                 <div class="pf-canvas" style="aspect-ratio: 1.434;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04472.jpg" alt="Vaulted ceiling and pendant light"></figure>
-                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05049.jpg" alt="Dog resting in the sun"></figure>
-                </div>
-            </section>
-
-            <section class="pf-block pf-bleed pf-s6" aria-label="Section 6 — carved stone bench">
-                <div class="pf-canvas" style="aspect-ratio: 0.667;">
-                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0010023.jpg" alt="Carved stone bench on the lawn"></figure>
                 </div>
             </section>
 
@@ -393,7 +396,7 @@
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009639.jpg" alt="Kitchen shelves"></figure>
                     <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09374.jpg" alt="Bowl of lemons on the garden table"></figure>
                     <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170031.jpg" alt="Guest house on film"></figure>
-                    <figure class="pf-frame f6"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Dog in the garden video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775616599/dog_nick_01_lcn0pv.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f6"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1775616599/dog_nick_01_lcn0pv.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Dog in the garden video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775616599/dog_nick_01_lcn0pv.mp4" type="video/mp4"></video></figure>
                     <figure class="pf-frame f7"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009617.jpg" alt="Dining room and chandelier at El Monte"></figure>
                     <figure class="pf-frame f8"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170025.jpg" alt="Interior on film"></figure>
                     <figure class="pf-frame f9"><img loading="lazy" decoding="async" src="images/selects/web/R0009612.jpg" alt="Open living room"></figure>
@@ -417,7 +420,7 @@
                     <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010078.jpg" alt="Glass shower and bath"></figure>
                     <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04932.jpg" alt="Interior at dusk"></figure>
                     <figure class="pf-frame f6"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09052.jpg" alt="Pond and water plants"></figure>
-                    <figure class="pf-frame f7"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pond water detail video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776377096/water_bubbles_01_d3ppl4.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f7"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776377096/water_bubbles_01_d3ppl4.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pond water detail video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776377096/water_bubbles_01_d3ppl4.mp4" type="video/mp4"></video></figure>
                 </div>
             </section>
 
@@ -437,9 +440,16 @@
 
             <section class="pf-block pf-bleed pf-s14" aria-label="Section 14 — pine ceiling video with insets">
                 <div class="pf-canvas" style="aspect-ratio: 1.776;">
-                    <figure class="pf-frame bg"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pine ceiling video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776364859/wood_01_dewmhw.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame bg"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776364859/wood_01_dewmhw.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pine ceiling video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776364859/wood_01_dewmhw.mp4" type="video/mp4"></video></figure>
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0010194.jpg" alt="Cedar sauna doors at golden hour"></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/selects/web/R0010032.jpg" alt="Hand holding avocados on the tree"></figure>
+                </div>
+            </section>
+
+            <!-- carved stone bench: client's section 6, moved here between 14 and 15 -->
+            <section class="pf-block pf-bleed pf-s6" aria-label="Section 6 — carved stone bench">
+                <div class="pf-canvas" style="aspect-ratio: 0.667;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0010023.jpg" alt="Carved stone bench on the lawn"></figure>
                 </div>
             </section>
 
@@ -454,7 +464,7 @@
             <section class="pf-block pf-bleed pf-s16" data-nav-theme="light" aria-label="Section 16 — floor shadows and fan">
                 <div class="pf-canvas" style="aspect-ratio: 1.446;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04435.jpg" alt="Afternoon shadows on the floor"></figure>
-                    <figure class="pf-frame f2"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Fan detail video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776357798/fan_01_dz6n2g.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f2"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776357798/fan_01_dz6n2g.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Fan detail video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776357798/fan_01_dz6n2g.mp4" type="video/mp4"></video></figure>
                 </div>
             </section>
 
@@ -463,7 +473,7 @@
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/DSC04895.jpg" alt="Blue hook on the cedar fence"></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/selects/web/DSC04703.jpg" alt="Gravel texture"></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/DSC04801.jpg" alt="Pile of sourced stone"></figure>
-                    <figure class="pf-frame f4"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Sourced stone video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776365013/rock_03_g6ucb6.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f4"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776365013/rock_03_g6ucb6.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Sourced stone video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776365013/rock_03_g6ucb6.mp4" type="video/mp4"></video></figure>
                 </div>
             </section>
 
@@ -478,7 +488,7 @@
 
             <section class="pf-block pf-s19" aria-label="Section 19 — evening at El Monte">
                 <div class="pf-canvas" style="aspect-ratio: 1.543;">
-                    <figure class="pf-frame f1"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Fire pit video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1280,c_limit,vc_h264,f_mp4/v1775596909/fire_nick_02_q5n2n0.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f1"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1775596909/fire_nick_02_q5n2n0.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Fire pit video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1280,c_limit,vc_h264,f_mp4/v1775596909/fire_nick_02_q5n2n0.mp4" type="video/mp4"></video></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170033.jpg" alt="Bloom on film"></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04463.jpg" alt="Shadow across the tiles"></figure>
                     <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/selects/web/R0009619.jpg" alt="Sunlit living room with fig tree"></figure>
@@ -503,7 +513,7 @@
 
             <section class="pf-block pf-bleed pf-s21b" data-nav-theme="light" aria-label="Section 21 — ocean at dusk">
                 <div class="pf-canvas" style="aspect-ratio: 1.624;">
-                    <figure class="pf-frame f1"><video class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Ocean at dusk video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:best,w_1920,c_limit,vc_h264,f_mp4/v1775604634/ocean_nick_02_gafg2s.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f1"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1775604634/ocean_nick_02_gafg2s.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Ocean at dusk video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:best,w_1920,c_limit,vc_h264,f_mp4/v1775604634/ocean_nick_02_gafg2s.mp4" type="video/mp4"></video></figure>
                 </div>
             </section>
         </div>
