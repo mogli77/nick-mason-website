@@ -776,7 +776,16 @@
 
         nav?.classList.add('nav-light');
 
-        window.addEventListener('scroll', requestNavUpdate, { passive: true });
+        // iOS Safari can starve rAF callbacks during touch scrolling, which
+        // left the mobile nav frozen until the finger lifted. Touch devices
+        // update visibility synchronously per scroll event (the cheap part —
+        // one scrollY read), like the project pages do; the rAF path still
+        // handles nav color, and desktop keeps full rAF throttling.
+        const touchNav = window.matchMedia('(hover: none) and (pointer: coarse)');
+        window.addEventListener('scroll', () => {
+            if (touchNav.matches) updateNavVisibility();
+            requestNavUpdate();
+        }, { passive: true });
         window.addEventListener('resize', () => {
             lastScrollY = Math.max(window.scrollY || window.pageYOffset || 0, 0);
             updateNavColor();
