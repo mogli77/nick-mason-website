@@ -932,9 +932,15 @@
             window.addEventListener('resize', recalc);
         })();
     </script>
-    <!-- Portfolio: settle-in reveals -->
+    <!-- Portfolio: settle-in reveals (?reveal=off shows everything
+         immediately; blocks still get .is-revealed so layers-mode
+         parallax keeps working) -->
     <script>
         (() => {
+            if (new URLSearchParams(location.search).get('reveal') === 'off') {
+                document.querySelectorAll('.pf-block').forEach(b => b.classList.add('is-revealed'));
+                return;
+            }
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             document.documentElement.classList.add('pf-reveal');
             const io = new IntersectionObserver(entries => {
