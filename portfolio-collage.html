@@ -733,7 +733,13 @@
         function updateNavVisibility() {
             if (!nav) return;
 
-            if (isLayoutEditMode || activeNavSection?.classList.contains('about-section-home')) {
+            // Desktop pins the nav while About is on screen; on touch the
+            // nav behaves like the rest of the page — hides on scroll-down,
+            // returns on scroll-up (client request).
+            const pinnedAtAbout = !touchNav.matches &&
+                activeNavSection?.classList.contains('about-section-home');
+
+            if (isLayoutEditMode || pinnedAtAbout) {
                 showNav();
                 return;
             }
@@ -742,6 +748,10 @@
             const scrollDelta = currentScrollY - lastScrollY;
 
             if (currentScrollY <= navHideAfter) {
+                showNav();
+            } else if (Math.abs(scrollDelta) > window.innerHeight * 2) {
+                // anchor teleports (About link, logo) land with the nav
+                // greeting you, not mid-hide
                 showNav();
             } else if (scrollDelta > navScrollDelta) {
                 hideNav();
@@ -1007,9 +1017,13 @@
                     setTimeout(() => {
                         target.scrollIntoView({ behavior: 'auto', block: 'start' });
                         history.replaceState(null, '', a.getAttribute('href'));
-                        // let the jump paint while invisible, then dissolve back
+                        // let the jump paint while invisible, then dissolve back.
+                        // Browsers may chunk the instant jump into several scroll
+                        // events whose deltas read as scroll-down — re-show the
+                        // nav once they have all been processed.
                         requestAnimationFrame(() => requestAnimationFrame(() => {
                             document.body.classList.remove('pf-anchor-fading');
+                            document.querySelector('nav')?.classList.remove('nav-hidden');
                         }));
                     }, 280);
                 });
