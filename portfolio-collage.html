@@ -50,14 +50,14 @@
 
         .pf-block {
             position: relative;
-            /* Reference rhythm: tight, continuous flow (measured 20-65px gaps
-               on a ~1200px column) */
-            margin: 0 auto clamp(1.25rem, 3vw, 3.25rem);
+            /* Keep the plates moving as one collage: a restrained seam
+               separates chapters without turning into a uniform border. */
+            margin: 0 auto clamp(1rem, 2vw, 2.25rem);
         }
 
-        /* s1 and s2 sit almost touching in the reference */
-        .pf-s1,
-        .pf-s2 { margin-bottom: clamp(0.6rem, 1.4vw, 1.5rem); }
+        /* s1 and s2 sit almost touching in the reference; the new Hope
+           Ranch chapter after s2 returns to the shared project rhythm. */
+        .pf-s1 { margin-bottom: clamp(0.6rem, 1.4vw, 1.5rem); }
 
         /* Full photographic plates break through the collage gutter. */
         .pf-bleed {
@@ -149,6 +149,20 @@
         .pf-s2 .f2 { left: 50.6%; top: 0; width: 49.4%; height: 43.4%; }
         .pf-s2 .f3 { left: 50.6%; top: 45%; width: 49.4%; height: 55%; }
 
+        /* ---- s2.5: Hope Ranch — full-width entry detail followed by the
+           interior/exterior collage measured from the client mockup ---- */
+        .pf-s25 .f1 { left: 0; top: 0; width: 100%; height: 36.6%; }
+        .pf-s25 .f2 { left: 0; top: 37.8%; width: 39.4%; height: 30.8%; }
+        .pf-s25 .f3 { left: 40.6%; top: 37.8%; width: 19%; height: 16%; }
+        .pf-s25 .f4 { left: 60.8%; top: 37.8%; width: 19%; height: 16%; }
+        .pf-s25 .f5 { left: 81%; top: 37.8%; width: 19%; height: 16%; }
+        .pf-s25 .f6 { left: 40.6%; top: 55%; width: 59.4%; height: 22.1%; }
+        .pf-s25 .f7 { left: 0; top: 69.8%; width: 19.1%; height: 15.6%; }
+        .pf-s25 .f8 { left: 20.3%; top: 69.8%; width: 19.1%; height: 15.6%; }
+        .pf-s25 .f9 { left: 0; top: 86.3%; width: 39.4%; height: 13.7%; }
+        .pf-s25 .f10 { left: 40.6%; top: 78.3%; width: 59.4%; height: 21.7%; }
+        .pf-s25 .f11 { left: 76.8%; top: 73.7%; width: 15.9%; height: 13.2%; z-index: 3; }
+
         /* ---- s3: cascading layers (client mockup): girl floats inset,
            topmost layer — lapping the video's edge on her left and the
            paddleboard on her right. Girl frame is native 2:3 (full photo,
@@ -160,11 +174,20 @@
         /* ---- s4: pool reflection, full-column portrait plate ---- */
         .pf-s4 .f1 { left: 0; top: 0; width: 100%; height: 100%; }
 
-        /* ---- s5: pendant ceiling + dog inset ---- */
-        .pf-s5 .f1 { left: 0; top: 0; width: 100%; height: 100%; }
+        /* ---- s5: pendant ceiling + dog inset + Hope Ranch detail row ---- */
+        .pf-s5 .f1 { left: 0; top: 0; width: 100%; height: 57.4%; }
+        .pf-s5 .f2 { left: 61.3%; top: 12.2%; width: 32.4%; height: 18.6%; z-index: 3; }
+        .pf-s5 .f3 { left: 0; top: 58.5%; width: 32.5%; height: 41.5%; }
+        .pf-s5 .f4 { left: 33.75%; top: 58.5%; width: 32.5%; height: 41.5%; }
+        .pf-s5 .f5 { left: 67.5%; top: 58.5%; width: 32.5%; height: 41.5%; }
 
-        /* ---- s6: stone bench, full-column portrait plate ---- */
-        .pf-s6 .f1 { left: 0; top: 0; width: 100%; height: 100%; }
+        /* ---- s6: Hope Ranch exterior/bedroom + stone bench; courtyard
+           portrait bridges the white seam into the dark skylight below ---- */
+        .pf-s6 { z-index: 2; }
+        .pf-s6 .f1 { left: 0; top: 0; width: 61.5%; height: 100%; }
+        .pf-s6 .f2 { left: 62.7%; top: 0; width: 37.3%; height: 53.7%; }
+        .pf-s6 .f3 { left: 62.7%; top: 54.9%; width: 37.3%; height: 45.1%; }
+        .pf-s6 .f4 { left: 75.5%; top: 89.5%; width: 21.5%; height: 30.6%; z-index: 4; }
 
         /* ---- s7: glowing skylight ---- */
         .pf-s7 .f1 { left: 0; top: 0; width: 100%; height: 100%; }
@@ -380,6 +403,22 @@
                 </div>
             </section>
 
+            <section class="pf-block pf-s25" aria-label="Section 2.5 — Hope Ranch">
+                <div class="pf-canvas" style="aspect-ratio: 0.549;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011631.JPG" alt="Wood-clad entry ceiling and pendant at Hope Ranch" width="2400" height="1600"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/Roll1_143683KM212005-R1-E028.jpg" alt="Dining nook table and chairs on film at Hope Ranch" width="1609" height="2400"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011580.JPG" alt="Kitchen island and brass faucet at Hope Ranch" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011588.JPG" alt="View through the Hope Ranch kitchen into the dining room" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/Roll1_143683KM212005-R1-E013.jpg" alt="Hope Ranch kitchen and island on film" width="1609" height="2400"></figure>
+                    <figure class="pf-frame f6"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011556.JPG" alt="Wide courtyard elevation at Hope Ranch" width="2400" height="1600"></figure>
+                    <figure class="pf-frame f7"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011619.JPG" alt="Hope Ranch living room and fireplace" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f8"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011607.JPG" alt="Hope Ranch dining nook" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f9"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011720.JPG" alt="Covered Hope Ranch entry courtyard" width="2400" height="1600"></figure>
+                    <figure class="pf-frame f10"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011594.JPG" alt="Brass chandelier beneath the Hope Ranch ceiling" width="2400" height="1600"></figure>
+                    <figure class="pf-frame f11"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011642.JPG" alt="Skylights and pendant at Hope Ranch" width="1600" height="2400"></figure>
+                </div>
+            </section>
+
             <section class="pf-block pf-s3" aria-label="Section 3 — palm video and pool pair">
                 <div class="pf-canvas" style="aspect-ratio: 2.578;">
                     <figure class="pf-frame f1"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1775596062/palmtree_nick_xnkxc9.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Palm tree video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596062/palmtree_nick_xnkxc9.mp4" type="video/mp4"></video></figure>
@@ -395,8 +434,21 @@
             </section>
 
             <section class="pf-block pf-s5" aria-label="Section 5 — pendant ceiling">
-                <div class="pf-canvas" style="aspect-ratio: 1.434;">
+                <div class="pf-canvas" style="aspect-ratio: 0.861;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04472.jpg" alt="Vaulted ceiling and pendant light" width="2400" height="1603"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05049.jpg" alt="Dog resting beside a person in the afternoon light" width="2400" height="1603"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011955.JPG" alt="Wood-paneled utility sink at Hope Ranch" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/Roll1_143683KM212005-R1-E029.jpg" alt="Kitchen pendant and living room view on film at Hope Ranch" width="1609" height="2400"></figure>
+                    <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011958.JPG" alt="Vintage wall sconce at Hope Ranch" width="1600" height="2400"></figure>
+                </div>
+            </section>
+
+            <section class="pf-block pf-s6" aria-label="Section 6 — Hope Ranch exterior and material details">
+                <div class="pf-canvas" style="aspect-ratio: 0.95;">
+                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011566.JPG" alt="Hope Ranch side patio beneath a mature tree" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011700.JPG" alt="Hope Ranch bedroom in deep window light" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/R0010023.jpg" alt="Carved stone bench on the lawn" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011679.JPG" alt="Hope Ranch courtyard wall and tree shadow" width="1600" height="2400"></figure>
                 </div>
             </section>
 
@@ -460,13 +512,6 @@
                     <figure class="pf-frame bg"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776364859/wood_01_dewmhw.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pine ceiling video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776364859/wood_01_dewmhw.mp4" type="video/mp4"></video></figure>
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0010194.jpg" alt="Cedar sauna doors at golden hour" width="2400" height="1600"></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/selects/web/R0010032.jpg" alt="Hand holding avocados on the tree" width="1600" height="2400"></figure>
-                </div>
-            </section>
-
-            <!-- carved stone bench: client's section 6, moved here between 14 and 15 -->
-            <section class="pf-block pf-bleed pf-s6" data-nav-theme="light" aria-label="Section 6 — carved stone bench">
-                <div class="pf-canvas" style="aspect-ratio: 0.667;">
-                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0010023.jpg" alt="Carved stone bench on the lawn" width="1600" height="2400"></figure>
                 </div>
             </section>
 
@@ -1056,7 +1101,8 @@
                 // the lap pieces (elevated z-index in the geometry above);
                 // k scales amplitude so layers move at different rates
                 const FLOATS = [
-                    ['.pf-s1 .f2', 1], ['.pf-s3 .f2', 1], ['.pf-s5 .f2', 1],
+                    ['.pf-s1 .f2', 1], ['.pf-s25 .f11', 1], ['.pf-s3 .f2', 1],
+                    ['.pf-s5 .f2', 1], ['.pf-s6 .f4', 1],
                     ['.pf-s8 .f8', 1], ['.pf-s10 .f3', 1], ['.pf-s11 .f2', 1],
                     ['.pf-s11 .f7', 1], ['.pf-s14 .f2', 1], ['.pf-s16 .f2', 1],
                     ['.pf-s18 .f4', 1], ['.pf-s19 .f6', 1], ['.pf-s21a .f3', 1],
