@@ -135,6 +135,19 @@
             margin: -1px;
         }
 
+        /* These two portrait overlays land on fractional desktop pixels even
+           with parallax off. Bleed their media beneath the clipped frame by
+           1px so the frame background cannot surface as an edge hairline. */
+        @media (min-width: 768px) {
+            .pf-s6 .f4 img,
+            .pf-s19 .f6 img {
+                max-width: none;
+                width: calc(100% + 2px);
+                height: calc(100% + 2px);
+                margin: -1px;
+            }
+        }
+
         /* Geometry begins with the measured REFERENCE_v4 composition, then
            incorporates the client's numbered crop and spacing refinements. */
 
