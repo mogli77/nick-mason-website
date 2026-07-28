@@ -84,10 +84,14 @@
                 .join(', ');
             img.addEventListener('error', () => restoreOriginal(img), { once: true });
 
-            // About is a direct nav destination from the hero. Once its small
-            // responsive candidate is configured, fetch it quietly so the
-            // anchor jump never lands on an empty portrait frame.
-            if (img.classList.contains('about-photo-final')) {
+            // Quietly stage the first collage spread behind the hero and the
+            // direct-nav About portrait. Both use small responsive candidates,
+            // so they are ready at the moment the visitor leaves the hero
+            // without competing at normal/high priority with its video.
+            const quietPreload =
+                img.classList.contains('about-photo-final') ||
+                img.closest('.pf-s1');
+            if (quietPreload) {
                 img.fetchPriority = 'low';
                 img.loading = 'eager';
             }
