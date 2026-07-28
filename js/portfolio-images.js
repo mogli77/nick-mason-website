@@ -83,6 +83,14 @@
                 .map(width => `${imageUrl(source, width)} ${width}w`)
                 .join(', ');
             img.addEventListener('error', () => restoreOriginal(img), { once: true });
+
+            // About is a direct nav destination from the hero. Once its small
+            // responsive candidate is configured, fetch it quietly so the
+            // anchor jump never lands on an empty portrait frame.
+            if (img.classList.contains('about-photo-final')) {
+                img.fetchPriority = 'low';
+                img.loading = 'eager';
+            }
             return;
         }
 
