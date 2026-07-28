@@ -567,8 +567,8 @@
 
    2. preload="auto" is a hint — mobile Safari frequently ignores it
       to save bandwidth. We call v.load() ourselves when the video is
-      near the viewport (rootMargin: 200% above) so the pipeline starts
-      buffering well before the user arrives.
+      near the viewport so the pipeline starts buffering before the user
+      arrives. The image-heavy portfolio uses a shorter preload runway.
 
    3. Muted state can desync after bfcache/navigation — Safari then
       treats the video as unmuted and blocks autoplay. Force
@@ -587,6 +587,8 @@
 (function autoplayOnView() {
     const vids = document.querySelectorAll('video.autoplay-on-view');
     if (!vids.length) return;
+    const visibleVideos = new WeakSet();
+    const wiredVideos = new WeakSet();
 
     // Respect user preference: do not autoplay motion.
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -623,7 +625,11 @@
     // rejects and canplay fires 10ms later, we still try again because
     // the listener was already attached.
     const wireRetries = (v) => {
-        const retry = () => playIfPaused(v);
+        if (wiredVideos.has(v)) return;
+        wiredVideos.add(v);
+        const retry = () => {
+            if (visibleVideos.has(v)) playIfPaused(v);
+        };
         v.addEventListener('loadeddata', retry);
         v.addEventListener('canplay', retry);
         v.addEventListener('canplaythrough', retry);
@@ -639,11 +645,17 @@
 
     // Two observers with different responsibilities:
     //
-    // 1) Near-view observer (rootMargin 200% above): start buffering
-    //    well before the video is actually visible, so by the time the
-    //    user gets there readyState is high and .play() succeeds.
+    // 1) Near-view observer: start buffering before the video is actually
+    //    visible. The image-heavy Work page uses a shorter runway so its
+    //    responsive stills get bandwidth priority; other pages retain the
+    //    original Safari-tested two-viewport runway.
     // 2) In-view observer (threshold 0.15): play when visible, pause
     //    when offscreen to free decoder resources.
+
+    const isPortfolioPage = document.body.classList.contains('portfolio-page');
+    const videoPreloadMargin = isPortfolioPage
+        ? '75% 0px 75% 0px'
+        : '200% 0px 200% 0px';
 
     const nearViewIO = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -653,18 +665,22 @@
             ensureLoading(v);
             nearViewIO.unobserve(v); // only needed once per video
         });
-    }, { rootMargin: '200% 0px 200% 0px' });
+    }, { rootMargin: videoPreloadMargin });
 
     const inViewIO = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             const v = entry.target;
             if (entry.isIntersecting) {
+                visibleVideos.add(v);
+                wireRetries(v);
+                ensureLoading(v);
                 playIfPaused(v);
-            } else if (!v.paused) {
+            } else {
+                visibleVideos.delete(v);
                 // Pause offscreen. Next scroll back in, intersectionObserver
                 // re-fires and playIfPaused() resumes from current position
                 // (loop attribute handles the wrap).
-                v.pause();
+                if (!v.paused) v.pause();
             }
         });
     }, { threshold: 0.15 });
@@ -682,6 +698,7 @@
         const r = v.getBoundingClientRect();
         const alreadyVisible = r.top < window.innerHeight && r.bottom > 0;
         if (alreadyVisible) {
+            visibleVideos.add(v);
             wireRetries(v);
             ensureLoading(v);
             playIfPaused(v);
@@ -693,7 +710,15 @@
         vids.forEach(v => {
             const r = v.getBoundingClientRect();
             const inView = r.top < window.innerHeight && r.bottom > 0;
-            if (inView) playIfPaused(v);
+            if (inView) {
+                visibleVideos.add(v);
+                wireRetries(v);
+                ensureLoading(v);
+                playIfPaused(v);
+            } else {
+                visibleVideos.delete(v);
+                if (!v.paused) v.pause();
+            }
         });
     });
 
@@ -703,7 +728,15 @@
         vids.forEach(v => {
             const r = v.getBoundingClientRect();
             const inView = r.top < window.innerHeight && r.bottom > 0;
-            if (inView) playIfPaused(v);
+            if (inView) {
+                visibleVideos.add(v);
+                wireRetries(v);
+                ensureLoading(v);
+                playIfPaused(v);
+            } else {
+                visibleVideos.delete(v);
+                if (!v.paused) v.pause();
+            }
         });
     });
 })();

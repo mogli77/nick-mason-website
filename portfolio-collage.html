@@ -84,11 +84,20 @@
             display: block;
         }
 
+        /* Default portfolio media stays on the normal paint path. The
+           optional within-frame review mode promotes only the media that
+           actually moves instead of all 80+ collage layers. */
+        .pf-flow .pf-frame img,
+        .pf-flow .pf-frame video {
+            will-change: auto;
+            transition: none;
+        }
+
         /* within-frame parallax: media is scaled 6% and drifts inside its
            overflow-hidden frame — frames never move, seams stay tight
            (see parallax script at the bottom of the page) */
-        .pf-flow .pf-frame img,
-        .pf-flow .pf-frame video {
+        html.pf-subtle .pf-flow .pf-frame img,
+        html.pf-subtle .pf-flow .pf-frame video {
             will-change: transform;
             transition: transform 0.1s ease-out;
         }
@@ -380,7 +389,7 @@
         }
     </style>
 </head>
-<body class="fade-out portfolio-page">
+<body class="fade-out portfolio-page" data-netlify-images>
     <!-- Navigation -->
     <nav>
         <a href="#top" class="logo" aria-label="Nick Mason Construction Co. home">
@@ -614,6 +623,8 @@
                     decoding="async"
                     src="images/about/citrus-planter-clouds-bw.png"
                     alt="Citrus tree and palms at a Nick Mason Construction Co. project"
+                    width="1023"
+                    height="1537"
                 >
             </div>
             <div class="about-content">
@@ -724,7 +735,8 @@
         <p class="footer-copyright">&copy; Nick Mason Construction Co.</p>
     </footer>
 
-    <script src="js/main.js?v=page-turn-6"></script>
+    <script src="js/portfolio-images.js?v=1"></script>
+    <script src="js/main.js?v=page-turn-7"></script>
     <script>
         // Homepage nav: color follows the active spread; visibility follows scroll intent.
         const nav = document.querySelector('nav');
@@ -1162,6 +1174,7 @@
                 return;
             }
 
+            document.documentElement.classList.add('pf-subtle');
             const media = document.querySelectorAll('.pf-flow .pf-frame img, .pf-flow .pf-frame video');
 
             function updateParallax() {
