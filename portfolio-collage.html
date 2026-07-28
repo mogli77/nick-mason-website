@@ -135,12 +135,12 @@
             margin: -1px;
         }
 
-        /* These two portrait overlays land on fractional desktop pixels even
-           with parallax off. Bleed their media beneath the clipped frame by
-           1px so the frame background cannot surface as an edge hairline. */
+        /* Raised/lapping frames land on fractional desktop pixels even with
+           parallax off. Bleed their media beneath the clipped frame by 1px
+           so the frame background cannot surface as an edge hairline. */
         @media (min-width: 768px) {
-            .pf-s6 .f4 img,
-            .pf-s19 .f6 img {
+            .pf-frame.pf-raised > img,
+            .pf-frame.pf-raised > video {
                 max-width: none;
                 width: calc(100% + 2px);
                 height: calc(100% + 2px);
@@ -414,7 +414,7 @@
             <section class="pf-block pf-s1" aria-label="Section 1 — La Marina entry collage">
                 <div class="pf-canvas" style="aspect-ratio: 1.366;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010071.jpg" alt="La Marina entry" width="2400" height="1600"></figure>
-                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05077.jpg" alt="Fruit tree shadow on the wall" width="2400" height="1603"></figure>
+                    <figure class="pf-frame f2 pf-raised"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05077.jpg" alt="Fruit tree shadow on the wall" width="2400" height="1603"></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/58-A001C0013_250313_Y0PG01.jpg" alt="Aerial view of the property" width="2400" height="1600"></figure>
                     <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010232.jpg" alt="Interior opening to the garden" width="1600" height="2400"></figure>
                 </div>
@@ -440,15 +440,15 @@
                     <figure class="pf-frame f8"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011607.JPG" alt="Hope Ranch dining nook" width="1600" height="2400"></figure>
                     <figure class="pf-frame f9"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011720.JPG" alt="Covered Hope Ranch entry courtyard" width="2400" height="1600"></figure>
                     <figure class="pf-frame f10"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011594.JPG" alt="Brass chandelier beneath the Hope Ranch ceiling" width="2400" height="1600"></figure>
-                    <figure class="pf-frame f11"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011642.JPG" alt="Skylights and pendant at Hope Ranch" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f11 pf-raised"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011642.JPG" alt="Skylights and pendant at Hope Ranch" width="1600" height="2400"></figure>
                 </div>
             </section>
 
             <section class="pf-block pf-s3" aria-label="Section 3 — palm video and pool pair">
                 <div class="pf-canvas" style="aspect-ratio: 2.578;">
                     <figure class="pf-frame f1"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1775596062/palmtree_nick_xnkxc9.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Palm tree video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775596062/palmtree_nick_xnkxc9.mp4" type="video/mp4"></video></figure>
-                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010242.jpg" alt="Side pool and cedar fence" width="1600" height="2400"></figure>
-                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04942.jpg" alt="Lap pool with yellow paddleboard" width="1603" height="2400"></figure>
+                    <figure class="pf-frame f2 pf-raised"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010242.jpg" alt="Side pool and cedar fence" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f3 pf-raised"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04942.jpg" alt="Lap pool with yellow paddleboard" width="1603" height="2400"></figure>
                 </div>
             </section>
 
@@ -461,7 +461,7 @@
             <section class="pf-block pf-s5" aria-label="Section 5 — pendant ceiling">
                 <div class="pf-canvas" style="aspect-ratio: 0.861;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04472.jpg" alt="Vaulted ceiling and pendant light" width="2400" height="1603"></figure>
-                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05049.jpg" alt="Dog resting beside a person in the afternoon light" width="2400" height="1603"></figure>
+                    <figure class="pf-frame f2 pf-raised"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC05049.jpg" alt="Dog resting beside a person in the afternoon light" width="2400" height="1603"></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011955.JPG" alt="Wood-paneled utility sink at Hope Ranch" width="1600" height="2400"></figure>
                     <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/Roll1_143683KM212005-R1-E029.jpg" alt="Kitchen pendant and living room view on film at Hope Ranch" width="1609" height="2400"></figure>
                     <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011958.JPG" alt="Vintage wall sconce at Hope Ranch" width="1600" height="2400"></figure>
@@ -473,7 +473,7 @@
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011566.JPG" alt="Hope Ranch side patio beneath a mature tree" width="1600" height="2400"></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011700.JPG" alt="Hope Ranch bedroom in deep window light" width="1600" height="2400"></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/R0010023.jpg" alt="Carved stone bench on the lawn" width="1600" height="2400"></figure>
-                    <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011679.JPG" alt="Hope Ranch courtyard wall and tree shadow" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f4 pf-raised"><img loading="lazy" decoding="async" src="images/projects/hope-ranch/web/R0011679.JPG" alt="Hope Ranch courtyard wall and tree shadow" width="1600" height="2400"></figure>
                 </div>
             </section>
 
@@ -492,7 +492,7 @@
                     <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170031.jpg" alt="Guest house on film" width="1591" height="2400"></figure>
                     <figure class="pf-frame f6"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1775616599/dog_nick_01_lcn0pv.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Dog in the garden video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1775616599/dog_nick_01_lcn0pv.mp4" type="video/mp4"></video></figure>
                     <figure class="pf-frame f7"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/R0009617.jpg" alt="Dining room and chandelier at El Monte" width="1600" height="2400"></figure>
-                    <figure class="pf-frame f8"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170025.jpg" alt="Interior on film" width="1591" height="2400"></figure>
+                    <figure class="pf-frame f8 pf-raised"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062170025.jpg" alt="Interior on film" width="1591" height="2400"></figure>
                     <figure class="pf-frame f9"><img loading="lazy" decoding="async" src="images/selects/web/R0009612.jpg" alt="Open living room" width="2400" height="1600"></figure>
                     <figure class="pf-frame f10"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04425.jpg" alt="El Monte living room" width="2400" height="1603"></figure>
                 </div>
@@ -501,20 +501,20 @@
             <section class="pf-block pf-bleed pf-s10" data-nav-theme="light" aria-label="Section 10 — wood planks with garden insets">
                 <div class="pf-canvas" style="aspect-ratio: 1.514;">
                     <figure class="pf-frame bg"><img loading="lazy" decoding="async" src="images/selects/web/DSC05332.jpg" alt="Weathered wood planks" width="2400" height="1603"></figure>
-                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09026_1.jpg" alt="Garden path to the house" width="2000" height="1334"></figure>
-                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09309.jpg" alt="House and back lawn" width="2000" height="1334"></figure>
+                    <figure class="pf-frame f2 pf-raised"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09026_1.jpg" alt="Garden path to the house" width="2000" height="1334"></figure>
+                    <figure class="pf-frame f3 pf-raised"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09309.jpg" alt="House and back lawn" width="2000" height="1334"></figure>
                 </div>
             </section>
 
             <section class="pf-block pf-s11" aria-label="Section 11 — film palm, bedroom column and pond">
                 <div class="pf-canvas" style="aspect-ratio: 1.497;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/000062160011.jpg" alt="Palm over the house on film" width="2400" height="1591"></figure>
-                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/selects/web/000062160022.jpg" alt="Porch on film" width="2400" height="1591"></figure>
+                    <figure class="pf-frame f2 pf-raised"><img loading="lazy" decoding="async" src="images/selects/web/000062160022.jpg" alt="Porch on film" width="2400" height="1591"></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010077.jpg" alt="Bedroom lamplight" width="1600" height="2400"></figure>
                     <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010078.jpg" alt="Glass shower and bath" width="1600" height="2400"></figure>
                     <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/DSC04932.jpg" alt="Interior at dusk" width="2400" height="1603"></figure>
                     <figure class="pf-frame f6"><img loading="lazy" decoding="async" src="images/projects/pomar-lane/web/DSC09052.jpg" alt="Pond and water plants" width="2000" height="1334"></figure>
-                    <figure class="pf-frame f7"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776377096/water_bubbles_01_d3ppl4.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pond water detail video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776377096/water_bubbles_01_d3ppl4.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f7 pf-raised"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776377096/water_bubbles_01_d3ppl4.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pond water detail video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776377096/water_bubbles_01_d3ppl4.mp4" type="video/mp4"></video></figure>
                 </div>
             </section>
 
@@ -535,8 +535,8 @@
             <section class="pf-block pf-bleed pf-s14" data-nav-theme="light" aria-label="Section 14 — pine ceiling video with insets">
                 <div class="pf-canvas" style="aspect-ratio: 1.776;">
                     <figure class="pf-frame bg"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776364859/wood_01_dewmhw.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Pine ceiling video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:good,w_1920,c_limit,vc_h264,f_mp4/v1776364859/wood_01_dewmhw.mp4" type="video/mp4"></video></figure>
-                    <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/selects/web/R0010194.jpg" alt="Cedar sauna doors at golden hour" width="2400" height="1600"></figure>
-                    <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/selects/web/R0010032.jpg" alt="Hand holding avocados on the tree" width="1600" height="2400"></figure>
+                    <figure class="pf-frame f1 pf-raised"><img loading="lazy" decoding="async" src="images/selects/web/R0010194.jpg" alt="Cedar sauna doors at golden hour" width="2400" height="1600"></figure>
+                    <figure class="pf-frame f2 pf-raised"><img loading="lazy" decoding="async" src="images/selects/web/R0010032.jpg" alt="Hand holding avocados on the tree" width="1600" height="2400"></figure>
                 </div>
             </section>
 
@@ -551,7 +551,7 @@
             <section class="pf-block pf-bleed pf-s16" data-nav-theme="light" aria-label="Section 16 — floor shadows and fan">
                 <div class="pf-canvas" style="aspect-ratio: 1.446;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04435.jpg" alt="Afternoon shadows on the floor" width="2400" height="1603"></figure>
-                    <figure class="pf-frame f2"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776357798/fan_01_dz6n2g.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Fan detail video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776357798/fan_01_dz6n2g.mp4" type="video/mp4"></video></figure>
+                    <figure class="pf-frame f2 pf-raised"><video poster="https://res.cloudinary.com/dylwzl4vu/video/upload/so_0,w_1280,q_auto/v1776357798/fan_01_dz6n2g.jpg" class="autoplay-on-view" muted loop playsinline preload="none" aria-label="Fan detail video"><source src="https://res.cloudinary.com/dylwzl4vu/video/upload/q_auto:eco,w_1280,c_limit,vc_h264,f_mp4/v1776357798/fan_01_dz6n2g.mp4" type="video/mp4"></video></figure>
                 </div>
             </section>
 
@@ -569,7 +569,7 @@
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010047.jpg" alt="Living room with framed prints" width="1600" height="2400"></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/projects/la-marina/web/R0010008.jpg" alt="Built-in bookshelf" width="1600" height="2400"></figure>
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/54-A001C0057_250313_Y0PG01.jpg" alt="Palm-lined street meeting the ocean" width="2400" height="1598"></figure>
-                    <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/selects/web/000062160010.jpg" alt="La Marina exterior on film" width="1591" height="2400"></figure>
+                    <figure class="pf-frame f4 pf-raised"><img loading="lazy" decoding="async" src="images/selects/web/000062160010.jpg" alt="La Marina exterior on film" width="1591" height="2400"></figure>
                 </div>
             </section>
 
@@ -580,7 +580,7 @@
                     <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04463.jpg" alt="Shadow across the tiles" width="2400" height="1603"></figure>
                     <figure class="pf-frame f4"><img loading="lazy" decoding="async" src="images/selects/web/R0009619.jpg" alt="Sunlit living room with fig tree" width="1600" height="2400"></figure>
                     <figure class="pf-frame f5"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/000062150007.jpg" alt="Dog at the doorway on film" width="2400" height="1591"></figure>
-                    <figure class="pf-frame f6"><img loading="lazy" decoding="async" src="images/selects/web/000062170032.jpg" alt="Potted plant on film" width="2400" height="1591"></figure>
+                    <figure class="pf-frame f6 pf-raised"><img loading="lazy" decoding="async" src="images/selects/web/000062170032.jpg" alt="Potted plant on film" width="2400" height="1591"></figure>
                 </div>
             </section>
 
@@ -594,7 +594,7 @@
                 <div class="pf-canvas" style="aspect-ratio: 2.761;">
                     <figure class="pf-frame f1"><img loading="lazy" decoding="async" src="images/projects/el-monte/web/DSC04463.jpg" alt="Shadow across the tiles" width="2400" height="1603"></figure>
                     <figure class="pf-frame f2"><img loading="lazy" decoding="async" src="images/selects/web/DSC05234.jpg" alt="Afternoon on the couch with the dog" width="2400" height="1603"></figure>
-                    <figure class="pf-frame f3"><img loading="lazy" decoding="async" src="images/selects/web/DSC05016.jpg" alt="Footprints across the bath floor" width="2400" height="1603"></figure>
+                    <figure class="pf-frame f3 pf-raised"><img loading="lazy" decoding="async" src="images/selects/web/DSC05016.jpg" alt="Footprints across the bath floor" width="2400" height="1603"></figure>
                 </div>
             </section>
 
