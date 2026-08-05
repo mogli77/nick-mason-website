@@ -1,2 +1,11 @@
+# Preserve indexed paths from the former Squarespace site
+/home           /             301
+/home-1         /             301
+/projects       /work         301
+/our-story      /#about       301
+/contact        /#about       301
+/contact-1      /#about       301
+/pomar-lane-1   /pomar-lane   301
+
 # Client-friendly path for the approved portfolio page
-/work  /portfolio-collage.html  200
+/work           /portfolio-collage.html   200
