@@ -1,3 +1,8 @@
+# Serve the approved portfolio collage at the production root. The force
+# marker overrides the legacy index.html that would otherwise shadow this rule.
+/               /portfolio-collage.html   200!
+/index.html     /                          301!
+
 # Preserve indexed paths from the former Squarespace site
 /home           /             301
 /home-1         /             301
