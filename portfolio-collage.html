@@ -46,6 +46,11 @@
            scroll-margin leaves a sliver of the ocean video showing. */
         #about { scroll-margin-top: 0; }
 
+        /* Mobile-only closing gesture. It stays in the document flow so it
+           never floats over photography, with a full-size invisible tap area
+           around the restrained arrow. */
+        .footer-back-to-top { display: none; }
+
         .portfolio-page { background-color: #f8f7f4; }
 
         /* Final About portrait: deliberately restrained beside the copy. */
@@ -385,6 +390,24 @@
             /* clear the fixed nav (~90px on mobile) so the About headline
                never sits under the logo when the anchor lands */
             .portfolio-page .about-section { padding-top: 7.5rem; }
+
+            .footer-back-to-top {
+                display: grid;
+                place-items: center;
+                width: 44px;
+                height: 44px;
+                margin: -0.5rem auto 0.75rem;
+                color: var(--color-text-muted);
+                opacity: 0.68;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .footer-back-to-top:active { opacity: 1; }
+
+            .footer-back-to-top:focus-visible {
+                outline: 1px solid currentColor;
+                outline-offset: 2px;
+            }
         }
 
         /* ---- settle-in reveals (JS-gated; skipped for reduced motion) ---- */
@@ -737,7 +760,6 @@
                         <img loading="lazy" decoding="async" src="images/construction/web/R0009822.jpg" alt="" width="1199" height="1800">
                         <img loading="lazy" decoding="async" src="images/work-in-progress/graded/Roll2_143683KM212005-R2-E039.jpg" alt="" width="2961" height="1985">
                         <img loading="lazy" decoding="async" src="images/construction/web/R0009831.jpg" alt="" width="1199" height="1800">
-                        <img loading="lazy" decoding="async" src="images/construction/web/R0009845.jpg" alt="" width="1199" height="1800">
                         <img loading="lazy" decoding="async" src="images/construction/web/R0009846.jpg" alt="" width="1199" height="1800">
                         <img loading="lazy" decoding="async" src="images/construction/web/R0009854.jpg" alt="" width="1800" height="1199">
                         <img loading="lazy" decoding="async" src="images/work-in-progress/graded/R0011318.jpg" alt="" width="6000" height="4000">
@@ -759,6 +781,11 @@
 
     <!-- Footer -->
     <footer>
+        <a class="footer-back-to-top" href="#top" aria-label="Back to top">
+            <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false">
+                <path d="M12 19V5M6.5 10.5 12 5l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="square" stroke-linejoin="miter"/>
+            </svg>
+        </a>
         <p class="footer-copyright">&copy; Nick Mason Construction Co.</p>
     </footer>
 
@@ -1178,7 +1205,7 @@
          Reduced-motion users get the plain instant jump. -->
     <script>
         (() => {
-            document.querySelectorAll('nav a[href^="#"]').forEach(a => {
+            document.querySelectorAll('nav a[href^="#"], .footer-back-to-top[href^="#"]').forEach(a => {
                 a.addEventListener('click', (e) => {
                     const target = document.getElementById(a.getAttribute('href').slice(1));
                     if (!target) return;
